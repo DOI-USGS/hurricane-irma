@@ -23,6 +23,11 @@ info:
       version: 0.1.8
       name: USGS-VIZLAB/vizlab
       ref: v0.1.8
+    svglite: 
+      repo: github
+      version: 1.2.0.9002
+      name: jread-usgs/svglite
+      ref: svgnano_01
     dplyr:
       repo: CRAN
       version: 0.7.2
@@ -43,14 +48,14 @@ fetch:
     location: cache/states.rds
     reader: rds
     fetcher: states
-    scripts: scripts/fetch/fetch.counties.R
+    scripts: scripts/fetch/fetch.states.R
     refetch: FALSE
     mimetype: application/zip
   -
-    id: harvey-track
-    location: cache/harvey.zip
+    id: hurricane-track
+    location: cache/hurricane.zip
     ocean: al
-    stormnum: 09
+    stormnum: 13
     year: 2017
     reader: shp
     fetcher: hurricaneTrack
@@ -70,11 +75,6 @@ fetch:
     mimetype: text/csv
     refetch: true
     comment: disabling refetch to avoid too many GDP requests
-  -
-    id: site_footy
-    location: data/Harvey_footy.zip #TODO
-    mimetype: application/zip
-    reader: shp
 process:
 visualize:
 publish:
