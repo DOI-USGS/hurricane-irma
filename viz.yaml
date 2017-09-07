@@ -1,0 +1,28 @@
+vizlab: "0.1.8"
+info:
+  id: hurricane-irma
+  name: Hurricane Irma's Water Footprint
+  date: 2017-09-07
+  publish-date: 2017-09-21
+  path: /hurricane-irma
+  analytics-id: UA-78530187-8
+  description: >-
+    Describe project here
+  thumbnail:
+    url:
+    width: 250
+    height: 250
+    alttext:
+  required-packages:
+    vizlab:
+      repo: github
+      version: 0.1.8
+      name: USGS-VIZLAB/vizlab
+      ref: v0.1.8
+    dplyr:
+      repo: CRAN
+      version: 0.5.0
+fetch:
+process:
+visualize:
+publish:
