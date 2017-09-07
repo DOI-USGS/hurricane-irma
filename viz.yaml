@@ -8,6 +8,10 @@ info:
   analytics-id: UA-78530187-8
   description: >-
     Describe project here
+  keywords: >-
+    water, hurricane, irma, USGS, NOAA, VIZLAB, NWIS, flood
+  audience: General public
+  url: https://owi.usgs.gov/vizlab/hurricane-irma/
   thumbnail:
     url:
     width: 250
@@ -21,8 +25,56 @@ info:
       ref: v0.1.8
     dplyr:
       repo: CRAN
-      version: 0.5.0
+      version: 0.7.2
+    maps:
+      repo: CRAN
+      version: 3.2.0
+    sp:
+      repo: CRAN
+      version: 1.2.5
+    httr:
+    magrittr:
+  contributors:
+    
+
 fetch:
+  -
+    id: states
+    location: cache/states.rds
+    reader: rds
+    fetcher: states
+    scripts: scripts/fetch/fetch.counties.R
+    refetch: FALSE
+    mimetype: application/zip
+  -
+    id: harvey-track
+    location: cache/harvey.zip
+    ocean: al
+    stormnum: 09
+    year: 2017
+    reader: shp
+    fetcher: hurricaneTrack
+    scripts: scripts/fetch/hurricaneTrack.R
+    mimetype: application/zip
+    refetch: TRUE
+    metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
+    comment: disabling refetch until timestamp is hooked up
+  -
+    id: precip-data
+    fetcher: precip
+    start.date: "2017-09-07"
+    end.date: "2017-09-15"
+    states: ["Florida", "Georgia", "South Carolina"]
+    scripts: scripts/fetch/fetchPrecip.R
+    location: cache/precip.csv
+    mimetype: text/csv
+    refetch: true
+    comment: disabling refetch to avoid too many GDP requests
+  -
+    id: site_footy
+    location: data/Harvey_footy.zip #TODO
+    mimetype: application/zip
+    reader: shp
 process:
 visualize:
 publish:
