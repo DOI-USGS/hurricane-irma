@@ -4,7 +4,7 @@
 #' 
 library(maps)
 library(sp)
-proj.string <- "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs"
+proj.string <- '+init=epsg:3086'
 to_sp <- function(...){
   library(maptools)
   library(maps)
