@@ -77,4 +77,21 @@ fetch:
     comment: disabling refetch to avoid too many GDP requests
 process:
 visualize:
+-
+    id: base-map
+    location: cache/base-map.svg
+    visualizer: svg_base_map
+    depends: ["counties","states", "storm-track", 'storm-location', "gage-sites"]
+    scripts: scripts/visualize/visualize_utils.R
+    mimetype: image/svg+xml
+  -
+    id: hurricane-map
+    location: figures/hurricane-map.svg
+    visualizer: hurricane_map
+    depends: ["base-map", "precip-category", "precip-colors", "discharge-sparks"]
+    scripts: scripts/visualize/visualize.harvey_map.R
+    mimetype: image/svg+xml
+    inline: true
+    title: "Hurricane Harvey's impact on precipitation and streamflow"
+    alttext: "Map of Hurricane Harvey's water footprint"
 publish:
