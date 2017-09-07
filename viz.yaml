@@ -89,9 +89,9 @@ visualize:
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
     depends: ["base-map", "precip-category", "precip-colors", "discharge-sparks"]
-    scripts: scripts/visualize/visualize.harvey_map.R
+    scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
-    title: "Hurricane Harvey's impact on precipitation and streamflow"
-    alttext: "Map of Hurricane Harvey's water footprint"
+    title: "Hurricane Irma's impact on precipitation and streamflow"
+    alttext: "Map of Hurricane Irma's water footprint"
 publish:
