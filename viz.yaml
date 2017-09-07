@@ -77,11 +77,12 @@ fetch:
     comment: disabling refetch to avoid too many GDP requests
 process:
 visualize:
--
+  -
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["counties","states", "storm-track", 'storm-location', "gage-sites"]
+    bbox: [-180.0, -90.0, 180.0, 90.0]
+    depends: ["states", "counties", "storm-track", 'storm-location', "gage-sites"]
     scripts: scripts/visualize/visualize_utils.R
     mimetype: image/svg+xml
   -
