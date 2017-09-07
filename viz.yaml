@@ -23,6 +23,11 @@ info:
       version: 0.1.8
       name: USGS-VIZLAB/vizlab
       ref: v0.1.8
+    svglite: 
+      repo: github
+      version: 1.2.0.9002
+      name: jread-usgs/svglite
+      ref: svgnano_01
     dplyr:
       repo: CRAN
       version: 0.7.2
