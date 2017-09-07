@@ -48,14 +48,14 @@ fetch:
     location: cache/states.rds
     reader: rds
     fetcher: states
-    scripts: scripts/fetch/fetch.counties.R
+    scripts: scripts/fetch/fetch.states.R
     refetch: FALSE
     mimetype: application/zip
   -
-    id: harvey-track
-    location: cache/harvey.zip
+    id: hurricane-track
+    location: cache/hurricane.zip
     ocean: al
-    stormnum: 09
+    stormnum: 13
     year: 2017
     reader: shp
     fetcher: hurricaneTrack
@@ -75,11 +75,6 @@ fetch:
     mimetype: text/csv
     refetch: true
     comment: disabling refetch to avoid too many GDP requests
-  -
-    id: site_footy
-    location: data/Harvey_footy.zip #TODO
-    mimetype: application/zip
-    reader: shp
 process:
 visualize:
 publish:
