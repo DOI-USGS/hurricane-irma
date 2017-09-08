@@ -106,10 +106,21 @@ fetch:
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
-    refetch: true
+    refetch: FALSE
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
+  -
+    id: sites-data
+    fetcher: sites
+    scripts: scripts/fetch/fetch.sites.R
+    location: cache/sites.rds
+    start.date: "2017-08-25"
+    states: ["TX", "LA"]
+    reader: rds
+    refetch: TRUE
+    comment: disabling refetch for now, re-enable to get updates to work
+    
 process:
 visualize:
   -
