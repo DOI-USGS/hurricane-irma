@@ -171,6 +171,7 @@ set_sp_plot <- function(){
 
 locate_css_class <- function(css, class_nm){
   start_class <- grep(class_nm, css)
+  stopifnot(length(start_class) > 0)
   close_classes <- grep("}", css)
   end_class <- close_classes[which(start_class < close_classes)[1]]
   css_details <- css[start_class:end_class]
@@ -178,8 +179,9 @@ locate_css_class <- function(css, class_nm){
 }
 
 locate_css_class_detail <- function(css, item_nm){
-  item_line <- grep(item_nm, css)
-  strip_excess1 <- gsub(paste0("  ", item_nm, ": "), "", css[item_line])
+  class_item_line <- grep(item_nm, css)
+  stopifnot(length(class_item_line) > 0)
+  strip_excess1 <- gsub(paste0("  ", item_nm, ": "), "", css[class_item_line])
   item_details <- gsub(";", "", strip_excess1)
   return(item_details)
 }
