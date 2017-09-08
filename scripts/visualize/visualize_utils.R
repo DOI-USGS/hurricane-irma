@@ -192,6 +192,7 @@ visualize.map_thumbnail <- function(viz){
   islands <- depends[[2]]
   counties <- depends[[3]]
   precip <- depends[[4]]
+  precip_cols <- depends[[5]]
 
   # styling details
   css <- readLines(viz$css)
@@ -207,6 +208,7 @@ visualize.map_thumbnail <- function(viz){
   countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
   precip_i <- dplyr::mutate(precip_i, map_nm = 
                               countynames[as.character(as.numeric(precip_i$fips))])
+  precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
   
   png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
   
@@ -214,7 +216,7 @@ visualize.map_thumbnail <- function(viz){
   
   sp::plot(states, col = state_color)
   sp::plot(islands, add = TRUE, col = island_color)
-  sp::plot(counties, add = TRUE, col = state_color)
+  sp::plot(counties, add = TRUE, col = precip_i$map_color)
   
   dev.off()
 }

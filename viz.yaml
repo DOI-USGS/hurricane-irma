@@ -235,7 +235,7 @@ visualize:
     location: figures/thumb-facebook.png
     visualizer: map_thumbnail
     scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify"]
+    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify", "precip-colors"]
     time-stamp: "2017-09-07 19:00:00"
     css: layout/css/hurricane-svg.css
     fig-height: 820
@@ -246,7 +246,7 @@ visualize:
     location: figures/thumb-twitter.png
     visualizer: map_thumbnail
     scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify"]
+    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify", "precip-colors"]
     time-stamp: "2017-09-07 19:00:00"
     css: layout/css/hurricane-svg.css
     fig-height: 300
@@ -257,7 +257,7 @@ visualize:
     location: figures/thumb-landing.png
     visualizer: map_thumbnail
     scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify"]
+    depends: ["storm-states", "storm-islands", "storm-counties", "precip-classify", "precip-colors"]
     time-stamp: "2017-09-07 19:00:00"
     css: layout/css/hurricane-svg.css
     fig-height: 400
