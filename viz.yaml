@@ -62,7 +62,7 @@ fetch:
     location: cache/states.rds
     reader: rds
     fetcher: states
-    scripts: scripts/fetch/fetch.states.R
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
     depends: ["view-limits"]
     mimetype: application/zip
   -
@@ -70,7 +70,7 @@ fetch:
     location: cache/counties.rds
     reader: rds
     fetcher: counties
-    scripts: scripts/fetch/fetch.states.R
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
     depends: ["view-limits"]
     mimetype: application/zip
   -
