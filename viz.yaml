@@ -49,6 +49,9 @@ info:
     rgdal:
       repo: CRAN
       version: 1.2.8
+    geoknife: 
+      repo: CRAN
+      verion: 1.5.5
   contributors:
     
 
