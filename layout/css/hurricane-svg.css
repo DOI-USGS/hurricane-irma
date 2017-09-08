@@ -12,15 +12,7 @@ line, polyline, path{
 	-ms-user-select: none;       /* Internet Explorer/Edge */
 	cursor: default;
 }
-.river-polyline {
-	stroke: #1E90FF;
-}
-.state-border	{
-  fill:none;
-  stroke: #8f8f8f;
-  stroke-width:2;
-  stroke-opacity: 0.4;
-}
+
 .track-polyline {
   stroke: #e0eeee;
   stroke-width:2;
@@ -34,16 +26,16 @@ line, polyline, path{
   stroke: #A0DFDF;
   stroke-width:3.0;
 }
-.county-polygon{
+#counties {
   fill: #DCDCDC;
   stroke: #c6c6c6;
   stroke-width:0.5;
 }
-.county-polygon:hover { 
+#counties:hover { 
   stroke: #ffffff;
   fill-opacity: 0.92;
   }
-.state-polygon {
+#states {
   fill: #9a9a9a;
   stroke: #5f5f5f;
   stroke-width:0.5;
