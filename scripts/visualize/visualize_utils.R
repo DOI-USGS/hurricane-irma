@@ -1,15 +1,12 @@
-
-visualize.svg_base_map <- function(viz = as.viz('base-map')){
-  
-  geoms <- readDepends(viz)
-  library(svglite)
-  # 1) set up shell svg, w/ proper size and aspect
-  # 2) add basic groups etc, including <defs><g id="template-geoms"/></defs> and <g id="styled-geoms"/>
-  # 3) set the plot bounds, including aspect of map
-  # 4) read in depends geoms
-  # 5) loop through depends, trim, then add geoms to <use/> elements (in id="template-geoms"), with id="u-{id}"
-  # 6) create geoms to mirror ids in <use/> elements, add attributes
+init.svg <- function(..., width = 10, height = 8){
+  # fragile, this is coded into svglite:
+  ppi <- 72
+  library(xml2)
+  vb <- sprintf("%s %s %s %s", 0, 0, width*ppi, height*ppi)
+  xml2::xml_new_root('svg', viewBox = vb, preserveAspectRatio="xMidYMid meet", 
+                     xmlns="http://www.w3.org/2000/svg", `xmlns:xlink`="http://www.w3.org/1999/xlink", version="1.1" )
 }
+
 
 #' calculate the bounding box of the sp object and return as `SpatialPolygons` object
 #' @param sp a spatial object
@@ -21,10 +18,6 @@ get_sp_bbox <- function(sp){
   ys <- bb[c(2, 4)]
   proj.string = sp::CRS(sp::proj4string(sp))
   return(as.sp_box(xs, ys, proj.string))
-}
-
-WGS84_bbox_to_sp <- function(bbox.vector){
-  
 }
 
 
@@ -54,7 +47,7 @@ as.sp_box <- function(xs, ys, proj.string){
 #' @return an `xml_document`
 get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim, ylim){
   
-  stopifnot(packageVersion('svglite') == '1.2.0.9002')
+  stopifnot(packageVersion('svglite') == '1.2.0.9003')
   
   if (missing(xlim)){
     xlim <- get_sp_lims(sp, ..., return = 'xlim')
@@ -68,14 +61,18 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
-    plot(clipped.sp, ..., xlim = xlim, ylim = ylim)
+    sp::plot(clipped.sp, ..., xlim = xlim, ylim = ylim)
   })
-  
-  sp.geoms <- tail(xml2::xml_children(rendered), length(clipped.sp))
+  svg.g <- xml2::xml_child(rendered)
+  if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
+    xml_remove(xml_child(svg.g)) # remove the <rect thing it puts in there>
+  } else if (xml2::xml_length(svg.g) != length(clipped.sp)){
+    stop('something wrong. Length of svg elements is different than number of features')
+  }
   
   # here either strip the important attributes out and re-add them with a xml_set_attrs call, or lapply the nodeset and add attrs one by one:
   
-  return(sp.geoms) # removing the <rect/> element...
+  return(svg.g) # removing the <rect/> element...
 }
 
 #' extract the plotting limits from a spatial object, given a sized svg view
@@ -144,6 +141,7 @@ clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection
   clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))
   g.i <- rgeos::gIntersects(sp, clip, byid = T) 
   
+  sp <- rgeos::gBuffer(sp, byid=TRUE, width=0) # zero buffer to avoid TopologyException
   has.data <- ("data" %in% slotNames(sp))
 
   out <- lapply(which(g.i), function(i) {
