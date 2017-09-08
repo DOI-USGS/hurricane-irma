@@ -7,6 +7,7 @@ process.storm_track <- function(viz = as.viz('storm-track')){
   track <- depends[[2]]
 
   track <- spTransform(track, sp::CRS(view.lims$proj.string))
+  track <- as(track, 'SpatialLines')
   
   # here do "over" analysis for masking?
   

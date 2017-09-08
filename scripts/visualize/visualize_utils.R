@@ -139,7 +139,9 @@ clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
 }
 
 clip_sp.SpatialLinesDataFrame <- function(sp, xlim, ylim, ...){
-  
+  return(sp)
+}
+clip_sp.SpatialLines <- function(sp, xlim, ylim, ...){
   return(sp)
 }
 
