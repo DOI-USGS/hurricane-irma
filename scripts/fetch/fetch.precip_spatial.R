@@ -39,10 +39,14 @@ fetch.point_precip <- function(viz = as.viz('precip-spatial')){
   
   sp_cells@proj4string <- CRS("+init=epsg:4326")
   state_boundary@proj4string <- CRS("+init=epsg:4326")
+  
   sp_cells <- gIntersection(state_boundary, sp_cells, byid = T, drop_lower_td = T)
+  
   IDs <- sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID"))
   sp_cells <- SpatialPolygonsDataFrame(sp_cells, data.frame(id=c(1:length(sp_cells)), row.names = IDs))
+  
   sp_point_selector <- sp::over(sp_points, sp_cells, fn=NULL)
+  
   sp_points <- sp_points[which(!is.na(sp_point_selector))]
   
   sp_point_ids <- sp::over(sp_points, sp_cells, returnList = F, fn=NULL)
