@@ -136,6 +136,11 @@ clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
   return(clipped.sp)
 }
 
+clip_sp.SpatialLinesDataFrame <- function(sp, xlim, ylim, ...){
+  
+  return(clipped.sp)
+}
+
 clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection){
   
   clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))

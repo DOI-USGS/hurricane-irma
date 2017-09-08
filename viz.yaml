@@ -128,6 +128,13 @@ fetch:
     
 process:
   -
+    id: storm-track
+    location: cache/storm-track.rds
+    processor: storm_track
+    scripts: scripts/process/process.storm_track.R
+    reader: rds
+    depends: ["view-limits", "hurricane-track"]
+  -
     id: precip-colors
     location: cache/precip-colors.json
     processor: precip_colors
@@ -191,7 +198,7 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands"]#, "storm-track", 'storm-location', "gage-sites"]
+    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands", "storm-track"]#, "storm-track", 'storm-location', "gage-sites"]
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml

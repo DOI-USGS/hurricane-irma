@@ -19,6 +19,10 @@ line, polyline, path{
   stroke-width:0.5;
 }
 
+#hurricane-track{
+  stroke-width:2;
+  stroke:red;
+}
 
 .state-polygon {
   fill: #9a9a9a;
