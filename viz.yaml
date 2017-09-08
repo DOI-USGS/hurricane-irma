@@ -70,6 +70,12 @@ info:
     RColorBrewer:
       repo: CRAN
       version: 1.1.2
+    data.table:
+      repo: CRAN
+      version: 1.10.4
+    readr:
+      repo: CRAN
+      version: 1.1.1    
   contributors:
     
 
