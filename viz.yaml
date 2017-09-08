@@ -254,7 +254,7 @@ publish:
     context:
       header: header-section
       resources: ["jquery-js", "animate-js", "vizlab-js", "svg-css","lib-header-css","lib-footer-css","map-figure-css",
-        "vizlab-favicon" ,"timesteps"] 
+        "vizlab-favicon"] 
       sections: [ "figure-section", "data-sources"]
   -
     id: figure-section
