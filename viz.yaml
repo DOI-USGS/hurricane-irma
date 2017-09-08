@@ -28,6 +28,9 @@ info:
       version: 1.2.0.9002
       name: jread-usgs/svglite
       ref: svgnano_02
+    mapdata:
+      repo: CRAN
+      version: 2.2.6
     maptools:
       repo: CRAN
       version: 0.9.2
@@ -52,9 +55,9 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-90, 20, -55, 32]
-    height: 8
-    width: 10
+    bbox: [-87, 20, -65, 34]
+    height: 10
+    width: 8
     pointsize: 12
     proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
@@ -71,6 +74,14 @@ fetch:
     location: cache/counties.rds
     reader: rds
     fetcher: counties
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
+    depends: ["view-limits"]
+    mimetype: application/zip
+  -
+    id: islands
+    location: cache/islands.rds
+    reader: rds
+    fetcher: islands
     scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
     depends: ["view-limits"]
     mimetype: application/zip
@@ -105,9 +116,9 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "states", "counties"]#, "storm-track", 'storm-location', "gage-sites"]
-    scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
-    reader: xml
+    depends: ["view-limits", "states", "counties", "islands"]#, "storm-track", 'storm-location', "gage-sites"]
+    scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
+    reader: svg_map
     mimetype: image/svg+xml
   -
     id: hurricane-map
@@ -121,3 +132,134 @@ visualize:
     title: "Hurricane Irma's impact on precipitation and streamflow"
     alttext: "Map of Hurricane Irma's water footprint"
 publish:
+  -
+    id: vizlab-favicon
+    location: images/favicon.ico
+    mimetype: image/ico
+    comment: saying it is a png to get it in right spot, need handler for ico
+    title: icon
+    alttext: icon
+  -
+    id: map-figure-css
+    location: layout/css/map-figure.css
+    mimetype: text/css
+  -
+    id: usgs-logo
+    location: images/usgsLogo.png
+    mimetype: image/png
+    title: "USGS Logo"
+    alttext: "USGS Logo"
+  -
+    id: vizlab-logo
+    location: images/vizlab.svg
+    mimetype: image/svg+xml
+    title: "Vizlab Logo"
+    alttext: "Vizlab Logo"
+  -
+    id: jquery-js
+    location: layout/js/jquery-3.1.1.min.js
+    mimetype: application/javascript
+  -
+    id: vizlab-js
+    location: layout/js/vizlab.js
+    mimetype: application/javascript
+  -
+    id: animate-js
+    location: layout/js/animate.js
+    mimetype: application/javascript
+#  -
+#    id: timesteps_pub
+#    relpath: js/times.json
+#    publisher: json
+#    scripts: scripts/publish/json.R
+#    mimetype: application/json
+  -
+    id: hurricane-page
+    name: index
+    publisher: page
+    template: fullpage
+    scripts: scripts/publish/json.R
+    depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
+      "jquery-js", "animate-js", "vizlab-js", # "timesteps", "precip-colors", 
+      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css"] #"thumbnail",
+    context:
+      header: header-section
+      resources: ["jquery-js", "animate-js", "vizlab-js", "svg-css","lib-header-css","lib-footer-css","map-figure-css",
+        "vizlab-favicon"] #,"timesteps"
+      sections: [ "figure-section", "data-sources"]
+  -
+    id: figure-section
+    template: layout/templates/mapFigure.mustache
+    publisher: section
+    depends: [ "hurricane-map" ]
+    context:
+      id: map-figure
+      figure: hurricane-map
+      title: Hurricane Irma’s Water Footprint
+      line1: >-
+        Hurricane Irma approached the U.S. Gulf coast on Sept X?, 2017.
+        In the map above, the hurricane's impact on precipitation and streamflow are 
+        shown. Normalized discharge (cubic feet per second) 
+        at a selection of U.S. Geological Survey gaging stations impacted by the hurricane is shown 
+        in the right panel. Variation in the shape of the hydrographs (right panel) 
+        is due to stream size, storm-surge, reservoir operations, and other local conditions, 
+        which can impact the effect of precipitation on flow. The the U.S. Geological Survey 
+        also collects additional information with 
+      stnText: Short-Term Network gages
+      stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
+      line2: (these gages are not shown here). 
+  -
+    id: header-section
+    template: layout/templates/header.mustache
+    publisher: section
+    depends: ["usgs-logo"]
+    context:
+      id: header
+      title: Hurricane Irma's Water Footprint
+      logo: usgs-logo
+      caption: Water impacts from Hurricane Irma
+  -
+    id: footer
+    publisher: section
+    template: footer-template
+    depends:
+      usgs-logo: usgs-logo
+    context:
+      blogsInFooter: FALSE
+      usgsLogo: usgs-logo
+      github-url: https://github.com/USGS-VIZLAB/hurricane-irma
+      vizzies:
+        -
+          url: https://owi.usgs.gov/vizlab/hurricane-matthew/
+          name: Hurricane Matthew
+          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-matthew/images/matthew_water2.png
+  -
+    id: data-sources
+    template: layout/templates/dataSources.mustache
+    publisher: section
+    context:
+      id: dataSources
+      title: Data Sources
+      line1: "Streamflow: U.S. Geological Survey "
+      waterDataText: National Water Information System
+      waterDataLink: "https://waterdata.usgs.gov/nwis"
+      line2: >-
+        . Time series of discharge at selected gages impacted by the storm are shown through time, 
+        ordered by latitude and normalized to site-specific maximum discharge observed over the duration of the hurricane. 
+      line4: "Precipitation: National Weather Service Environmental Modeling Center National Center for Environmental Prediction "
+      emcText: "Stage IV precipitation analysis"
+      emcLink: "http://www.emc.ncep.noaa.gov/mmb/ylin/pcpanl/stage4/"
+      line5: ", aggregated according to "
+      pubsLink: "https://pubs.usgs.gov/fs/2013/3035/pdf/fs2013-3035.pdf"
+      pubsText: "Blodgett (2013)"
+      line6: .
+      line7: "Storm Track: National Oceanic and Atmospheric Administration National Hurricane Center " 
+      nhcLink: "http://www.nhc.noaa.gov/gis/"
+      nhcText: "Preliminary Best Track"
+      line8: " for Hurricane Irma."
+
+  -
+    id: svg-css
+    location: layout/css/hurricane-svg.css
+    mimetype: text/css
+

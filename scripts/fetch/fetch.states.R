@@ -3,6 +3,7 @@
 #' @param \dots arguments passed to \code{\link[maps]{map}} excluding \code{fill} and \code{plot}
 #' 
 library(maps)
+library(mapdata)
 library(sp)
 to_sp <- function(..., proj.string, within = NULL){
   library(maptools)
@@ -33,4 +34,8 @@ fetch.states <- function(viz = as.viz('states')){
 
 fetch.counties <- function(viz = as.viz('counties')){
   fetch_map_data('county', viz = viz)
+}
+
+fetch.islands <- function(viz = as.viz('islands')){
+  fetch_map_data('world2Hires', "(?!USA)", xlim = c(275, 300), ylim = c(16, 30), viz = viz)
 }
