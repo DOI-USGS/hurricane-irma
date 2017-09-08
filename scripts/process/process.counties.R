@@ -8,6 +8,13 @@ county_map_name_2_id <- function(names){
   names.out <- paste(states, counties, sep = '-')
   return(names.out)
 }
+
+append_fake_precip <- function(class.name){
+  n <- 70
+  out <- paste(class.name, paste(' p-', 1:n, '-', sample(1:8, n, replace = TRUE), sep = '', collapse = ''))
+  return(out) 
+}
+
 #' clip/reduce the actual counties that are used, add a data.frame to them that will be used by `visualize`
 #' 
 #' @param
@@ -16,7 +23,7 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   sp <- readDepends(viz)[['counties']]
   library(dplyr)
   data.out <- data.frame(id = NA_character_, class = rep('county-polygon', length(sp)), raw.name = names(sp), stringsAsFactors = FALSE) %>% 
-    mutate(id = county_map_name_2_id(raw.name)) %>% select(id, class)
+    mutate(id = county_map_name_2_id(raw.name)) %>% mutate(class = append_fake_precip(class)) %>% select(id, class)
   
   row.names(data.out) <- row.names(sp)
   sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))
@@ -24,3 +31,4 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   
   saveRDS(sp.data.frame, viz[['location']])
 }
+
