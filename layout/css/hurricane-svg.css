@@ -1,0 +1,121 @@
+line, polyline, path{
+  fill: none;
+	stroke-linecap: round;
+	stroke-linejoin: round;
+	stroke-miterlimit: 10.00;
+}
+.svg-text {
+  -webkit-touch-callout: none; /* iOS Safari */
+  -webkit-user-select: none;   /* Chrome/Safari/Opera */
+	-khtml-user-select: none;    /* Konqueror */
+	-moz-user-select: none;      /* Firefox */
+	-ms-user-select: none;       /* Internet Explorer/Edge */
+	cursor: default;
+}
+.river-polyline {
+	stroke: #1E90FF;
+}
+.state-border	{
+  fill:none;
+  stroke: #8f8f8f;
+  stroke-width:2;
+  stroke-opacity: 0.4;
+}
+.track-polyline {
+  stroke: #e0eeee;
+  stroke-width:2;
+}
+.sparkline {
+	stroke: #A0DFDF;
+	stroke-width:1.5;
+}
+.sparkline-bold,.sparkline:hover  {
+  cursor: pointer;
+  stroke: #A0DFDF;
+  stroke-width:3.0;
+}
+.county-polygon{
+  fill: #DCDCDC;
+  stroke: #c6c6c6;
+  stroke-width:0.5;
+}
+.county-polygon:hover { 
+  stroke: #ffffff;
+  fill-opacity: 0.92;
+  }
+.state-polygon {
+  fill: #9a9a9a;
+  stroke: #5f5f5f;
+  stroke-width:0.5;
+}
+.background {
+  fill: #505050;
+  stroke: none
+}
+.legend-box {
+  fill: #C0C0C0;
+  stroke: none;
+}
+.storm-dot, .storm-dot-legend {
+  fill: #F29E4C;
+}
+.time-text {
+  font-size: 1.25em;
+  fill:#DCDCDC;
+}
+
+.state-overlay-text {
+  font-size: 1.9em;
+  fill:#A9A9A9;
+}
+
+.gulf-overlay-text {
+  font-size: 1.9em;
+  fill:#696969;
+}
+
+.legend-title {
+  font-size: 1.3em;
+}
+.smallprint-text {
+  font-size: 0.8em;
+}
+.nwis-dot, .nwis-legend-dot,.nwis-dot:hover, .nwis-bold,.nwis {
+  cursor: pointer;
+  fill: #057083;
+  stroke: white;
+}
+
+.nwis-inactive {
+  fill: #023139;
+  fill-opacity: 0.5;
+  stroke: none;
+}
+
+.nwis-dot, .nwis-legend-dot, .nwis{
+  stroke-width:0.75;
+}
+.nwis-dot:hover, .nwis-bold, .nwis:hover{
+  transform: scale(2.2);
+  fill-opacity: 0.7;
+  stroke-width:0.35;
+}
+.watermark {
+  cursor: pointer;
+  fill: #DCDCDC;
+  stroke: #c6c6c6;
+  stroke-width:0.5;
+  opacity: 0.4;
+}
+.hidden {
+  opacity: 0;
+}
+.shown {
+  opacity: 1;
+}
+.tooltip-box{
+  stroke-width: 0.5;
+  stroke: grey;
+  opacity: 0.9;
+  fill: #E8E8E8;
+}
