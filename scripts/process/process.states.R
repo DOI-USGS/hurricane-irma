@@ -5,12 +5,17 @@
 #' @param
 process.storm_states <- function(viz = as.viz('storm-states')){
   sp <- readDepends(viz)[['states']]
-  add_svg_data(viz, sp)
+  add_svg_data(viz, sp, class.name = 'state-polygon')
 }
 
-add_svg_data <- function(viz, sp){
+process.storm_islands <- function(viz = as.viz('storm-islands')){
+  sp <- readDepends(viz)[['islands']]
+  add_svg_data(viz, sp, class.name = 'island-polygon')
+}
+
+add_svg_data <- function(viz, sp, class.name){
   library(dplyr)
-  data.out <- data.frame(id = NA_character_, class = rep('state-polygon', length(sp)), raw.name = names(sp), stringsAsFactors = FALSE) %>% 
+  data.out <- data.frame(id = NA_character_, class = rep(class.name, length(sp)), raw.name = names(sp), stringsAsFactors = FALSE) %>% 
     mutate(id = gsub(" ", "_", raw.name)) %>% select(id, class)
   
   row.names(data.out) <- row.names(sp)
@@ -20,7 +25,3 @@ add_svg_data <- function(viz, sp){
   saveRDS(sp.data.frame, viz[['location']])
 }
 
-process.storm_islands <- function(viz = as.viz('storm-islands')){
-  sp <- readDepends(viz)[['islands']]
-  add_svg_data(viz, sp)
-}
