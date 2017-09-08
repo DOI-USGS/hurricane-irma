@@ -26,6 +26,11 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
     g.ids <- tail(g.ids, -1L)
   }
   
+  g.tool <- xml_add_child(svg,'g',id='tooltip-group')
+  xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")
+  xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
+  xml_add_child(g.tool, 'text', id="tooltip-text", dy="-1.1em", 'text-anchor'="middle", class="tooltip-text-label svg-text", " ")
+  
   xml2::write_xml(x = svg, viz[['location']])
   # 6) create geoms to mirror ids in <use/> elements, add attributes
 }
