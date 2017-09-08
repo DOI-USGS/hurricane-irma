@@ -170,6 +170,16 @@ process:
     scripts: scripts/process/process.states.R
     depends: ["islands"]
     mimetype: application/zip
+  -
+    id: timesteps
+    location: cache/times.json
+    processor: timesteps
+    scripts: scripts/process/process.timesteps.R
+    reader: json
+    depends: "precip-classify"
+    export: true
+    mimetype: application/javascript
+    
 visualize:
   -
     id: base-map
