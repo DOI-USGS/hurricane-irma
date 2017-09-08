@@ -115,10 +115,9 @@ fetch:
     fetcher: sites
     scripts: scripts/fetch/fetch.sites.R
     location: cache/sites.rds
-    start.date: "2017-08-25"
-    states: ["TX", "LA"]
     reader: rds
     refetch: TRUE
+    depends: ["precip-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
     
 process:

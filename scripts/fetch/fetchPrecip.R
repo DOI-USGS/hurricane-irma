@@ -31,12 +31,11 @@ fetch.precip <- function(viz = as.viz('precip-data')){
   library(dplyr)
   library(geoknife)
   library(tidyr)
-  
   startDate <- as.POSIXct(paste(viz[["start.date"]],"12:00:00"), tz="America/New_York")
   endDate <- as.POSIXct(paste(viz[["end.date"]],"22:00:00"), tz="America/New_York")
   attr(startDate, 'tzone') <- "UTC"
   
-  counties <- readDepends(viz)[['counties']] #TODO: need to get counties, send into getPrecip
+  counties <- readDepends(viz)[['counties']] 
   
   precip <- getPrecip(names(counties), startDate, endDate)
   attr(precip$DateTime, 'tzone') <- "America/New_York" #back to eastern
