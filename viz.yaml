@@ -43,8 +43,6 @@ info:
     sp:
       repo: CRAN
       version: 1.2.5
-    httr:
-    magrittr:
   contributors:
     
 
@@ -66,7 +64,7 @@ fetch:
     reader: rds
     fetcher: states
     scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
-    depends: ["view-limits"]
+    depends: "view-limits"
     mimetype: application/zip
   -
     id: counties
@@ -89,6 +87,18 @@ fetch:
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
+  -
+    id: precip-data
+    fetcher: precip
+    start.date: "2017-09-07"
+    end.date: "2017-09-08"
+    scripts: scripts/fetch/fetchPrecip.R
+    location: cache/precip.csv
+    mimetype: text/csv
+    refetch: true
+    depends:
+      counties: counties
+    comment: disabling refetch to avoid too many GDP requests
 process:
 visualize:
   -
@@ -103,7 +113,8 @@ visualize:
     id: hurricane-map
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
-    depends: ["base-map"]#, "precip-category", "precip-colors", "discharge-sparks"]
+    depends: 
+      base-map: "base-map"#, "precip-category", "precip-colors", "discharge-sparks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
