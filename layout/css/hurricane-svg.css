@@ -13,7 +13,7 @@ line, polyline, path{
 	cursor: default;
 }
 
-#counties {
+#counties, #islands {
   fill: #DCDCDC;
   stroke: #c6c6c6;
   stroke-width:0.5;
