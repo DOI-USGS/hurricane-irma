@@ -13,16 +13,14 @@ line, polyline, path{
 	cursor: default;
 }
 
-#counties, #islands {
+.county-polygon, .island-polygon {
   fill: #DCDCDC;
   stroke: #c6c6c6;
   stroke-width:0.5;
 }
-#counties:hover { 
-  fill-opacity: 0.5;
-}
 
-#states {
+
+.state-polygon {
   fill: #9a9a9a;
   stroke: #5f5f5f;
   stroke-width:0.5;
