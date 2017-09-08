@@ -121,6 +121,31 @@ fetch:
     comment: disabling refetch for now, re-enable to get updates to work
     
 process:
+  -
+    id: precip-colors
+    location: cache/precip-colors.json
+    processor: precip_colors
+    scripts: scripts/process/process.precip_colors.R
+    reader: json
+    bins: 9
+    pallete: "Blues"
+    mimetype: application/javascript
+    export: true
+  -
+    id: precip-breaks
+    location: cache/precip_breaks.rds
+    processor: precip_breaks
+    scripts: scripts/process/process.classifyBins.R
+    reader: rds
+    depends: ["precip-colors"]
+  - 
+    id: precip-classify
+    location: cache/precip-classified.rds
+    processor: classifyBins
+    scripts: scripts/process/process.precip-classify.R
+    reader: rds
+    depends: ["precip-breaks", "precip-data"]
+  
 visualize:
   -
     id: base-map
