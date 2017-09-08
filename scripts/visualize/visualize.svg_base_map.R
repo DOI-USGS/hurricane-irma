@@ -36,9 +36,10 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
 }
 
 add_attrs <- function(nodes, data, plot.order){
+  
   for (d.i in seq_len(length(nodes))){
     for (value in names(data)){
-      xml2::xml_attr(nodes[d.i], value) <- data[[value]][plot.order[d.i]]
+      xml2::xml_attr(nodes[d.i], value) <- data[[value]][plot.order == d.i]
     }
   }
 }
