@@ -30,13 +30,13 @@ var animatePrcp = function(timestep) {
       $currentStormDot.css('opacity', '1.0').css('transform', 'scale(0.1)');
     }
   });
-  //Is this setting the html value
-  //document.getElementById('timestamp-text').firstChild.data = prcpTimes.times[timestep-1]; // zero indexed
+
+  $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
+
   var darkWidth = timestep/prcpTimes.times.length;
-  //document.getElementById('spark-light-mask').setAttribute('x', darkWidth);
-  //document.getElementById('spark-light-mask').setAttribute('width', 1-darkWidth);
-  //document.getElementById('spark-full-mask').setAttribute('width',darkWidth);
-}
+  $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  $('#spark-full-mask').attr('width', darkWidth);
+};
 
 var playPause = function() {
   var button = $('#playButton');
@@ -61,7 +61,7 @@ var playPause = function() {
       }
     }, intervalLength);
   }
-}
+};
 
 $(document).ready(function() {
   $.when(fetchPrcpTimes, fetchPrcpColors)
