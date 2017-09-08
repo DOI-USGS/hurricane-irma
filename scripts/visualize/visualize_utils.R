@@ -168,3 +168,10 @@ clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection
 set_sp_plot <- function(){
   par(mai=c(0,0,0,0), omi=c(0,0,0,0), xaxs = 'i', yaxs = 'i')
 }
+
+#' script to turn the dataviz into a thumbnail
+#' 
+visualize.map_thumbnail <- function(viz){
+  data <- readDepends(viz)
+  file.copy(from = data[[1]], to = viz[['location']], overwrite = TRUE)
+}
