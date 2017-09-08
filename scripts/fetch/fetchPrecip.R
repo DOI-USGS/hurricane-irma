@@ -1,6 +1,8 @@
 #fetch precip data w/geoknife
 fetch.precip <- function(viz = as.viz('precip-data')){
-  
+  if(!viz[['refetch']]){
+    return(NULL)
+  }
   required <- c("location","start.date", "end.date")
   checkRequired(viz, required)
   
