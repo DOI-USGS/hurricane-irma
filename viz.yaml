@@ -25,9 +25,9 @@ info:
       ref: v0.1.8
     svglite: 
       repo: github
-      version: 1.2.0.9002
+      version: 1.2.0.9003
       name: jread-usgs/svglite
-      ref: svgnano_02
+      ref: svgnano_03
     mapdata:
       repo: CRAN
       version: 2.2.6
