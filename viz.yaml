@@ -150,16 +150,31 @@ process:
     location: cache/storm-counties.rds
     reader: rds
     processor: storm_counties
-    scripts: [scripts/process/process.counties.R, scripts/visualize/visualize_utils.R]
+    scripts: scripts/process/process.counties.R
     depends: ["counties"]
     mimetype: application/zip
-    
+  -
+    id: storm-states
+    location: cache/storm-states.rds
+    reader: rds
+    processor: storm_states
+    scripts: scripts/process/process.states.R
+    depends: ["states"]
+    mimetype: application/zip
+  -
+    id: storm-islands
+    location: cache/storm-islands.rds
+    reader: rds
+    processor: storm_islands
+    scripts: scripts/process/process.states.R
+    depends: ["islands"]
+    mimetype: application/zip
 visualize:
   -
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "states", "storm-counties", "islands"]#, "storm-track", 'storm-location', "gage-sites"]
+    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands"]#, "storm-track", 'storm-location', "gage-sites"]
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
