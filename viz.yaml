@@ -249,12 +249,12 @@ publish:
     template: fullpage
     scripts: scripts/publish/json.R
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
-      "jquery-js", "animate-js", "vizlab-js", # "timesteps", "precip-colors", 
+      "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css"] #"thumbnail",
     context:
       header: header-section
       resources: ["jquery-js", "animate-js", "vizlab-js", "svg-css","lib-header-css","lib-footer-css","map-figure-css",
-        "vizlab-favicon"] #,"timesteps"
+        "vizlab-favicon" ,"timesteps"] 
       sections: [ "figure-section", "data-sources"]
   -
     id: figure-section
