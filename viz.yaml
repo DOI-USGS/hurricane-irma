@@ -96,8 +96,8 @@ visualize:
     location: cache/base-map.svg
     visualizer: svg_base_map
     depends: ["view-limits", "states", "counties"]#, "storm-track", 'storm-location', "gage-sites"]
-    scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
-    reader: xml
+    scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
+    reader: svg_map
     mimetype: image/svg+xml
   -
     id: hurricane-map
