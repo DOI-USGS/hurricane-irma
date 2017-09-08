@@ -22,8 +22,13 @@ append_fake_precip <- function(class.name){
 process.storm_counties <- function(viz = as.viz('storm-counties')){
   sp <- readDepends(viz)[['counties']]
   library(dplyr)
-  data.out <- data.frame(id = NA_character_, class = rep('county-polygon', length(sp)), raw.name = names(sp), stringsAsFactors = FALSE) %>% 
-    mutate(id = county_map_name_2_id(raw.name)) %>% mutate(class = append_fake_precip(class)) %>% select(id, class)
+  data.out <- data.frame(id = NA_character_, 
+                         class = rep('county-polygon', length(sp)), 
+                         raw.name = names(sp), 
+                         onmousemove = "hovertext('TEST county, TEST state',evt);", 
+                         onmouseout = "hovertext(' ');", 
+                         stringsAsFactors = FALSE) %>% 
+    mutate(id = county_map_name_2_id(raw.name)) %>% mutate(class = append_fake_precip(class)) %>% select(-raw.name)
   
   row.names(data.out) <- row.names(sp)
   sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))
