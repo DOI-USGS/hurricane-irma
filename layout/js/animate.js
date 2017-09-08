@@ -1,7 +1,7 @@
-var prcpColors = undefined;
-var prcpTimes = undefined;
-var svg = undefined;
-var pt = undefined;
+var prcpColors;
+var prcpTimes;
+var pt;
+var svg
 
 var running = false;
 var interval = undefined;
@@ -68,7 +68,7 @@ $(document).ready(function() {
     .done(function() {
       svg = document.querySelector("svg");
       pt = svg.createSVGPoint();  
-    })
+    });
 });
 
 
@@ -83,7 +83,6 @@ function hovertext(text, evt){
     if(hoverTimer) {
       clearTimeout(hoverTimer); //stop when off area
     }
-    this_vizlab_svg.hide_tooltip()
     tooltip.firstChild.data = ' ';
     tooltip_bg.setAttribute("class","hidden");
     tooltip_bg.setAttribute("x",0);
@@ -92,7 +91,7 @@ function hovertext(text, evt){
     pt = cursorPoint(evt);
     pt.x = Math.round(pt.x);
     pt.y = Math.round(pt.y);
-    svgWidth = Number(svg.getAttribute("viewBox").split(" ")[2]);
+    var svgWidth = Number(svg.getAttribute("viewBox").split(" ")[2]);
     tooltip.setAttribute("x",pt.x);
     tooltip.setAttribute("y",pt.y);
     tooltip.firstChild.data = text;
