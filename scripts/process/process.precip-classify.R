@@ -1,4 +1,4 @@
-process.classifyBins <- function(viz = as.viz('precip-classify')){
+process.precip_classify <- function(viz = as.viz('precip-classify')){
   library(dplyr)
   
   #need to get bins

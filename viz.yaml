@@ -142,7 +142,7 @@ process:
   - 
     id: precip-classify
     location: cache/precip-classified.rds
-    processor: classifyBins
+    processor: precip_classify
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-breaks", "precip-data"]
