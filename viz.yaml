@@ -51,7 +51,7 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-90, 25, -75, 35]
+    bbox: [-90, 20, -55, 32]
     height: 8
     width: 10
     pointsize: 12
@@ -62,7 +62,7 @@ fetch:
     location: cache/states.rds
     reader: rds
     fetcher: states
-    scripts: scripts/fetch/fetch.states.R
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
     depends: ["view-limits"]
     mimetype: application/zip
   -
@@ -70,7 +70,7 @@ fetch:
     location: cache/counties.rds
     reader: rds
     fetcher: counties
-    scripts: scripts/fetch/fetch.states.R
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
     depends: ["view-limits"]
     mimetype: application/zip
   -
@@ -86,17 +86,6 @@ fetch:
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
-  -
-    id: precip-data
-    fetcher: precip
-    start.date: "2017-09-07"
-    end.date: "2017-09-15"
-    states: ["Florida", "Georgia", "South Carolina"]
-    scripts: scripts/fetch/fetchPrecip.R
-    location: cache/precip.csv
-    mimetype: text/csv
-    refetch: true
-    comment: disabling refetch to avoid too many GDP requests
 process:
 visualize:
   -
