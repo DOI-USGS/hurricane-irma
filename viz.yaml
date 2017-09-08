@@ -27,7 +27,7 @@ info:
       repo: github
       version: 1.2.0.9002
       name: jread-usgs/svglite
-      ref: svgnano_01
+      ref: svgnano_02
     maptools:
       repo: CRAN
       version: 0.9.2
@@ -37,6 +37,9 @@ info:
     maps:
       repo: CRAN
       version: 3.2.0
+    gBuffer:
+      repo: CRAN
+      version: 0.3.23
     sp:
       repo: CRAN
       version: 1.2.5
@@ -93,7 +96,8 @@ visualize:
     location: cache/base-map.svg
     visualizer: svg_base_map
     depends: ["view-limits", "states", "counties"]#, "storm-track", 'storm-location', "gage-sites"]
-    scripts: scripts/visualize/visualize_utils.R
+    scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R"]
+    reader: xml
     mimetype: image/svg+xml
   -
     id: hurricane-map
