@@ -46,6 +46,12 @@ info:
     sp:
       repo: CRAN
       version: 1.2.5
+    rgdal:
+      repo: CRAN
+      version: 1.2.8
+    geoknife: 
+      repo: CRAN
+      verion: 1.5.5
   contributors:
     
 
@@ -106,7 +112,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
-    refetch: FALSE
+    refetch: TRUE
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
