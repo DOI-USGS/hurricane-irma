@@ -28,6 +28,9 @@ info:
       version: 1.2.0.9002
       name: jread-usgs/svglite
       ref: svgnano_01
+    maptools:
+      repo: CRAN
+      version: 0.9.2
     dplyr:
       repo: CRAN
       version: 0.7.2
@@ -44,12 +47,31 @@ info:
 
 fetch:
   -
+    id: view-limits
+    location: cache/view-limits.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-90, 25, -75, 35]
+    height: 8
+    width: 10
+    pointsize: 12
+    proj.string: '+init=epsg:3086'
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+  -
     id: states
     location: cache/states.rds
     reader: rds
     fetcher: states
     scripts: scripts/fetch/fetch.states.R
-    refetch: FALSE
+    depends: ["view-limits"]
+    mimetype: application/zip
+  -
+    id: counties
+    location: cache/counties.rds
+    reader: rds
+    fetcher: counties
+    scripts: scripts/fetch/fetch.states.R
+    depends: ["view-limits"]
     mimetype: application/zip
   -
     id: hurricane-track
@@ -81,15 +103,14 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    bbox: [-180.0, -90.0, 180.0, 90.0]
-    depends: ["states", "counties", "storm-track", 'storm-location', "gage-sites"]
+    depends: ["view-limits", "states", "counties"]#, "storm-track", 'storm-location', "gage-sites"]
     scripts: scripts/visualize/visualize_utils.R
     mimetype: image/svg+xml
   -
     id: hurricane-map
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
-    depends: ["base-map", "precip-category", "precip-colors", "discharge-sparks"]
+    depends: ["base-map"]#, "precip-category", "precip-colors", "discharge-sparks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
