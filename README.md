@@ -23,3 +23,5 @@ Go to the "build" tab in Rstudio. You should see a "Build All" option. Click it!
 
 If there are errors, logs with errors are in `.hurricane-irma/vizlab/make/log`
 
+Once you are able to complete the build, open `target/index.html` to see the finished product locally.
+
