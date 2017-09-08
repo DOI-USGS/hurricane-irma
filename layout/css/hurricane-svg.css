@@ -26,3 +26,13 @@ line, polyline, path{
   stroke-width:0.5;
 }
 
+.tooltip-box{
+  stroke-width: 0.5;
+  stroke: grey;
+  opacity: 0.9;
+  fill: #E8E8E8;
+}
+
+.smallprint-text {
+  font-size: 0.8em;
+}
