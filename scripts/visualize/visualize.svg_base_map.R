@@ -19,9 +19,22 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
   for (g in geoms){
     g.node <- xml2::xml_add_child(svg, do.call(get_svg_geoms, append(list(sp = g), view.limits)))
     xml2::xml_attr(g.node, 'id') <- g.ids[1L]
+    if ("data" %in% slotNames(g)){
+      # add svg attributes based on data.frame that the sp object is carrying
+      add_attrs(xml2::xml_children(g.node), data = as.data.frame(g))
+    }
     g.ids <- tail(g.ids, -1L)
   }
   
   xml2::write_xml(x = svg, viz[['location']])
   # 6) create geoms to mirror ids in <use/> elements, add attributes
+}
+
+add_attrs <- function(nodes, data){
+  for (node in nodes){
+    for (value in names(data)){
+      xml2::xml_attr(node, value) <- data[[value]][1]
+      data <- tail(data, -1L)
+    }
+  }
 }

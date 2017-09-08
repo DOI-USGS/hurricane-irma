@@ -121,12 +121,20 @@ fetch:
     comment: disabling refetch for now, re-enable to get updates to work
     
 process:
+  -
+    id: storm-counties
+    location: cache/storm-counties.rds
+    reader: rds
+    processor: storm_counties
+    scripts: [scripts/process/process.counties.R, scripts/visualize/visualize_utils.R]
+    depends: ["counties"]
+    mimetype: application/zip
 visualize:
   -
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "states", "counties", "islands"]#, "storm-track", 'storm-location', "gage-sites"]
+    depends: ["view-limits", "states", "storm-counties", "islands"]#, "storm-track", 'storm-location', "gage-sites"]
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
