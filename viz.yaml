@@ -46,9 +46,6 @@ info:
     sp:
       repo: CRAN
       version: 1.2.5
-    rgdal:
-      repo: CRAN
-      version: 1.2.8
   contributors:
     
 
@@ -109,7 +106,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
-    refetch: TRUE
+    refetch: FALSE
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
@@ -261,10 +258,6 @@ publish:
   -
     id: vizlab-js
     location: layout/js/vizlab.js
-    mimetype: application/javascript
-  -
-    id: vizlab-svg-js
-    location: layout/js/svg.js
     mimetype: application/javascript
   -
     id: animate-js
