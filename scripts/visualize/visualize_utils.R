@@ -204,8 +204,9 @@ visualize.map_thumbnail <- function(viz){
   island_lwd <- locate_css_class_detail(island_css, "stroke-width")
 
   precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
-  # countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
-  # precip_i <- dplyr::mutate(precip_i, map_nm = countynames[as.numeric(fips)])
+  countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
+  precip_i <- dplyr::mutate(precip_i, map_nm = 
+                              countynames[as.character(as.numeric(precip_i$fips))])
   
   png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
   
