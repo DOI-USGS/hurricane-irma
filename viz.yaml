@@ -46,6 +46,36 @@ info:
     sp:
       repo: CRAN
       version: 1.2.5
+    rgdal:
+      repo: CRAN
+      version: 1.2.8
+    geoknife:
+      repo: CRAN
+      version: 1.5.5
+    tidyr:
+      repo: CRAN
+      version: 0.7.1
+    magrittr:
+      repo: CRAN
+      version: 1.5
+    httr:
+      repo: CRAN
+      version: 1.3.1
+    xml2:
+      repo: CRAN
+      version: 1.1.1
+    jsonlite:
+      repo: CRAN
+      version: 1.5
+    RColorBrewer:
+      repo: CRAN
+      version: 1.1.2
+    data.table:
+      repo: CRAN
+      version: 1.10.4
+    readr:
+      repo: CRAN
+      version: 1.1.1    
   contributors:
     
 
@@ -106,7 +136,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
-    refetch: FALSE
+    refetch: TRUE
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
@@ -128,7 +158,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: json
     bins: 9
-    pallete: "Blues"
+    pallete: "YlGnBu"
     mimetype: application/javascript
     export: true
   -
@@ -278,12 +308,12 @@ publish:
     template: fullpage
     scripts: scripts/publish/json.R
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
-      "jquery-js", "animate-js", "vizlab-js", # "timesteps", "precip-colors", 
+      "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css"] #"thumbnail",
     context:
       header: header-section
       resources: ["jquery-js", "animate-js", "vizlab-js", "svg-css","lib-header-css","lib-footer-css","map-figure-css",
-        "vizlab-favicon"] #,"timesteps"
+        "vizlab-favicon"]
       sections: [ "figure-section", "data-sources"]
   -
     id: figure-section
