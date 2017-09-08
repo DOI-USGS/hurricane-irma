@@ -54,9 +54,9 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-90, 20, -55, 32]
-    height: 8
-    width: 10
+    bbox: [-87, 20, -65, 34]
+    height: 10
+    width: 8
     pointsize: 12
     proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
@@ -152,7 +152,7 @@ publish:
 #    scripts: scripts/publish/json.R
 #    mimetype: application/json
   -
-    id: harvey-page
+    id: hurricane-page
     name: index
     publisher: page
     template: fullpage
@@ -193,9 +193,9 @@ publish:
     depends: ["usgs-logo"]
     context:
       id: header
-      title: Hurricane Harvey's Water Footprint
+      title: Hurricane Irma's Water Footprint
       logo: usgs-logo
-      caption: Water impacts from Hurricane Harvey
+      caption: Water impacts from Hurricane Irma
   -
     id: footer
     publisher: section
@@ -205,7 +205,7 @@ publish:
     context:
       blogsInFooter: FALSE
       usgsLogo: usgs-logo
-      github-url: https://github.com/USGS-VIZLAB/hurricane-harvey
+      github-url: https://github.com/USGS-VIZLAB/hurricane-irma
       vizzies:
         -
           url: https://owi.usgs.gov/vizlab/hurricane-matthew/
