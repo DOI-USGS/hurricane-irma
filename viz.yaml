@@ -113,7 +113,7 @@ fetch:
     id: hurricane-track
     location: cache/hurricane.zip
     ocean: al
-    stormnum: 13
+    stormnum: 11
     year: 2017
     reader: shp
     fetcher: hurricaneTrack

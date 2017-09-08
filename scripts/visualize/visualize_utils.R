@@ -67,7 +67,9 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
     xml_remove(xml_child(svg.g)) # remove the <rect thing it puts in there>
   } else if (xml2::xml_length(svg.g) != length(clipped.sp)){
-    stop('something wrong. Length of svg elements is different than number of features')
+    message('something might be wrong. Length of svg elements is different than number of features',
+            'but ignore this warning for lines.')
+    xml_remove(xml_child(svg.g))
   }
   
   # here either strip the important attributes out and re-add them with a xml_set_attrs call, or lapply the nodeset and add attrs one by one:
@@ -138,7 +140,7 @@ clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
 
 clip_sp.SpatialLinesDataFrame <- function(sp, xlim, ylim, ...){
   
-  return(clipped.sp)
+  return(sp)
 }
 
 clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection){
