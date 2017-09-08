@@ -4,8 +4,7 @@
 #' 
 library(maps)
 library(sp)
-proj.string <- "+proj=laea +lat_0=45 +lon_0=-100 +x_0=0 +y_0=0 +a=6370997 +b=6370997 +units=m +no_defs"
-to_sp <- function(...){
+to_sp <- function(..., proj.string){
   library(maptools)
   library(maps)
   map <- maps::map(..., fill=TRUE, plot = FALSE)
@@ -16,9 +15,17 @@ to_sp <- function(...){
 }
 
 
-fetch.states <- function(viz){
-  states.out <- to_sp('state')
+fetch.states <- function(viz = as.viz('states')){
+  view <- readDepends(viz)[['view-limits']]
+  states.out <- to_sp('state', proj.string = view[['proj.string']])
   states.out <- rbind(states.out, to_sp('world','Mexico'))
+  
+  saveRDS(states.out, viz[['location']])
+}
+
+fetch.counties <- function(viz = as.viz('counties')){
+  view <- readDepends(viz)[['view-limits']]
+  states.out <- to_sp('county', proj.string = view[['proj.string']])
   
   saveRDS(states.out, viz[['location']])
 }
