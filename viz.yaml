@@ -260,6 +260,10 @@ publish:
     location: layout/js/vizlab.js
     mimetype: application/javascript
   -
+    id: vizlab-svg-js
+    location: layout/js/svg.js
+    mimetype: application/javascript
+  -
     id: animate-js
     location: layout/js/animate.js
     mimetype: application/javascript
