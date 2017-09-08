@@ -111,14 +111,14 @@ fetch:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
 #  -
-#    id: sites-data
-#    fetcher: sites
-#    scripts: scripts/fetch/fetch.sites.R
-#    location: cache/sites.rds
-#    reader: rds
-#    refetch: TRUE
-#    depends: ["precip-data", "counties"] #for start time
-#    comment: disabling refetch for now, re-enable to get updates to work
+#   id: sites-data
+#   fetcher: sites
+#   scripts: scripts/fetch/fetch.sites.R
+#   location: cache/sites.rds
+#   reader: rds
+#   refetch: TRUE
+#   depends: ["precip-data", "counties"] #for start time
+#   comment: disabling refetch for now, re-enable to get updates to work
     
 process:
   -
@@ -131,20 +131,21 @@ process:
     pallete: "Blues"
     mimetype: application/javascript
     export: true
-#  -
-#    id: precip-breaks
-#    location: cache/precip_breaks.rds
-#    processor: precip_breaks
-#    scripts: scripts/process/process.classifyBins.R
-#    reader: rds
-#    depends: ["precip-colors"]
-#  - 
-#    id: precip-classify
-#    location: cache/precip-classified.rds
-#    processor: classifyBins
-#    scripts: scripts/process/process.precip-classify.R
-#    reader: rds
-#    depends: ["precip-breaks", "precip-data"]
+  -
+    id: precip-breaks
+    location: cache/precip_breaks.rds
+    processor: precip_breaks
+    scripts: scripts/process/process.precip-classify.R
+    reader: rds
+    depends: ["precip-colors"]
+    stepSize: 0.1
+  - 
+    id: precip-classify
+    location: cache/precip-classified.rds
+    processor: precip_classify
+    scripts: scripts/process/process.precip-classify.R
+    reader: rds
+    depends: ["precip-breaks", "precip-data"]
   -
     id: storm-counties
     location: cache/storm-counties.rds
@@ -169,6 +170,16 @@ process:
     scripts: scripts/process/process.states.R
     depends: ["islands"]
     mimetype: application/zip
+  -
+    id: timesteps
+    location: cache/times.json
+    processor: timesteps
+    scripts: scripts/process/process.timesteps.R
+    reader: json
+    depends: "precip-classify"
+    export: true
+    mimetype: application/javascript
+    
 visualize:
   -
     id: base-map
