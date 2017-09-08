@@ -1,8 +1,8 @@
 
-visualize.svg_base_map <- function(viz){
+visualize.svg_base_map <- function(viz = as.viz('base-map')){
+  
   geoms <- readDepends(viz)
   library(svglite)
-  
   # 1) set up shell svg, w/ proper size and aspect
   # 2) add basic groups etc, including <defs><g id="template-geoms"/></defs> and <g id="styled-geoms"/>
   # 3) set the plot bounds, including aspect of map
@@ -16,11 +16,15 @@ visualize.svg_base_map <- function(viz){
 #' 
 #' @return a `SpatialPolygons` object that represents the bounding box of the input `sp`
 get_sp_bbox <- function(sp){
-  bb <- bbox(sp)
+  bb <- sp::bbox(sp)
   xs <- bb[c(1, 3)]
   ys <- bb[c(2, 4)]
-  proj.string = CRS(proj4string(sp))
+  proj.string = sp::CRS(sp::proj4string(sp))
   return(as.sp_box(xs, ys, proj.string))
+}
+
+WGS84_bbox_to_sp <- function(bbox.vector){
+  
 }
 
 
@@ -31,9 +35,9 @@ get_sp_bbox <- function(sp){
 #' 
 #' @return a `SpatialPolygons` object
 as.sp_box <- function(xs, ys, proj.string){
-  Sr1 <- Polygon(cbind(c(xs[c(1, 2, 2, 1, 1)]), c(ys[c(1, 1, 2, 2, 1)])))
-  Srs1 <- Polygons(list(Sr1), "s1")
-  SpP <- SpatialPolygons(list(Srs1), proj4string = proj.string)
+  Sr1 <- sp::Polygon(cbind(c(xs[c(1, 2, 2, 1, 1)]), c(ys[c(1, 1, 2, 2, 1)])))
+  Srs1 <- sp::Polygons(list(Sr1), "s1")
+  SpP <- sp::SpatialPolygons(list(Srs1), proj4string = proj.string)
   return(SpP)
 }
 
@@ -90,7 +94,7 @@ get_sp_lims <- function(sp, ..., width = 10, height = 8, pointsize = 12, return 
   # now default plot
   # extract usr, return lims from usr
   .fun <- svglite::svgstring(width = width, height = height, pointsize = pointsize, standalone = F)
-  suppressWarnings(plot(bb, ...)) # warning is for expandBB param, if used
+  suppressWarnings(sp::plot(bb, ...)) # warning is for expandBB param, if used
   usr <- par('usr')
   dev.off()
   xlim = usr[c(1,2)]
@@ -137,7 +141,7 @@ clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
 
 clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection){
   
-  clip <- as.sp_box(xlim, ylim, CRS(proj4string(sp)))
+  clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))
   g.i <- rgeos::gIntersects(sp, clip, byid = T) 
   
   has.data <- ("data" %in% slotNames(sp))

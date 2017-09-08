@@ -28,6 +28,9 @@ info:
       version: 1.2.0.9002
       name: jread-usgs/svglite
       ref: svgnano_01
+    maptools:
+      repo: CRAN
+      version: 0.9.2
     dplyr:
       repo: CRAN
       version: 0.7.2
@@ -44,12 +47,31 @@ info:
 
 fetch:
   -
+    id: view-limits
+    location: cache/view-limits.rds
+    reader: rds
+    fetcher: view_limits
+    bbox: [-90, 20, -55, 32]
+    height: 8
+    width: 10
+    pointsize: 12
+    proj.string: '+init=epsg:3086'
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+  -
     id: states
     location: cache/states.rds
     reader: rds
     fetcher: states
-    scripts: scripts/fetch/fetch.states.R
-    refetch: FALSE
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
+    depends: ["view-limits"]
+    mimetype: application/zip
+  -
+    id: counties
+    location: cache/counties.rds
+    reader: rds
+    fetcher: counties
+    scripts: [scripts/fetch/fetch.states.R, scripts/visualize/visualize_utils.R]
+    depends: ["view-limits"]
     mimetype: application/zip
   -
     id: hurricane-track
@@ -64,17 +86,23 @@ fetch:
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
-  -
-    id: precip-data
-    fetcher: precip
-    start.date: "2017-09-07"
-    end.date: "2017-09-15"
-    states: ["Florida", "Georgia", "South Carolina"]
-    scripts: scripts/fetch/fetchPrecip.R
-    location: cache/precip.csv
-    mimetype: text/csv
-    refetch: true
-    comment: disabling refetch to avoid too many GDP requests
 process:
 visualize:
+  -
+    id: base-map
+    location: cache/base-map.svg
+    visualizer: svg_base_map
+    depends: ["view-limits", "states", "counties"]#, "storm-track", 'storm-location', "gage-sites"]
+    scripts: scripts/visualize/visualize_utils.R
+    mimetype: image/svg+xml
+  -
+    id: hurricane-map
+    location: figures/hurricane-map.svg
+    visualizer: hurricane_map
+    depends: ["base-map"]#, "precip-category", "precip-colors", "discharge-sparks"]
+    scripts: scripts/visualize/visualize.hurricane_map.R
+    mimetype: image/svg+xml
+    inline: true
+    title: "Hurricane Irma's impact on precipitation and streamflow"
+    alttext: "Map of Hurricane Irma's water footprint"
 publish:
