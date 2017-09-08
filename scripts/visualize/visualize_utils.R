@@ -169,9 +169,58 @@ set_sp_plot <- function(){
   par(mai=c(0,0,0,0), omi=c(0,0,0,0), xaxs = 'i', yaxs = 'i')
 }
 
+locate_css_class <- function(css, class_nm){
+  start_class <- grep(class_nm, css)
+  stopifnot(length(start_class) > 0)
+  close_classes <- grep("}", css)
+  end_class <- close_classes[which(start_class < close_classes)[1]]
+  css_details <- css[start_class:end_class]
+  return(css_details)
+}
+
+locate_css_class_detail <- function(css, item_nm){
+  class_item_line <- grep(item_nm, css)
+  stopifnot(length(class_item_line) > 0)
+  strip_excess1 <- gsub(paste0("  ", item_nm, ": "), "", css[class_item_line])
+  item_details <- gsub(";", "", strip_excess1)
+  return(item_details)
+}
+
 #' script to turn the dataviz into a thumbnail
 #' 
 visualize.map_thumbnail <- function(viz){
-  data <- readDepends(viz)
-  file.copy(from = data[[1]], to = viz[['location']], overwrite = TRUE)
+  depends <- readDepends(viz)
+  states <- depends[[1]]
+  islands <- depends[[2]]
+  counties <- depends[[3]]
+  precip <- depends[[4]]
+  precip_cols <- depends[[5]]
+
+  # styling details
+  css <- readLines(viz$css)
+  ocean_color <- locate_css_class_detail(locate_css_class(css, ".ocean-water"), "fill")
+  state_css <- locate_css_class(css, ".county-polygon")
+  state_color <- locate_css_class_detail(state_css, "fill")
+  state_lwd <- locate_css_class_detail(state_css, "stroke-width")
+  island_css <- locate_css_class(css, ".island-polygon")
+  island_color <- locate_css_class_detail(island_css, "fill")
+  island_lwd <- locate_css_class_detail(island_css, "stroke-width")
+
+  precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
+  countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
+  precip_i <- dplyr::mutate(precip_i, map_nm = 
+                              countynames[as.character(as.numeric(precip_i$fips))])
+  precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
+  
+  png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
+  
+  par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
+  
+  sp::plot(states, col = state_color)
+  sp::plot(islands, add = TRUE, col = island_color)
+  sp::plot(counties, add = TRUE, col = precip_i$map_color)
+  
+  dev.off()
 }
+
+

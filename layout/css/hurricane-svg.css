@@ -14,7 +14,7 @@ line, polyline, path{
 }
 
 .county-polygon, .island-polygon {
-  fill: #DCDCDC;
+  fill: #efefef;
   stroke: #c6c6c6;
   stroke-width:0.5;
 }
@@ -26,6 +26,11 @@ line, polyline, path{
   stroke-width:0.5;
 }
 
+.ocean-water {
+  fill: #e3eaef;
+  stroke: none;
+}
+
 .tooltip-box{
   stroke-width: 0.5;
   stroke: grey;
@@ -35,4 +40,11 @@ line, polyline, path{
 
 .smallprint-text {
   font-size: 0.8em;
+}
+
+.hidden {
+  opacity: 0;
+}
+.shown {
+  opacity: 1;
 }

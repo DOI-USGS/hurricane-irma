@@ -1,7 +1,7 @@
-var prcpColors = undefined;
-var prcpTimes = undefined;
-var svg = undefined;
-var pt = undefined;
+var prcpColors;
+var prcpTimes;
+var pt;
+var svg
 
 var running = false;
 var interval = undefined;
@@ -30,13 +30,13 @@ var animatePrcp = function(timestep) {
       $currentStormDot.css('opacity', '1.0').css('transform', 'scale(0.1)');
     }
   });
-  //Is this setting the html value
-  //document.getElementById('timestamp-text').firstChild.data = prcpTimes.times[timestep-1]; // zero indexed
+
+  $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
+
   var darkWidth = timestep/prcpTimes.times.length;
-  //document.getElementById('spark-light-mask').setAttribute('x', darkWidth);
-  //document.getElementById('spark-light-mask').setAttribute('width', 1-darkWidth);
-  //document.getElementById('spark-full-mask').setAttribute('width',darkWidth);
-}
+  $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  $('#spark-full-mask').attr('width', darkWidth);
+};
 
 var playPause = function() {
   var button = $('#playButton');
@@ -61,14 +61,14 @@ var playPause = function() {
       }
     }, intervalLength);
   }
-}
+};
 
 $(document).ready(function() {
   $.when(fetchPrcpTimes, fetchPrcpColors)
     .done(function() {
       svg = document.querySelector("svg");
       pt = svg.createSVGPoint();  
-    })
+    });
 });
 
 
@@ -83,7 +83,6 @@ function hovertext(text, evt){
     if(hoverTimer) {
       clearTimeout(hoverTimer); //stop when off area
     }
-    this_vizlab_svg.hide_tooltip()
     tooltip.firstChild.data = ' ';
     tooltip_bg.setAttribute("class","hidden");
     tooltip_bg.setAttribute("x",0);
@@ -92,7 +91,7 @@ function hovertext(text, evt){
     pt = cursorPoint(evt);
     pt.x = Math.round(pt.x);
     pt.y = Math.round(pt.y);
-    svgWidth = Number(svg.getAttribute("viewBox").split(" ")[2]);
+    var svgWidth = Number(svg.getAttribute("viewBox").split(" ")[2]);
     tooltip.setAttribute("x",pt.x);
     tooltip.setAttribute("y",pt.y);
     tooltip.firstChild.data = text;
