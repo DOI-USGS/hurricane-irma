@@ -21,7 +21,7 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
     xml2::xml_attr(g.node, 'id') <- g.ids[1L]
     if ("data" %in% slotNames(g)){
       # add svg attributes based on data.frame that the sp object is carrying
-      add_attrs(xml2::xml_children(g.node), data = as.data.frame(g))
+      add_attrs(xml2::xml_children(g.node), data = as.data.frame(g), plot.order = g@plotOrder)
     }
     g.ids <- tail(g.ids, -1L)
   }
@@ -35,12 +35,10 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
   # 6) create geoms to mirror ids in <use/> elements, add attributes
 }
 
-add_attrs <- function(nodes, data){
-  for (node in nodes){
-    d.i <- 1
+add_attrs <- function(nodes, data, plot.order){
+  for (d.i in seq_len(length(nodes))){
     for (value in names(data)){
-      xml2::xml_attr(node, value) <- data[[value]][d.i]
+      xml2::xml_attr(nodes[d.i], value) <- data[[value]][plot.order[d.i]]
     }
-    d.i <- d.i + 1
   }
 }

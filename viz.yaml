@@ -189,7 +189,7 @@ process:
     reader: rds
     processor: storm_counties
     scripts: scripts/process/process.counties.R
-    depends: ["counties"]
+    depends: ["counties", "precip-classify"]
     mimetype: application/zip
   -
     id: storm-states
@@ -213,7 +213,7 @@ process:
     processor: timesteps
     scripts: scripts/process/process.timesteps.R
     reader: json
-    depends: "precip-classify"
+    depends: "precip-data"
     export: true
     mimetype: application/javascript
     
