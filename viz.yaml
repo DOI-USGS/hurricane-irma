@@ -251,14 +251,21 @@ process:
     export: true
     mimetype: application/javascript
   -
-    id: getNWISdata
+    id: gage-data
     processor: getNWISdata
-    location: cache/NWISdata.rds
+    location: cache/gage-data.rds
     scripts: scripts/process/process.storm_sites.R
     depends: ["precip-data","storm-sites", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
     comment: disabling refetch for now, re-enable to get updates to work
+  - 
+    id: discharge-sparks
+    location: cache/discharge-sparks.rds
+    processor: discharge_sparks
+    scripts: scripts/process/process.discharge_sparks.R
+    reader: rds
+    depends: ["gage-data","timesteps"]
     
 visualize:
   -
@@ -273,8 +280,7 @@ visualize:
     id: hurricane-map
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
-    depends: 
-      base-map: "base-map"#, "precip-category", "precip-colors", "discharge-sparks"]
+    depends: ["base-map", "discharge-sparks"] #"precip-category", "precip-colors", 
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true

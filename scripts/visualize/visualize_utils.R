@@ -253,6 +253,9 @@ visualize.map_thumbnail <- function(viz){
   # subset precip data to one time stamp
   # plus map county fips to names & mapping color numbers to a color
   count <- 0
+  if (!dir.exists('figures/gif')){
+    dir.create('figures/gif')
+  }
   for(i in timesteps){
     precip_i <- dplyr::filter(precip, DateTime == i)
     countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
