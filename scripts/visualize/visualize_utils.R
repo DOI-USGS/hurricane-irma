@@ -212,14 +212,18 @@ locate_css_class_detail <- function(css, item_nm){
 #' script to turn the dataviz into a thumbnail
 #' 
 visualize.map_thumbnail <- function(viz){
+  library(dplyr)
+  
   depends <- readDepends(viz)
-  states <- depends[[1]]
-  islands <- depends[[2]]
-  counties <- depends[[3]]
-  precip <- depends[[4]]
-  precip_cols <- depends[[5]]
-  hurricane_track <- depends[[6]]
-  view_box <- depends[[7]]
+  states <- depends[["storm-states"]]
+  islands <- depends[["storm-islands"]]
+  counties <- depends[["storm-counties"]]
+  precip_df <- depends[["precip-data"]]
+  precip_breaks <- depends[["precip-breaks"]]
+  precip_cols <- depends[["precip-colors"]]
+  timesteps <- depends[['timesteps']]
+  hurricane_track <- depends[["hurricane-track"]]
+  view_box <- depends[["view-limits"]]
     
   # styling details
   css <- readLines(viz$css)
@@ -234,23 +238,47 @@ visualize.map_thumbnail <- function(viz){
   # find current hurricane point (not automatically linked to time stamp chosen)
   hurricane_location <- tail(tail(hurricane_track@lines, 1)[[1]]@Lines[[1]]@coords, 1)
   
+  # process precip to get county & color category together w/ time
+  fips.data <- maps::county.fips
+  fips.data$fips <- as.character(fips.data$fips)
+  fips.data$fips <- ifelse(nchar(fips.data$fips) == 4, paste0("0", fips.data$fips), fips.data$fips)
+  precip_df$precipVal <- precip_df$precipVal/25.4 #convert mm to inches
+  precip <- precip_df %>% 
+    mutate(cols = cut(precipVal, breaks = precip_breaks, labels = FALSE)) %>% 
+    mutate(cols = ifelse(precipVal > tail(precip_breaks,1), length(precip_breaks), cols)) %>% 
+    mutate(cols = ifelse(is.na(cols), 1, cols), cols = as.character(cols)) %>% 
+    select(fips, DateTime, cols) %>% 
+    left_join(fips.data)
+  
   # subset precip data to one time stamp
   # plus map county fips to names & mapping color numbers to a color
-  # precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
-  # countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
-  # precip_i <- dplyr::mutate(precip_i, map_nm = countynames[as.character(as.numeric(precip_i$fips))])
-  # precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
-  # 
-  png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
+  count <- 0
+  for(i in timesteps){
+    precip_i <- dplyr::filter(precip, DateTime == i)
+    countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
+    precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
+    
+    count <- count + 1
+    png(file = paste0("figures/gif/map", count, ".png"), height = viz$`fig-height`, width = viz$`fig-width`)
+    
+    par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
+    
+    sp::plot(states, col = state_color, xlim = view_box$xlim, ylim = view_box$ylim)
+    sp::plot(islands, add = TRUE, col = island_color)
+    sp::plot(counties, regions = precip_i$polyname, add = TRUE, col = precip_i$map_color)
+    
+    # proj4string(hurricane_track) <- proj4string(states)
+    sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
+    points(hurricane_location[1], hurricane_location[2], pch=20, cex=3, col="red")
+    title(main = i)
+    
+    dev.off()
+  }
   
-  set_sp_plot()
-  par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
+}
+
+createTimeStepPlots <- function(precip, states, counties, islands, hurricane_track, 
+                                hurricane_location, view_box, 
+                                precip_cols, state_color, island_color, ocean_color){
   
-  sp::plot(states, col = state_color, xlim = view_box$xlim, ylim = view_box$ylim)
-  sp::plot(islands, add = TRUE, col = island_color)
-  # sp::plot(counties, add = TRUE, col = precip_i$map_color)
-  sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
-  points(hurricane_location[1], hurricane_location[2], pch=20, cex=3, col="red")
-  
-  dev.off()
 }
