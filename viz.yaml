@@ -149,6 +149,19 @@ fetch:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
   -
+    id: precip-cell-data
+    fetcher: precipCellData
+    start.date: "2017-09-07"
+    end.date: "2017-09-08"
+    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
+    sb.geom: "sb:irma_cells"
+    sb.attribute: "id"
+    scripts: scripts/fetch/fetchPrecip_cells.R
+    location: cache/precip_cells.csv
+    mimetype: text/csv
+    refetch: TRUE
+    comment: disabling refetch to avoid too many GDP requests
+  -
     id: sites
     fetcher: sites
     scripts: scripts/fetch/fetch.sites.R
