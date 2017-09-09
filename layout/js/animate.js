@@ -27,7 +27,7 @@ var animatePrcp = function(timestep) {
     $stormDot.css("opacity", "0").css("transform", "scale(0.1");
     
     if ($currentStormDot){
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(0.1)');
+      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
     }
   });
 
