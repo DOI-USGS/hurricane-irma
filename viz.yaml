@@ -158,13 +158,28 @@ fetch:
     comment: disabling refetch for now, re-enable to get updates to work
     pCode: "00060"
   -
+    id: nws-conversion
+    location: cache/nws-conversion.rds
+    reader: rds
+    states: ["FL"] # not currently coded to support more...
+    fetcher: nws_conversion
+    scripts: scripts/fetch/fetch.nws_conversion.R
+  -
+    id: nws-data
+    location: cache/nws-data.rds
+    fetcher: nws_data
+    refetch: FALSE
+    scripts: scripts/fetch/fetch.nws_data.R
+    reader: rds
+    depends: ['sites', 'nws-conversion']
+  -
     id: storm-area-filter
     location: cache/storm-area-filter.rds
     reader: rds
     fetcher: storm_area_filter
     lats: [24.5, 30.9, 32.7, 27, 24.5, 24.5]
     lons: [-83.4, -84, -80.5, -78.9, -79.6, -83.4]
-    height: 10
+    height: 10 # we should instead depend on view-limits and get all of this out of that target
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3086'
@@ -177,7 +192,7 @@ process:
     processor: storm_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
-    depends: ["view-limits", "sites", "storm-area-filter"]
+    depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
   -
     id: storm-track
     location: cache/storm-track.rds
