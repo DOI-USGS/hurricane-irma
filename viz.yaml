@@ -75,7 +75,7 @@ info:
       version: 1.10.4
     readr:
       repo: CRAN
-      version: 1.1.1    
+      version: 1.1.1
   contributors:
     
 
@@ -140,15 +140,16 @@ fetch:
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
-#  -
-#   id: sites-data
-#   fetcher: sites
-#   scripts: scripts/fetch/fetch.sites.R
-#   location: cache/sites.rds
-#   reader: rds
-#   refetch: TRUE
-#   depends: ["precip-data", "counties"] #for start time
-#   comment: disabling refetch for now, re-enable to get updates to work
+  -
+    id: sites-data
+    fetcher: sites
+    scripts: scripts/fetch/fetch.sites.R
+    location: cache/sites.rds
+    reader: rds
+    refetch: TRUE
+    depends: ["precip-data", "counties"] #for start time
+    comment: disabling refetch for now, re-enable to get updates to work
+    pCode: "00060"
     
 process:
   -
