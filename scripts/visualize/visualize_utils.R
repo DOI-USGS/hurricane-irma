@@ -61,7 +61,10 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
-    sp::plot(clipped.sp, ..., xlim = xlim, ylim = ylim)
+    for (j in seq_len(length(clipped.sp))){
+      sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+    }
+    
   })
   svg.g <- xml2::xml_child(rendered)
   if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
