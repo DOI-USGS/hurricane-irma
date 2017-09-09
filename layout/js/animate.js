@@ -128,3 +128,12 @@ function openNWIS(id, event){
   }
   
 }
+
+function setBold(id){
+  var className = id.split('-')[0];
+  document.getElementById(id).setAttribute('class', className+'-bold');
+}
+function setNormal(id){
+  var className = id.split('-')[0];
+  document.getElementById(id).setAttribute('class', className);
+}
