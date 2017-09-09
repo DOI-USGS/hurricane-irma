@@ -10,13 +10,16 @@ grab_spark <- function(vals){
 
 process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   library(dplyr)
-  disch <- readData(viz[['depends']][1])
-  times <- readData(viz[['depends']][2]) %>% .$times %>% 
-    as.POSIXct(format = '%b %d %I:%M %p', tz= "America/New_York")
+  depends <- readDepends(viz)
+  checkRequired(depends, c('timesteps', "gage-data"))
+  times <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
+  
   interp_q <- function(x,y){
     approx(x, y, xout = times)$y %>% grab_spark
   }
-  sparks <- group_by(disch, site_no) %>% filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2]) %>% 
-    summarize(points = interp_q(dateTime, Flow_Inst))
+  sparks <- group_by(depends[["gage-data"]], site_no) %>% filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2]) %>% 
+    summarize(points = interp_q(dateTime, Flow_Inst)) %>% 
+    mutate(class = "sparkline", id = sprintf("sparkline-%s", site_no), style = "mask: url(#spark-opacity);") %>% select(-site_no)
+  
   saveRDS(sparks, viz[['location']])
 }

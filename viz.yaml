@@ -241,8 +241,8 @@ process:
   -
     id: gage-data
     processor: getNWISdata
-    location: cache/NWISdata.rds
-    scripts: scripts/process/process.storm-sites.R
+    location: cache/gage-data.rds
+    scripts: scripts/process/process.storm_sites.R
     depends: ["precip-data","storm-sites", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
@@ -268,8 +268,7 @@ visualize:
     id: hurricane-map
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
-    depends: 
-      base-map: "base-map"#, "precip-category", "precip-colors", "discharge-sparks"]
+    depends: ["base-map", "discharge-sparks"] #"precip-category", "precip-colors", 
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
