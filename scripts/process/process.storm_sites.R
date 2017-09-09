@@ -1,16 +1,21 @@
 process.storm_sites <- function(viz = as.viz('storm-sites')){
   library(magrittr)
   depends <- readDepends(viz)
+  checkRequired(depends, c("view-limits", "sites", "storm-area-filter", "nws-data"))
   view.lims <- depends[["view-limits"]]
   sites <- depends[['sites']] 
   storm_poly <- depends[['storm-area-filter']]
+  nws.sites <- depends[['nws-data']]
+  
+  sites <- sites %>% filter(site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)])
   
   sites.sp <- sp::SpatialPoints(cbind(sites$dec_long_va,sites$dec_lat_va), 
                             proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
   storm_poly <- sp::spTransform(storm_poly, sp::CRS(view.lims$proj.string))
 
-  is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% rowSums() %>% as.logical()
+  is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% rowSums() %>% as.logical() &
+    sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)]
   
   data.out <- data.frame(id = paste0('nwis-', sites$site_no), 
                          class = ifelse(is.featured, 'active-gage','inactive-gage'),
