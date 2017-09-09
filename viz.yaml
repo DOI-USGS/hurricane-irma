@@ -177,7 +177,7 @@ process:
     processor: storm_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
-    depends: ["view-limits", "sites"]
+    depends: ["view-limits", "sites", "storm-area-filter"]
   -
     id: storm-track
     location: cache/storm-track.rds
