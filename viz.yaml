@@ -157,6 +157,18 @@ fetch:
     depends: ["precip-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
     pCode: "00060"
+  -
+    id: storm-area-filter
+    location: cache/storm-area-filter.rds
+    reader: rds
+    fetcher: storm_area_filter
+    lats: [24.5, 30.9, 32.7, 27, 24.5, 24.5]
+    lons: [-83.4, -84, -80.5, -78.9, -79.6, -83.4]
+    height: 10
+    width: 8
+    pointsize: 12
+    proj.string: '+init=epsg:3086'
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     
 process:
   -
@@ -165,7 +177,7 @@ process:
     processor: storm_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
-    depends: ["view-limits", "sites"]
+    depends: ["view-limits", "sites", "storm-area-filter"]
   -
     id: storm-track
     location: cache/storm-track.rds
@@ -211,7 +223,7 @@ process:
     reader: rds
     processor: storm_counties
     scripts: scripts/process/process.counties.R
-    depends: ["counties", "precip-classify"]
+    depends: ["counties", "precip-classify", "storm-area-filter"]
     mimetype: application/zip
   -
     id: storm-states
@@ -242,7 +254,7 @@ process:
     id: getNWISdata
     processor: getNWISdata
     location: cache/NWISdata.rds
-    scripts: scripts/process/process.storm-sites.R
+    scripts: scripts/process/process.storm_sites.R
     depends: ["precip-data","storm-sites", "sites", "timesteps"]
     reader: rds
     refetch: TRUE

@@ -15,9 +15,17 @@ county_map_name_2_id <- function(names){
 #' @param
 #' @param
 process.storm_counties <- function(viz = as.viz('storm-counties')){
+  library(dplyr)
   depends <- readDepends(viz)
   sp <- depends[['counties']]
   precip.classes <- depends[['precip-classify']]
+  epsg_code <- getContentInfo('storm-area-filter')[['proj.string']]
+  footy <- depends[['storm-area-filter']] %>% sp::spTransform(sp::CRS(epsg_code)) %>% 
+    rgeos::gBuffer(width=200000, byid=TRUE )
+  counties <- sp::spTransform(sp, sp::CRS(epsg_code))
+  overlap <- rgeos::gContains(footy, counties, byid = TRUE) %>% rowSums() %>% as.logical()
+  
+  
   library(dplyr)
   data.out <- data.frame(id = NA_character_, 
                          base.class = rep('county-polygon', length(sp)), 
@@ -26,9 +34,11 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
     left_join(precip.classes) %>% 
-    mutate(id = county_map_name_2_id(polyname)) %>% mutate(class = paste0(base.class, class)) %>% select(-polyname, -base.class)
+    mutate(id = county_map_name_2_id(polyname)) %>% mutate(class = paste0(base.class, class)) %>% 
+    select(-polyname, -base.class) 
   
   row.names(data.out) <- row.names(sp)
+  sp <- sp[overlap, ]
   sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))
   sp.data.frame@data <- data.out
   
