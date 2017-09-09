@@ -75,7 +75,7 @@ info:
       version: 1.10.4
     readr:
       repo: CRAN
-      version: 1.1.1    
+      version: 1.1.1
   contributors:
     
 
@@ -128,6 +128,13 @@ fetch:
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
+  -
+    id: precip-spatial
+    fetcher: precipSpatial
+    depends: ["view-limits"]
+    scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
+    location: cache/irma_cells.rds
+    mimetype: application/zip
   -
     id: precip-data
     fetcher: precip
