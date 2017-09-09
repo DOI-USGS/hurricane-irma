@@ -21,7 +21,7 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
     xml2::xml_attr(g.node, 'id') <- g.ids[1L]
     if ("data" %in% slotNames(g)){
       # add svg attributes based on data.frame that the sp object is carrying
-      add_attrs(xml2::xml_children(g.node), data = as.data.frame(g))
+      add_attrs(xml2::xml_children(g.node), data = g@data)
     }
     g.ids <- tail(g.ids, -1L)
   }
@@ -37,7 +37,6 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
 
 add_attrs <- function(nodes, data){
   for (d.i in seq_len(length(nodes))){
-    message(d.i)
     for (value in names(data)){
       xml2::xml_attr(nodes[d.i], value) <- data[d.i, ][[value]]
     }
