@@ -13,8 +13,7 @@ fetch.view_limits <- function(viz = as.viz('view-limits')){
                 list(proj.string = viz[['proj.string']],
                      width = viz[['width']], 
                      height = viz[['height']], 
-                     pointsize = viz[['pointsize']],
-                     latlonbbox = bbox))
+                     pointsize = viz[['pointsize']]))
   
   saveRDS(out, viz[['location']])
 }

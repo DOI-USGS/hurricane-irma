@@ -135,6 +135,7 @@ fetch:
     scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells.rds
     mimetype: application/zip
+    refetch: TRUE
   -
     id: precip-data
     fetcher: precip
