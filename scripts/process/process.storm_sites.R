@@ -31,7 +31,7 @@ process.getNWISdata <- function(viz = as.viz('getNWISdata')){
   checkRequired(viz, required)
   depends <- readDepends(viz)
   siteInfo <- depends[['storm-sites']]
-  sites_active <- dplyr::filter(siteInfo@data, r == 2)$id
+  sites_active <- dplyr::filter(siteInfo@data, class == 'active-gage')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
   
   dateTimes <- depends[['timesteps']]$times
