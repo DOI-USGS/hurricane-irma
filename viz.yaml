@@ -120,6 +120,7 @@ fetch:
     mimetype: application/zip
   -
     id: hurricane-track
+    storm: IRMA
     location: cache/hurricane.zip
     ocean: al
     stormnum: 11
@@ -169,6 +170,13 @@ process:
     scripts: scripts/process/process.storm_track.R
     reader: rds
     depends: ["view-limits", "hurricane-track"]
+  -
+    id: storm-location
+    location: cache/storm-location.rds
+    processor: storm_location
+    scripts: scripts/process/process.storm_location.R
+    reader: rds
+    depends: ["view-limits", "hurricane-track", "timesteps"] 
   -
     id: precip-colors
     location: cache/precip-colors.json
@@ -233,7 +241,7 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands", "storm-track", "storm-sites"]#, 'storm-location', "gage-sites"]
+    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands", "storm-track", "storm-sites", "storm-location"]
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
