@@ -1,22 +1,19 @@
-fetch.point_precip <- function(viz = as.viz('precip-spatial')){
-  if(!viz[['refetch']]){
-    return(NULL)
-  }
-  required <- c("location", "bbox")
-  checkRequired(viz, required)
+fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
+
+  view <- readDepends(viz)[["view-limits"]]
   
   ### constants
   cell_size <- .1 # degrees -- set to make grid more course or dense.
   states <- c("florida", "georgia", "alabama", "south carolina") # from maps states id list.
   ### /constants
     
-  bbox <- viz[["bbox"]]
+  bbox <- view[["latlonbbox"]]
   
   x_range <- (bbox[3] - bbox[1])/cell_size
   y_range <- (bbox[4] - bbox[2])/cell_size
   
-  grid_topology <- sp::GridTopology(cellcentre.offset = bbox[c(1:2)], 
-                                    cellsize = c(cell_size,cell_size), 
+  grid_topology <- sp::GridTopology(bbox[c(1:2)],
+                                    cellsize = c(cell_size,cell_size),
                                     cells.dim = c(x_range, y_range))
   sp_grid <- raster::raster(sp::SpatialGrid(grid_topology, sp::CRS("+init=epsg:4326")))
   
@@ -40,7 +37,7 @@ fetch.point_precip <- function(viz = as.viz('precip-spatial')){
   sp_cells@proj4string <- CRS("+init=epsg:4326")
   state_boundary@proj4string <- CRS("+init=epsg:4326")
   
-  sp_cells <- gIntersection(state_boundary, sp_cells, byid = T, drop_lower_td = T)
+  sp_cells <- rgeos::gIntersection(state_boundary, sp_cells, byid = T, drop_lower_td = T)
   
   IDs <- sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID"))
   sp_cells <- SpatialPolygonsDataFrame(sp_cells, data.frame(id=c(1:length(sp_cells)), row.names = IDs))
@@ -53,12 +50,13 @@ fetch.point_precip <- function(viz = as.viz('precip-spatial')){
   
   sp_points <- SpatialPointsDataFrame(sp_points, sp_point_ids)
   
-  location <- viz[['location']]
+  saveRDS(sp_cells, viz[['location']])
   
-  rgdal::wrtieOGR(sp_points, paste0(location,"/irma_points.shp"), 
-                  layer = "irma_points", driver = "ESRI Shapefile", overwrite_layer=TRUE)
-  rgdal::writeOGR(sp_cells, paste0(location,"/irma_cells.shp"), 
-                  layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE)
+  # Used for ScienceBase item.
+  # rgdal::writeOGR(sp_points, irma_points.shp, # Will be used later instead of cells.
+  #                 layer = "irma_points", driver = "ESRI Shapefile", overwrite_layer=TRUE)
+  # rgdal::writeOGR(sp_cells, "irma_cells.shp", 
+  #                 layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE)
 }
 
 

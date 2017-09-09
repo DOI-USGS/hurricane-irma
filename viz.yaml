@@ -129,6 +129,13 @@ fetch:
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
   -
+    id: precip-spatial
+    fetcher: precipSpatial
+    depends: ["view-limits"]
+    scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
+    location: cache/irma_cells.rds
+    mimetype: application/zip
+  -
     id: precip-data
     fetcher: precip
     start.date: "2017-09-07"
