@@ -13,6 +13,17 @@ line, polyline, path{
 	cursor: default;
 }
 
+.active-gage {
+  stroke:purple;
+  fill:purple;
+  fill-opacity:0.6;
+}
+
+.inactive-gage {
+  stroke:grey;
+  fill:grey;
+  fill-opacity:0.6;
+}
 .county-polygon, .island-polygon {
   fill: #efefef;
   stroke: #c6c6c6;

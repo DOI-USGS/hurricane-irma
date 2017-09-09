@@ -62,7 +62,12 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
     for (j in seq_len(length(clipped.sp))){
-      sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+      if (inherits(clipped.sp, 'SpatialPoints')){
+        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T), pch = 20)
+      } else {
+        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+      }
+      
     }
     
   })
@@ -130,7 +135,7 @@ clip_sp <- function(sp, xlim, ylim, ...) {
 
 
 clip_sp.SpatialPolygonsDataFrame <- function(sp, xlim, ylim, ...){
-  
+  sp <- rgeos::gBuffer(sp, byid=TRUE, width=0) # zero buffer to avoid TopologyException
   clipped.sp <- NextMethod('clip_sp', sp, ..., clip.fun = rgeos::gIntersection)
   return(clipped.sp)
 }
@@ -151,25 +156,31 @@ clip_sp.SpatialLines <- function(sp, xlim, ylim, ...){
 clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection){
   
   clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))
-  g.i <- rgeos::gIntersects(sp, clip, byid = T) 
   
-  sp <- rgeos::gBuffer(sp, byid=TRUE, width=0) # zero buffer to avoid TopologyException
-  has.data <- ("data" %in% slotNames(sp))
-
-  out <- lapply(which(g.i), function(i) {
-    g.out <- clip.fun(sp[i,], clip)
-    row.names(g.out) <- row.names(sp)[i]
-    return(g.out)
-  })
   
-  # use rbind.SpatialPolygons method to combine into a new object.
-  clipped.sp <- do.call("rbind", out)
-  
-  if(has.data){
-    data.out <- as.data.frame(sp)[g.i, ]
-    row.names(data.out) <- row.names(sp)[g.i]
-    clipped.sp <- as(object = clipped.sp, Class = class(sp))
-    clipped.sp@data <- data.out
+  if (!inherits(sp, 'SpatialPoints')){
+    g.i <- rgeos::gIntersects(sp, clip, byid = T) 
+    has.data <- ("data" %in% slotNames(sp))
+    
+    out <- lapply(which(g.i), function(i) {
+      g.out <- clip.fun(sp[i,], clip)
+      row.names(g.out) <- row.names(sp)[i]  
+      return(g.out)
+    })
+    
+    # use rbind.SpatialPolygons method to combine into a new object.
+    clipped.sp <- do.call("rbind", out)
+    
+    if(has.data){
+      data.out <- as.data.frame(sp)[g.i, ]
+      row.names(data.out) <- row.names(sp)[g.i]
+      clipped.sp <- as(object = clipped.sp, Class = class(sp))
+      clipped.sp@data <- data.out
+    }
+  } else {
+    g.i <- rgeos::gContains(sp, clip, byid = TRUE)
+    clipped.sp <- sp[g.i]
+    clipped.sp@data <- sp@data[g.i, ]
   }
   
   # //to do: use rgeos::gContains for points
