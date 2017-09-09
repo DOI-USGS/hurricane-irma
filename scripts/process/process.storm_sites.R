@@ -7,8 +7,6 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   storm_poly <- depends[['storm-area-filter']]
   nws.sites <- depends[['nws-data']]
   
-  sites <- sites %>% filter(site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)])
-  
   sites.sp <- sp::SpatialPoints(cbind(sites$dec_long_va,sites$dec_lat_va), 
                             proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
