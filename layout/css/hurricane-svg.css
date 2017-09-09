@@ -72,14 +72,16 @@ line, polyline, path{
 .shown {
   opacity: 1;
 }
-
+.storm-dot, .storm-dot-legend {
+  fill: #F29E4C;
+}
 .sparkline {
 	stroke: #A0DFDF;
 	stroke-width:1.5;
 }
 .sparkline-bold,.sparkline:hover  {
   cursor: pointer;
-  stroke: #A0DFDF;
+  stroke: #F29E4C;
   stroke-width:3.0;
 }
 
