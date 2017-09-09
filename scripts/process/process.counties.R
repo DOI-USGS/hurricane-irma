@@ -9,26 +9,24 @@ county_map_name_2_id <- function(names){
   return(names.out)
 }
 
-append_fake_precip <- function(class.name){
-  n <- 70
-  out <- paste(class.name, paste(' p-', 1:n, '-', sample(1:8, n, replace = TRUE), sep = '', collapse = ''))
-  return(out) 
-}
 
 #' clip/reduce the actual counties that are used, add a data.frame to them that will be used by `visualize`
 #' 
 #' @param
 #' @param
 process.storm_counties <- function(viz = as.viz('storm-counties')){
-  sp <- readDepends(viz)[['counties']]
+  depends <- readDepends(viz)
+  sp <- depends[['counties']]
+  precip.classes <- depends[['precip-classify']]
   library(dplyr)
   data.out <- data.frame(id = NA_character_, 
-                         class = rep('county-polygon', length(sp)), 
-                         raw.name = names(sp), 
+                         base.class = rep('county-polygon', length(sp)), 
+                         polyname = names(sp), 
                          onmousemove = "hovertext('TEST county, TEST state',evt);", 
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
-    mutate(id = county_map_name_2_id(raw.name)) %>% mutate(class = append_fake_precip(class)) %>% select(-raw.name)
+    left_join(precip.classes) %>% 
+    mutate(id = county_map_name_2_id(polyname)) %>% mutate(class = paste0(base.class, class)) %>% select(-polyname, -base.class)
   
   row.names(data.out) <- row.names(sp)
   sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))

@@ -61,13 +61,18 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
-    sp::plot(clipped.sp, ..., xlim = xlim, ylim = ylim)
+    for (j in seq_len(length(clipped.sp))){
+      sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+    }
+    
   })
   svg.g <- xml2::xml_child(rendered)
   if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
     xml_remove(xml_child(svg.g)) # remove the <rect thing it puts in there>
   } else if (xml2::xml_length(svg.g) != length(clipped.sp)){
-    stop('something wrong. Length of svg elements is different than number of features')
+    message('something might be wrong. Length of svg elements is different than number of features',
+            'but ignore this warning for lines.')
+    xml_remove(xml_child(svg.g))
   }
   
   # here either strip the important attributes out and re-add them with a xml_set_attrs call, or lapply the nodeset and add attrs one by one:
@@ -134,6 +139,13 @@ clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
   
   clipped.sp <- NextMethod('clip_sp', sp, ..., clip.fun = rgeos::gContains)
   return(clipped.sp)
+}
+
+clip_sp.SpatialLinesDataFrame <- function(sp, xlim, ylim, ...){
+  return(sp)
+}
+clip_sp.SpatialLines <- function(sp, xlim, ylim, ...){
+  return(sp)
 }
 
 clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection){
