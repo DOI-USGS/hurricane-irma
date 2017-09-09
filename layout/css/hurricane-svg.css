@@ -13,6 +13,9 @@ line, polyline, path{
 	cursor: default;
 }
 
+.time-text {
+  fill:black;
+}
 .active-gage {
   stroke:purple;
   fill:purple;
