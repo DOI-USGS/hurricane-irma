@@ -24,7 +24,7 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
     rgeos::gBuffer(width=200000, byid=TRUE )
   counties <- sp::spTransform(sp, sp::CRS(epsg_code))
   overlap <- rgeos::gContains(footy, counties, byid = TRUE) %>% rowSums() %>% as.logical()
-  
+  sp <- sp[overlap, ]
   
   library(dplyr)
   data.out <- data.frame(id = NA_character_, 
@@ -38,7 +38,7 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
     select(-polyname, -base.class) 
   
   row.names(data.out) <- row.names(sp)
-  sp <- sp[overlap, ]
+  
   sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))
   sp.data.frame@data <- data.out
   
