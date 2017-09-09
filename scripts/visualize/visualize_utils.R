@@ -207,10 +207,14 @@ visualize.map_thumbnail <- function(viz){
   island_color <- locate_css_class_detail(island_css, "fill")
   island_lwd <- locate_css_class_detail(island_css, "stroke-width")
 
+  # find current hurricane point (not automatically linked to time stamp chosen)
+  hurricane_location <- tail(tail(hurricane_track@lines, 1)[[1]]@Lines[[1]]@coords, 1)
+  
+  # subset precip data to one time stamp
+  # plus map county fips to names & mapping color numbers to a color
   precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
   countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
-  precip_i <- dplyr::mutate(precip_i, map_nm = 
-                              countynames[as.character(as.numeric(precip_i$fips))])
+  precip_i <- dplyr::mutate(precip_i, map_nm = countynames[as.character(as.numeric(precip_i$fips))])
   precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
   
   png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
@@ -221,8 +225,7 @@ visualize.map_thumbnail <- function(viz){
   sp::plot(islands, add = TRUE, col = island_color)
   sp::plot(counties, add = TRUE, col = precip_i$map_color)
   sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
+  points(hurricane_location[1], hurricane_location[2], pch=20, cex=3, col="red")
   
   dev.off()
 }
-
-
