@@ -219,6 +219,7 @@ visualize.map_thumbnail <- function(viz){
   precip <- depends[[4]]
   precip_cols <- depends[[5]]
   hurricane_track <- depends[[6]]
+  view_box <- depends[[7]]
     
   # styling details
   css <- readLines(viz$css)
@@ -235,18 +236,19 @@ visualize.map_thumbnail <- function(viz){
   
   # subset precip data to one time stamp
   # plus map county fips to names & mapping color numbers to a color
-  precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
-  countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
-  precip_i <- dplyr::mutate(precip_i, map_nm = countynames[as.character(as.numeric(precip_i$fips))])
-  precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
-  
+  # precip_i <- dplyr::filter(precip, DateTime == viz$`time-stamp`)
+  # countynames <- setNames(maps::county.fips$polyname, maps::county.fips$fips)
+  # precip_i <- dplyr::mutate(precip_i, map_nm = countynames[as.character(as.numeric(precip_i$fips))])
+  # precip_i <- dplyr::mutate(precip_i, map_color = precip_cols[as.numeric(precip_i$col)])
+  # 
   png(file = viz$location, height = viz$`fig-height`, width = viz$`fig-width`)
   
+  set_sp_plot()
   par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
   
-  sp::plot(states, col = state_color)
+  sp::plot(states, col = state_color, xlim = view_box$xlim, ylim = view_box$ylim)
   sp::plot(islands, add = TRUE, col = island_color)
-  sp::plot(counties, add = TRUE, col = precip_i$map_color)
+  # sp::plot(counties, add = TRUE, col = precip_i$map_color)
   sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
   points(hurricane_location[1], hurricane_location[2], pch=20, cex=3, col="red")
   
