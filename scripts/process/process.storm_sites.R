@@ -26,7 +26,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
 
 #fetch NWIS iv data, downsample to hourly
 
-process.getNWISdata <- function(viz = as.viz('getNWISdata')){
+process.getNWISdata <- function(viz = as.viz('gage-data')){
   required <- c("depends", "location")
   checkRequired(viz, required)
   depends <- readDepends(viz)

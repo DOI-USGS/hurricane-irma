@@ -231,7 +231,7 @@ process:
     export: true
     mimetype: application/javascript
   -
-    id: getNWISdata
+    id: gage-data
     processor: getNWISdata
     location: cache/NWISdata.rds
     scripts: scripts/process/process.storm-sites.R
@@ -239,6 +239,13 @@ process:
     reader: rds
     refetch: TRUE
     comment: disabling refetch for now, re-enable to get updates to work
+  - 
+    id: discharge-sparks
+    location: cache/discharge-sparks.rds
+    processor: discharge_sparks
+    scripts: scripts/process/process.discharge_sparks.R
+    reader: rds
+    depends: ["gage-data","timesteps"]
     
 visualize:
   -
