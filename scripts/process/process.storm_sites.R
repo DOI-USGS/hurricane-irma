@@ -7,6 +7,8 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   storm_poly <- depends[['storm-area-filter']]
   nws.sites <- depends[['nws-data']]
   
+  library(dplyr)
+  sites <- sites %>% arrange(desc(dec_lat_va))
   sites.sp <- sp::SpatialPoints(cbind(sites$dec_long_va,sites$dec_lat_va), 
                             proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
@@ -18,9 +20,11 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   data.out <- data.frame(id = paste0('nwis-', sites$site_no), 
                          class = ifelse(is.featured, 'active-gage','inactive-gage'),
                          r = ifelse(is.featured, '2','1'),
-                         onmousemove = "hovertext('TEST gage',evt);", 
-                         onmouseout = "hovertext(' ');", 
+                         onmousemove = sprintf("hovertext('USGS %s',evt);",sites$site_no),
+                         onmouseout = sprintf("setNormal('sparkline-%s');hovertext(' ');", sites$site_no),
+                         onmouseover=sprintf("setBold('sparkline-%s');", sites$site_no),
                          stringsAsFactors = FALSE) 
+  
   row.names(data.out) <- row.names(sites.sp)
   sp.data.frame <- as(object = sites.sp, Class = paste0(class(sites.sp), "DataFrame"))
   sp.data.frame@data <- data.out
@@ -38,6 +42,8 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   siteInfo <- depends[['storm-sites']]
   sites_active <- dplyr::filter(siteInfo@data, class == 'active-gage')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
+  # now, use the SORTED dependency "sites" to get these in latitude order
+  sites_active <- depends$sites$site_no[depends$sites$site_no %in% sites_active]
   
   dateTimes <- depends[['timesteps']]$times
   dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
