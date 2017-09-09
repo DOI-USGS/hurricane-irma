@@ -15,9 +15,8 @@ fetch.view_limits <- function(viz = as.viz('view-limits')){
 fetch.storm_area_filter <- function(viz = as.viz('storm-area-filter')) {
   pointsVec <- as.numeric(c(lats = viz[['lons']], lons = viz[['lats']]))
   pointsMatrix <- matrix(pointsVec, nrow = length(pointsVec)/2, ncol = 2)
-  #hull <- chull(x = pointsDF$lons, y = pointsDF$lats)
   poly <- sp::SpatialPolygons(list(
-    Polygons(list(Polygon(pointsMatrix)), ID =1 )), 
+    sp::Polygons(list(sp::Polygon(pointsMatrix)), ID =1 )), 
     pO = 1L, proj4string = sp::CRS("+proj=longlat +datum=WGS84"))
   saveRDS(poly, viz[['location']])
 }
