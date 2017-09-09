@@ -12,5 +12,7 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   
+  xml_add_child(svg, 'text', ' ', id='timestamp-text', class='time-text svg-text', x="400", y="550", 'text-anchor'="middle")
+  
   write_xml(svg, file = viz[['location']])
 }
