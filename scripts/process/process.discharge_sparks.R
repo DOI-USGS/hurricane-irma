@@ -19,7 +19,11 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   }
   sparks <- group_by(depends[["gage-data"]], site_no) %>% filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2]) %>% 
     summarize(points = interp_q(dateTime, Flow_Inst)) %>% 
-    mutate(class = "sparkline", id = sprintf("sparkline-%s", site_no), style = "mask: url(#spark-opacity);") %>% select(-site_no)
+    mutate(class = "sparkline", id = sprintf("sparkline-%s", site_no), style = "mask: url(#spark-opacity);",
+           onmouseover=sprintf("setBold('nwis-%s');", site_no), 
+           onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
+           onmousemove=sprintf("hovertext('USGS %s',evt);", site_no)) %>% 
+    select(-site_no)
   
   saveRDS(sparks, viz[['location']])
 }

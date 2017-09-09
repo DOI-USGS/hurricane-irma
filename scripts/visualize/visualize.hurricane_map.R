@@ -24,9 +24,9 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_child(g.spark, 'text', x='67', '(normalized discharge)', dy='1.1em', 'text-anchor'='middle', class='svg-text smallprint-text')
   
   ys <- seq(20, 300, length.out = nrow(sparks))
-  for (i in 1:nrow(sparks)){ # FRAGILE - assumes all gages are on the map!!
+  for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.spark, 'g', transform=sprintf('translate(-5,%s)', ys[i])) 
-    xml_add_child(g.single, 'polyline', points = sparks$points[i], class = sparks$class[i], id = sparks$id[i], style = sparks$style[i])
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
   }
 
   xml_add_child(svg, 'text', ' ', id='timestamp-text', class='time-text svg-text', x="400", y="550", 'text-anchor'="middle")
