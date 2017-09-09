@@ -31,6 +31,12 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
 
   xml_add_child(svg, 'text', ' ', id='timestamp-text', class='time-text svg-text', x="400", y="550", 'text-anchor'="middle")
   
+  g.tool <- xml_add_child(svg,'g',id='tooltip-group')
+  xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")
+  xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
+  xml_add_child(g.tool, 'text', id="tooltip-text", dy="-1.1em", 'text-anchor'="middle", class="tooltip-text-label svg-text", " ")
+  
+  
   # sparkline masks:
   d <- xml_add_child(svg, 'defs', .where='before') 
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
