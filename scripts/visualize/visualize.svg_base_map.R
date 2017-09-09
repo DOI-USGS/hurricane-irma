@@ -36,11 +36,10 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
 }
 
 add_attrs <- function(nodes, data){
-  for (node in nodes){
-    d.i <- 1
+  for (d.i in seq_len(length(nodes))){
+    message(d.i)
     for (value in names(data)){
-      xml2::xml_attr(node, value) <- data[[value]][d.i]
+      xml2::xml_attr(nodes[d.i], value) <- data[d.i, ][[value]]
     }
-    d.i <- d.i + 1
   }
 }

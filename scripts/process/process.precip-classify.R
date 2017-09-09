@@ -5,16 +5,26 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
   deps <- readDepends(viz)
   precip_breaks <- deps[['precip-breaks']] 
   precipData <- deps[['precip-data']] 
-
+  fips.data <- maps::county.fips
+  fips.data$fips <- as.character(fips.data$fips)
+  fips.data$fips <- ifelse(nchar(fips.data$fips) == 4, paste0("0", fips.data$fips), fips.data$fips)
   precipData$precipVal <- precipData$precipVal/25.4 #convert mm to inches
   
   precipData <- precipData %>% mutate(cols = cut(precipVal, breaks = precip_breaks, labels = FALSE)) %>% 
     mutate(cols = ifelse(precipVal > tail(precip_breaks,1), length(precip_breaks), cols)) %>% 
-    mutate(cols = ifelse(is.na(cols), 1, cols), cols = as.character(cols)) %>% select(fips, DateTime, cols)
+    mutate(cols = ifelse(is.na(cols), 1, cols), cols = as.character(cols)) %>% select(fips, DateTime, cols) %>% left_join(fips.data)
     
-  #want to cut down precipData to only relevant info?
+  polynames <- unique(precipData$polyname)
+  data.out <- data.frame(polyname = polynames, class = NA_character_, stringsAsFactors = FALSE)
   
-  saveRDS(object = precipData, file = viz[['location']])
+  for (i in 1:length(polynames)){
+    polyname <- polynames[i]
+    fip.data <- precipData[precipData$polyname == polyname, ] %>% arrange(desc(DateTime))
+    changed <- which(as.logical(c(TRUE, diff(as.numeric(fip.data$cols)))))
+    data.out$class[i] <- paste(' p-', changed, '-', fip.data$cols[changed], sep = '', collapse = '')
+  }
+  #want to cut down precipData to only relevant info?
+  saveRDS(object = data.out, file = viz[['location']])
 }
 
 process.precip_breaks <- function(viz = as.viz("precip-breaks")){
