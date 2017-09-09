@@ -195,7 +195,8 @@ visualize.map_thumbnail <- function(viz){
   counties <- depends[[3]]
   precip <- depends[[4]]
   precip_cols <- depends[[5]]
-
+  hurricane_track <- depends[[6]]
+    
   # styling details
   css <- readLines(viz$css)
   ocean_color <- locate_css_class_detail(locate_css_class(css, ".ocean-water"), "fill")
@@ -219,6 +220,7 @@ visualize.map_thumbnail <- function(viz){
   sp::plot(states, col = state_color)
   sp::plot(islands, add = TRUE, col = island_color)
   sp::plot(counties, add = TRUE, col = precip_i$map_color)
+  sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
   
   dev.off()
 }
