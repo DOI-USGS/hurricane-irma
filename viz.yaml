@@ -78,7 +78,10 @@ info:
       version: 1.1.1
     dataRetrieval:
       repo: GRAN
-      version: 2.7.3 
+      version: 2.7.3
+    lubridate:
+      repo: CRAN
+      version: 1.6.0
   contributors:
     
 
@@ -227,6 +230,15 @@ process:
     depends: "precip-data"
     export: true
     mimetype: application/javascript
+  -
+    id: getNWISdata
+    processor: getNWISdata
+    location: cache/NWISdata.rds
+    scripts: scripts/process/process.storm-sites.R
+    depends: ["precip-data","storm-sites", "sites", "timesteps"]
+    reader: rds
+    refetch: TRUE
+    comment: disabling refetch for now, re-enable to get updates to work
     
 visualize:
   -

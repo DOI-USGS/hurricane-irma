@@ -23,3 +23,35 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   
   saveRDS(sp.data.frame, viz[['location']])
 }
+
+#fetch NWIS iv data, downsample to hourly
+
+process.getNWISdata <- function(viz = as.viz('getNWISdata')){
+  required <- c("depends", "location")
+  checkRequired(viz, required)
+  depends <- readDepends(viz)
+  siteInfo <- depends[['storm-sites']]
+  sites_active <- dplyr::filter(siteInfo@data, r == 2)$id
+  sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
+  
+  dateTimes <- depends[['timesteps']]$times
+  dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
+             tz = "America/New_York")
+  
+  start.date <-  as.Date(dateTimes_fromJSON[1])
+  end.date <- as.Date(dateTimes_fromJSON[length(dateTimes)])
+  
+  nwisParams <- getContentInfo('sites')
+  
+  nwisData <- dataRetrieval::renameNWISColumns(dataRetrieval::readNWISdata(service="iv",
+                                              parameterCd=nwisParams[['pCode']],
+                                              sites = sites_active,
+                                              startDate = start.date,
+                                              endDate = end.date,
+                                              tz = "America/New_York"))
+  
+  nwisData <- dplyr::filter(nwisData, dateTime %in% dateTimes_fromJSON)
+  
+  location <- viz[['location']]
+  saveRDS(nwisData, file=location)
+}
