@@ -9,8 +9,10 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   
   library(dplyr)
   
-  sites.sp <- sp::SpatialPoints(cbind(sites$dec_long_va,sites$dec_lat_va), 
-                            proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
+  sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
+                                               sites$dec_lat_va), 
+                                         data = sites,
+                                         proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
   
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
   
@@ -19,20 +21,15 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% rowSums() %>% as.logical() &
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)]
   
-  data.out <- data.frame(id = paste0('nwis-', sites$site_no), 
+  sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
                          r = ifelse(is.featured, '2','1'),
-                         onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites$site_no), ""),
-                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites$site_no), ""),
-                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites$site_no), ""),
-                         stringsAsFactors = FALSE) 
+                         onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites.sp@data$site_no), ""),
+                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites.sp@data$site_no), ""),
+                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites.sp@data$site_no), ""),
+                         stringsAsFactors = FALSE)
   
-  row.names(data.out) <- row.names(sites.sp)
-  sp.data.frame <- as(object = sites.sp, Class = paste0(class(sites.sp), "DataFrame"))
-  sp.data.frame@data <- data.out
-  row.names(sp.data.frame) <- row.names(data.out)
-  
-  saveRDS(sp.data.frame, viz[['location']])
+  saveRDS(sites.sp, viz[['location']])
 }
 
 #fetch NWIS iv data, downsample to hourly
