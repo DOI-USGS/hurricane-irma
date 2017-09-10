@@ -64,11 +64,11 @@ var playPause = function() {
 };
 
 $('svg').ready(function() {
-  $('.storm-dot').css("opacity", "0")
   $.when(fetchPrcpTimes, fetchPrcpColors)
     .done(function() {
       svg = document.querySelector("svg");
-      pt = svg.createSVGPoint();  
+      pt = svg.createSVGPoint();
+      $('#playButton').click();
     });
 });
 
