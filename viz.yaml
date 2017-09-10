@@ -139,6 +139,15 @@ fetch:
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
   -
+    id: precip-spatial
+    fetcher: precipSpatial
+    depends: ["view-limits"]
+    scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
+    location: cache/irma_cells.rds
+    mimetype: application/zip
+    refetch: FALSE
+    comment: disabling refetch as this isn't needed yet
+  -
     id: precip-data
     fetcher: precip
     start.date: "2017-09-07"
@@ -150,6 +159,19 @@ fetch:
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
+  -
+    id: precip-cell-data
+    fetcher: precipCellData
+    start.date: "2017-09-07"
+    end.date: "2017-09-08"
+    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
+    sb.geom: "sb:irma_cells"
+    sb.attribute: "id"
+    scripts: scripts/fetch/fetchPrecip_cells.R
+    location: cache/precip_cells.csv
+    mimetype: text/csv
+    refetch: FALSE
+    comment: disabling refetch as this isn't needed yet
   -
     id: sites
     fetcher: sites
@@ -279,7 +301,7 @@ process:
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data","timesteps"]
+    depends: ["gage-data","timesteps", "sites"]
     
 visualize:
   -
