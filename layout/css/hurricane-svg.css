@@ -44,7 +44,7 @@ line, polyline, path{
 
 
 .time-text {
-  fill:black;
+  font-style:italic;
 }
 .nwis-dot, .nwis {
   stroke:purple;

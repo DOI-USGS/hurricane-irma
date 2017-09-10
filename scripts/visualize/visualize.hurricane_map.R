@@ -29,7 +29,10 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_child(g.overlays, 'text', "Gulf of Mexico", class='svg-text ocean-name', id="gulf-of-mexico", transform="translate(50,310)")
   xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(50,202)")
   xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(140,60)")
-  g.rain <- xml_add_child(g.overlays, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-60))
+  xml_add_child(g.overlays, 'text', "Alabama", class='svg-text state-name', id="alabama", transform="translate(30,95)")
+  xml_add_child(g.overlays, 'text', "South Carolina", class='svg-text state-name', id="south-carolina", transform="translate(230,30)")
+  
+  g.rain <- xml_add_child(g.overlays, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
   
   # lower left legend:
   xml_add_child(g.rain, 'text', "Rainfall totals", class='svg-text rainfall-legend-text legend-text', dy="-1em")
@@ -40,6 +43,7 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_child(g.gage, 'circle', r="2", class="nwis-dot")
   xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage, 'text', "USGS stream gage", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.rains, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', y="70")
   rain.w <- 30 # width of a rain legend bin
   rain.h <- 15
   x0 <- 0
@@ -64,7 +68,7 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
   }
 
-  xml_add_child(svg, 'text', ' ', id='timestamp-text', class='time-text svg-text', x="400", y="550", 'text-anchor'="middle")
+  
   
   g.tool <- xml_add_child(svg,'g',id='tooltip-group')
   xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")

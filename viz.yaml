@@ -213,7 +213,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: json
     bins: 9
-    pallete: "YlGnBu"
+    pallete: "Blues"
     mimetype: application/javascript
     export: true
   -
