@@ -13,6 +13,36 @@ line, polyline, path{
 	cursor: default;
 }
 
+.rain-box {
+  stroke:white;
+}
+
+.legend-text{
+  fill: black;
+  fill-opacity: 0.55;
+}
+.rainfall-legend-text {
+  font-size:1.2em;
+  font-style: italic;
+}
+.ocean-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-style: italic;
+  font-size:1.2em;
+}
+.state-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-size:1em;
+}
+
+
+#georgia{
+  transform:translate(200,300);
+}
+
+
 .time-text {
   fill:black;
 }

@@ -4,10 +4,10 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map",'discharge-sparks'))
+  checkRequired(depends, c("base-map",'discharge-sparks', 'precip-colors'))
   svg <- depends[["base-map"]]
   sparks <- depends[["discharge-sparks"]]
-  
+  color.meta <- getContentInfo('precip-colors')
   xml_attr(svg, "id") <- viz[['id']]
   
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
@@ -23,11 +23,40 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   
+  # overlays 
+  g.overlays <- xml_add_child(svg, 'g', id = 'map-overlays')
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class='svg-text ocean-name', id="atlantic-ocean", transform="translate(300,190)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class='svg-text ocean-name', id="gulf-of-mexico", transform="translate(50,310)")
+  xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(50,202)")
+  xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(140,60)")
+  g.rain <- xml_add_child(g.overlays, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-60))
+  
+  # lower left legend:
+  xml_add_child(g.rain, 'text', "Rainfall totals", class='svg-text rainfall-legend-text legend-text', dy="-1em")
+  g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
+  g.irma <- xml_add_child(g.rain, 'g', id = 'irma-legend', transform="translate(15,20)")
+  g.gage <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,35)")
+  xml_add_child(g.irma, 'circle', r="8", class="storm-dot-legend")
+  xml_add_child(g.gage, 'circle', r="2", class="nwis-dot")
+  xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.gage, 'text', "USGS stream gage", class='svg-text legend-text', dx='20', dy="0.33em")
+  rain.w <- 30 # width of a rain legend bin
+  rain.h <- 15
+  x0 <- 0
+  n.bins <- 4
+  cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
+  for (i in 1:n.bins){
+    xml_add_child(g.rains, 'rect', x=as.character(x0), y="-10", 
+                  height = as.character(rain.h), width = as.character(rain.w), 
+                  class='rain-box', style=sprintf("fill:%s;",cols[i]))
+    x0 <- x0+rain.w
+  }
+  
   
   # sparklines:
   g.spark <- xml_add_child(svg, 'g', transform=sprintf('translate(%s,%s)', as.numeric(vb[3])-side.panel, top.bmp))
-  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text')
-  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), '(normalized discharge)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text')
+  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
+  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), '(normalized discharge)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   
   ys <- seq(45, 400, length.out = nrow(sparks))
   for (i in 1:nrow(sparks)){ 
