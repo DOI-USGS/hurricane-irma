@@ -16,13 +16,20 @@ line, polyline, path{
 .time-text {
   fill:black;
 }
-.active-gage {
+.nwis-dot, .nwis {
   stroke:purple;
   fill:purple;
   fill-opacity:0.6;
 }
 
-.inactive-gage {
+.nwis-bold, .nwis-dot:hover, .nwis:hover {
+  fill-opacity: 0.7;
+  stroke:purple;
+  fill:purple;
+  stroke-width:2;
+}
+  
+.inactive-dot {
   stroke:grey;
   fill:grey;
   fill-opacity:0.6;
@@ -66,14 +73,16 @@ line, polyline, path{
 .shown {
   opacity: 1;
 }
-
+.storm-dot, .storm-dot-legend {
+  fill: #F29E4C;
+}
 .sparkline {
 	stroke: #A0DFDF;
 	stroke-width:1.5;
 }
 .sparkline-bold,.sparkline:hover  {
   cursor: pointer;
-  stroke: #A0DFDF;
+  stroke: #F29E4C;
   stroke-width:3.0;
 }
 

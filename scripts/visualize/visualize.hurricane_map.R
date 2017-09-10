@@ -11,8 +11,9 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_attr(svg, "id") <- viz[['id']]
   
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
+  xml_attr(svg, 'viewBox') <- paste("0", "13", vb[3], vb[4], collapse="") # doing this because there is a weird gutter on top
   
-  xml_add_sibling(xml_children(svg)[[1]], 'rect', .where='before', width=vb[3], height=vb[4], class='ocean-water')
+  xml_add_sibling(xml_children(svg)[[1]], 'rect', .where='before', width="100%", height="100%", class='ocean-water')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   
@@ -30,6 +31,12 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   }
 
   xml_add_child(svg, 'text', ' ', id='timestamp-text', class='time-text svg-text', x="400", y="550", 'text-anchor'="middle")
+  
+  g.tool <- xml_add_child(svg,'g',id='tooltip-group')
+  xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")
+  xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
+  xml_add_child(g.tool, 'text', id="tooltip-text", dy="-1.1em", 'text-anchor'="middle", class="tooltip-text-label svg-text", " ")
+  
   
   # sparkline masks:
   d <- xml_add_child(svg, 'defs', .where='before') 
