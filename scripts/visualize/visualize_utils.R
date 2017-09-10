@@ -259,8 +259,8 @@ visualize.map_thumbnail <- function(viz){
   png(file = viz[['location']], height = viz$`fig-height`, width = viz$`fig-width`)
   
   
-  par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
-  sp::plot(counties, col = NA, expandBB = viz[["expandBB"]])
+  par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
+  sp::plot(counties, col = NA, expandBB = eval(parse(text = viz[["expandBB"]]))) #decimals not working?
   sp::plot(states, col = state_color, add = TRUE)
   sp::plot(islands, add = TRUE, col = island_color)
   sp::plot(counties, add = TRUE, col = counties@data$col)
