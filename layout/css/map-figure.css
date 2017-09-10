@@ -46,12 +46,19 @@ figurecaption{
 }
 
 #buttonContainer {
+  position: absolute;
   margin: 10px auto 10px auto;
   text-align: center;
+  left: 20px;
 }
 
 #playButton{
   background:#ebebeb;
+}
+
+
+#map-figure {
+  position: relative;
 }
 
 @media screen and (min-width:768px){
