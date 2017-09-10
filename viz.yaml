@@ -159,19 +159,19 @@ fetch:
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
-  -
-    id: precip-cell-data
-    fetcher: precipCellData
-    start.date: "2017-09-07"
-    end.date: "2017-09-08"
-    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
-    sb.geom: "sb:irma_cells"
-    sb.attribute: "id"
-    scripts: scripts/fetch/fetchPrecip_cells.R
-    location: cache/precip_cells.csv
-    mimetype: text/csv
-    refetch: FALSE
-    comment: disabling refetch as this isn't needed yet
+#  -
+#    id: precip-cell-data
+#    fetcher: precipCellData
+#    start.date: "2017-09-07"
+#    end.date: "2017-09-08"
+#    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
+#    sb.geom: "sb:irma_cells"
+#    sb.attribute: "id"
+#    scripts: scripts/fetch/fetchPrecip_cells.R
+#    location: cache/precip_cells.csv
+#    mimetype: text/csv
+#    refetch: FALSE
+#    comment: disabling refetch as this isn't needed yet
   -
     id: sites
     fetcher: sites
@@ -193,7 +193,7 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: FALSE
+    refetch: TRUE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
@@ -235,7 +235,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: json
     bins: 9
-    pallete: "YlGnBu"
+    pallete: "Blues"
     mimetype: application/javascript
     export: true
   -
@@ -308,7 +308,15 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands", "storm-track", "storm-sites", "storm-location"]
+    depends: 
+      view-limits: view-limits
+      storm-states: storm-states
+      storm-counties: storm-counties
+      storm-islands: storm-islands
+      storm-track-highlight: storm-track
+      storm-track: storm-track
+      storm-sites: storm-sites
+      storm-location: storm-location
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml
@@ -316,7 +324,7 @@ visualize:
     id: hurricane-map
     location: figures/hurricane-map.svg
     visualizer: hurricane_map
-    depends: ["base-map", "discharge-sparks"] #"precip-category", "precip-colors", 
+    depends: ["base-map", "discharge-sparks", "precip-colors"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
