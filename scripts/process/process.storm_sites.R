@@ -8,10 +8,12 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   nws.sites <- depends[['nws-data']]
   
   library(dplyr)
-  sites <- sites %>% arrange(desc(dec_lat_va))
+  
   sites.sp <- sp::SpatialPoints(cbind(sites$dec_long_va,sites$dec_lat_va), 
                             proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
+  
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
+  
   storm_poly <- sp::spTransform(storm_poly, sp::CRS(view.lims$proj.string))
 
   is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% rowSums() %>% as.logical() &
@@ -42,24 +44,24 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   siteInfo <- depends[['storm-sites']]
   sites_active <- dplyr::filter(siteInfo@data, class == 'nwis-dot')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
-  # now, use the SORTED dependency "sites" to get these in latitude order
-  sites_active <- depends$sites$site_no[depends$sites$site_no %in% sites_active]
   
   dateTimes <- depends[['timesteps']]$times
   dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
-             tz = "America/New_York")
+                                   tz = "America/New_York")
   
   start.date <-  as.Date(dateTimes_fromJSON[1])
   end.date <- as.Date(dateTimes_fromJSON[length(dateTimes)])
   
-  nwisParams <- getContentInfo('sites')
+  sites_fetcher_params <- getContentInfo('sites')
+  parameter_code <- sites_fetcher_params[['pCode']]
   
-  nwisData <- dataRetrieval::renameNWISColumns(dataRetrieval::readNWISdata(service="iv",
-                                              parameterCd=nwisParams[['pCode']],
-                                              sites = sites_active,
-                                              startDate = start.date,
-                                              endDate = end.date,
-                                              tz = "America/New_York"))
+  nwisData <- dataRetrieval::renameNWISColumns(
+    dataRetrieval::readNWISdata(service="iv",
+                                parameterCd=parameter_code,
+                                sites = sites_active,
+                                startDate = start.date,
+                                endDate = end.date,
+                                tz = "America/New_York"))
   
   nwisData <- dplyr::filter(nwisData, dateTime %in% dateTimes_fromJSON)
   

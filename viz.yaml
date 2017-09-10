@@ -142,7 +142,8 @@ fetch:
     scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells.rds
     mimetype: application/zip
-    refetch: TRUE
+    refetch: FALSE
+    comment: disabling refetch as this isn't needed yet
   -
     id: precip-data
     fetcher: precip
@@ -166,8 +167,8 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
-    refetch: TRUE
-    comment: disabling refetch to avoid too many GDP requests
+    refetch: FALSE
+    comment: disabling refetch as this isn't needed yet
   -
     id: sites
     fetcher: sites
@@ -301,7 +302,7 @@ process:
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data","timesteps"]
+    depends: ["gage-data","timesteps", "sites"]
     
 visualize:
   -

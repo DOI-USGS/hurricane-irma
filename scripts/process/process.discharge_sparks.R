@@ -27,8 +27,14 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            style = "mask: url(#spark-opacity);",
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
-           onmousemove=sprintf("hovertext('USGS %s',evt);", site_no)) %>% 
-    select(-site_no)
+           onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
+  
+  sites <- depends[['sites']][c("site_no", "dec_lat_va")]
+  
+  sparks <- sparks %>% 
+    left_join(sites, by = "site_no") %>%
+    arrange(desc(dec_lat_va)) %>%
+    select(-site_no, -dec_lat_va) 
   
   saveRDS(sparks, viz[['location']])
 }
