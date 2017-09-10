@@ -13,7 +13,16 @@ county_map_name_2_mouser <- function(names){
   names.split <- unlist(strsplit(names, '[,]'))
   states <- names.split[seq(1, length(names.split), by=2)] 
   counties <- names.split[seq(2, length(names.split), by=2)]
-  names.out <- paste(counties, states, sep = ', ')
+  names.out <- as.character(sapply(paste(counties, states, sep = ', '), simpleCap))
+}
+
+simpleCap <- function(x) {
+  s <- strsplit(x, " ")[[1]]
+  s <- paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse=" ")
+  s <- strsplit(s, "-")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse="-")
 }
 
 #' clip/reduce the actual counties that are used, add a data.frame to them that will be used by `visualize`
