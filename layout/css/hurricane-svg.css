@@ -13,6 +13,9 @@ line, polyline, path{
 	cursor: default;
 }
 
+.time-text {
+  fill:black;
+}
 .active-gage {
   stroke:purple;
   fill:purple;
@@ -62,4 +65,19 @@ line, polyline, path{
 }
 .shown {
   opacity: 1;
+}
+
+.sparkline {
+	stroke: #A0DFDF;
+	stroke-width:1.5;
+}
+.sparkline-bold,.sparkline:hover  {
+  cursor: pointer;
+  stroke: #A0DFDF;
+  stroke-width:3.0;
+}
+
+.legend-box {
+  fill: #C0C0C0;
+  stroke: none;
 }

@@ -27,7 +27,7 @@ var animatePrcp = function(timestep) {
     $stormDot.css("opacity", "0").css("transform", "scale(0.1");
     
     if ($currentStormDot){
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(0.1)');
+      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
     }
   });
 
@@ -127,4 +127,13 @@ function openNWIS(id, event){
    vizlab.clicklink('http://waterdata.usgs.gov/nwis/uv?site_no='+id,'_blank');
   }
   
+}
+
+function setBold(id){
+  var className = id.split('-')[0];
+  document.getElementById(id).setAttribute('class', className+'-bold');
+}
+function setNormal(id){
+  var className = id.split('-')[0];
+  document.getElementById(id).setAttribute('class', className);
 }
