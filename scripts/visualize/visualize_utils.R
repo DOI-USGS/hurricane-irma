@@ -256,7 +256,7 @@ visualize.map_thumbnail <- function(viz){
     counties@data$col[j] <- precip_cols[precip.col.i[time.i]]
   }
   
-  #png(file = viz[['location']], height = viz$`fig-height`, width = viz$`fig-width`)
+  png(file = viz[['location']], height = viz$`fig-height`, width = viz$`fig-width`)
   
   
   par(mar=c(1,0,0,0), oma=c(0,0,0,0), bg = ocean_color)
@@ -269,7 +269,7 @@ visualize.map_thumbnail <- function(viz){
   cols[time.idx] <- 'red'
   sp::plot(storm, pch=20, cex=3, col=cols, add = TRUE)
   
-  #dev.off()
+  dev.off()
   
 }
 
