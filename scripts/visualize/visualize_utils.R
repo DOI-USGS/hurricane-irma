@@ -56,25 +56,22 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
     ylim <- get_sp_lims(sp, ..., return = 'ylim')
   }
   
-  # clip the spatial object so that it only contains features and data that are within the plotting range:
-  clipped.sp <- clip_sp(sp, xlim, ylim)
-  
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
-    for (j in seq_len(length(clipped.sp))){
-      if (inherits(clipped.sp, 'SpatialPoints')){
-        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T), pch = 20)
+    for (j in seq_len(length(sp))){
+      if (inherits(sp, 'SpatialPoints')){
+        sp::plot(sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T), pch = 20)
       } else {
-        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+        sp::plot(sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
       }
       
     }
     
   })
   svg.g <- xml2::xml_child(rendered)
-  if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
+  if (xml2::xml_length(svg.g) == length(sp) + 1){
     xml_remove(xml_child(svg.g)) # remove the <rect thing it puts in there>
-  } else if (xml2::xml_length(svg.g) != length(clipped.sp)){
+  } else if (xml2::xml_length(svg.g) != length(sp)){
     message('something might be wrong. Length of svg elements is different than number of features',
             'but ignore this warning for lines.')
     xml_remove(xml_child(svg.g))
@@ -142,7 +139,12 @@ clip_sp.SpatialPolygonsDataFrame <- function(sp, xlim, ylim, ...){
 
 clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
   
-  clipped.sp <- NextMethod('clip_sp', sp, ..., clip.fun = rgeos::gContains)
+  clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))
+  g.i <- rgeos::gContains(clip, sp, byid = TRUE)
+  clipped.sp <- rgeos::gIntersection(clip, sp, byid = TRUE)
+  clipped.sp <- as(object = clipped.sp, Class = class(sp))
+  clipped.sp@data <- sp@data[g.i, ]
+  
   return(clipped.sp)
 }
 
@@ -178,9 +180,7 @@ clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection
       clipped.sp@data <- data.out
     }
   } else {
-    g.i <- rgeos::gContains(sp, clip, byid = TRUE)
-    clipped.sp <- sp[g.i]
-    clipped.sp@data <- sp@data[g.i, ]
+    stop('not supported')
   }
   
   # //to do: use rgeos::gContains for points
