@@ -438,7 +438,7 @@ publish:
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css"] #"thumbnail",
     context:
       header: header-section
-      resources: ["jquery-js", "animate-js", "vizlab-js", "svg-css","lib-header-css","lib-footer-css","map-figure-css",
+      resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
         "vizlab-favicon"]
       sections: [ "figure-section", "data-sources"]
   -

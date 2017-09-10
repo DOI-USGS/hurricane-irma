@@ -70,6 +70,9 @@ $('svg').ready(function() {
       pt = svg.createSVGPoint();
       $('#playButton').click();
     });
+    
+  var figureHeight = $("#map-figure figure").height();
+  $('#buttonContainer').css('top', figureHeight * .45);
 });
 
 
