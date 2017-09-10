@@ -132,9 +132,10 @@ function openNWIS(id, event){
 
 function setBold(id){
   var className = id.split('-')[0];
-  document.getElementById(id).setAttribute('class', className+'-bold');
+  $('#' + id).removeClass(className).addClass(className + '-bold');
+  $('#storm_sites circle[id=' + id + ']').removeClass(className + '-bold').addClass(className)
 }
 function setNormal(id){
   var className = id.split('-')[0];
-  document.getElementById(id).setAttribute('class', className);
+  $('#' + id).removeClass(className + '-bold').addClass(className);
 }
