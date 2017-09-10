@@ -308,7 +308,15 @@ visualize:
     id: base-map
     location: cache/base-map.svg
     visualizer: svg_base_map
-    depends: ["view-limits", "storm-states", "storm-counties", "storm-islands", "storm-track", "storm-sites", "storm-location"]
+    depends: 
+      view-limits: view-limits
+      storm-states: storm-states
+      storm-counties: storm-counties
+      storm-islands: storm-islands
+      storm-track-highlight: storm-track
+      storm-track: storm-track
+      storm-sites: storm-sites
+      storm-location: storm-location
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
     mimetype: image/svg+xml

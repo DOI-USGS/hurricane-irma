@@ -3,11 +3,12 @@
 visualize.svg_base_map <- function(viz = as.viz('base-map')){
   
   depends <- readDepends(viz)
+  checkRequired(depends, 'view-limits')
   
-  # not good to assume order here, but: 
-  view.limits <- depends[[1L]]
-  geoms <- depends[-1L]
-  g.ids <- viz[['depends']][-1L]
+  view.i <- which(names(depends) == 'view-limits')
+  view.limits <- depends[[view.i]]
+  geoms <- depends[-view.i]
+  g.ids <- names(depends)[-view.i]
   view.limits$proj.string <- NULL
   
   # 1) set up shell svg, w/ proper size and aspect
