@@ -43,14 +43,19 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
       }
       
       forecast <- xml_find_all(nws.site, "forecast")
-      if(length(xml_children(forecast)) == 0) {
+      forecast_children <- xml_children(forecast)
+      if(length(forecast_children) == 0) {
         #not all sites have forecasts
         next
       } else {
-        datum_children <- xml_find_all(xml_children(forecast), nws_node)
-        assertthat::assert_that(length(unique(xml_attr(datum_children, "units"))) == 1)
-        forecast_site <- data.frame(forecast_vals = xml_text(datum_children), 
-                                    site = i)
+        time_nodes <- xml_find_all(forecast_children, "valid")
+        value_nodes <- xml_find_all(forecast_children, nws_node)
+        assertthat::assert_that(length(unique(xml_attr(value_nodes, "units"))) == 1)
+        forecast_site <- data.frame(site = i,
+                                    dateTime = xml_text(time_nodes),
+                                    tz = xml_attr(time_nodes, "timezone"),
+                                    forecast_vals = xml_text(value_nodes)
+                                    )
         forecastDF <- bind_rows(forecastDF, forecast_site)
       }
     }
