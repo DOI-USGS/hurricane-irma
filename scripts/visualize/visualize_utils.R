@@ -56,9 +56,6 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
     ylim <- get_sp_lims(sp, ..., return = 'ylim')
   }
   
-  # clip the spatial object so that it only contains features and data that are within the plotting range:
-  clipped.sp <- clip_sp(sp, xlim, ylim)
-  
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
     for (j in seq_len(length(clipped.sp))){
@@ -142,7 +139,12 @@ clip_sp.SpatialPolygonsDataFrame <- function(sp, xlim, ylim, ...){
 
 clip_sp.SpatialPointsDataFrame <- function(sp, xlim, ylim, ...){
   
-  clipped.sp <- NextMethod('clip_sp', sp, ..., clip.fun = rgeos::gContains)
+  clip <- as.sp_box(xlim, ylim, sp::CRS(sp::proj4string(sp)))
+  g.i <- rgeos::gContains(clip, sp, byid = TRUE)
+  clipped.sp <- rgeos::gIntersection(clip, sp, byid = TRUE)
+  clipped.sp <- as(object = clipped.sp, Class = class(sp))
+  clipped.sp@data <- sp@data[g.i, ]
+  
   return(clipped.sp)
 }
 
@@ -178,9 +180,7 @@ clip_sp.Spatial <- function(sp, xlim, ylim, ..., clip.fun = rgeos::gIntersection
       clipped.sp@data <- data.out
     }
   } else {
-    g.i <- rgeos::gContains(sp, clip, byid = TRUE)
-    clipped.sp <- sp[g.i]
-    clipped.sp@data <- sp@data[g.i, ]
+    stop('not supported')
   }
   
   # //to do: use rgeos::gContains for points
