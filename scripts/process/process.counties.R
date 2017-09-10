@@ -9,6 +9,12 @@ county_map_name_2_id <- function(names){
   return(names.out)
 }
 
+county_map_name_2_mouser <- function(names){
+  names.split <- unlist(strsplit(names, '[,]'))
+  states <- names.split[seq(1, length(names.split), by=2)] 
+  counties <- names.split[seq(2, length(names.split), by=2)]
+  names.out <- paste(counties, states, sep = ', ')
+}
 
 #' clip/reduce the actual counties that are used, add a data.frame to them that will be used by `visualize`
 #' 
@@ -19,8 +25,8 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   depends <- readDepends(viz)
   sp <- depends[['counties']]
   precip.classes <- depends[['precip-classify']]
-  epsg_code <- getContentInfo('storm-area-filter')[['proj.string']]
-  footy <- depends[['storm-area-filter']] %>% sp::spTransform(sp::CRS(epsg_code)) %>% 
+  epsg_code <- getContentInfo('view-limits')[['proj.string']]
+  footy <- depends[['storm-area-filter']] %>% sp::spTransform(epsg_code) %>% 
     rgeos::gBuffer(width=200000, byid=TRUE )
   counties <- sp::spTransform(sp, sp::CRS(epsg_code))
   overlap <- rgeos::gContains(footy, counties, byid = TRUE) %>% rowSums() %>% as.logical()
@@ -30,11 +36,11 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   data.out <- data.frame(id = NA_character_, 
                          base.class = rep('county-polygon', length(sp)), 
                          polyname = names(sp), 
-                         onmousemove = "hovertext('TEST county, TEST state',evt);", 
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
     left_join(precip.classes) %>% 
     mutate(id = county_map_name_2_id(polyname)) %>% mutate(class = paste0(base.class, class)) %>% 
+    mutate(onmousemove = sprintf("hovertext('%s',evt);", county_map_name_2_mouser(polyname))) %>%  
     select(-polyname, -base.class) 
   
   row.names(data.out) <- row.names(sp)

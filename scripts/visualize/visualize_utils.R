@@ -58,20 +58,20 @@ get_svg_geoms <- function(sp, ..., width = 10, height = 8, pointsize = 12, xlim,
   
   rendered <- svglite::xmlSVG(width = width, height = height, pointsize = pointsize, standalone = F, {
     set_sp_plot()
-    for (j in seq_len(length(clipped.sp))){
-      if (inherits(clipped.sp, 'SpatialPoints')){
-        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T), pch = 20)
+    for (j in seq_len(length(sp))){
+      if (inherits(sp, 'SpatialPoints')){
+        sp::plot(sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T), pch = 20)
       } else {
-        sp::plot(clipped.sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
+        sp::plot(sp[j, ], ..., xlim = xlim, ylim = ylim, add = ifelse(j == 1, F, T))
       }
       
     }
     
   })
   svg.g <- xml2::xml_child(rendered)
-  if (xml2::xml_length(svg.g) == length(clipped.sp) + 1){
+  if (xml2::xml_length(svg.g) == length(sp) + 1){
     xml_remove(xml_child(svg.g)) # remove the <rect thing it puts in there>
-  } else if (xml2::xml_length(svg.g) != length(clipped.sp)){
+  } else if (xml2::xml_length(svg.g) != length(sp)){
     message('something might be wrong. Length of svg elements is different than number of features',
             'but ignore this warning for lines.')
     xml_remove(xml_child(svg.g))

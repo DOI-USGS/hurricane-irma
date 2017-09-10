@@ -179,10 +179,6 @@ fetch:
     fetcher: storm_area_filter
     lats: [24.5, 30.9, 32.7, 27, 24.5, 24.5]
     lons: [-83.4, -84, -80.5, -78.9, -79.6, -83.4]
-    height: 10 # we should instead depend on view-limits and get all of this out of that target
-    width: 8
-    pointsize: 12
-    proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     
 process:
@@ -238,7 +234,7 @@ process:
     reader: rds
     processor: storm_counties
     scripts: scripts/process/process.counties.R
-    depends: ["counties", "precip-classify", "storm-area-filter"]
+    depends: ["counties", "precip-classify", "storm-area-filter", "view-limits"]
     mimetype: application/zip
   -
     id: storm-states

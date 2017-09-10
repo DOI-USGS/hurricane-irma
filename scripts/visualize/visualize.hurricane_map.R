@@ -57,6 +57,5 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
   
-  
   write_xml(svg, file = viz[['location']])
 }
