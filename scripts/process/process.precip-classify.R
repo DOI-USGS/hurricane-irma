@@ -19,7 +19,7 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
   
   for (i in 1:length(polynames)){
     polyname <- polynames[i]
-    fip.data <- precipData[precipData$polyname == polyname, ] %>% arrange(desc(DateTime))
+    fip.data <- precipData[precipData$polyname == polyname, ] %>% arrange(DateTime)
     changed <- which(as.logical(c(TRUE, diff(as.numeric(fip.data$cols)))))
     data.out$class[i] <- paste(' p-', changed, '-', fip.data$cols[changed], sep = '', collapse = '')
   }
