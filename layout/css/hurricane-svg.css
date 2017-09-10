@@ -13,19 +13,42 @@ line, polyline, path{
 	cursor: default;
 }
 
+.rain-box {
+  stroke:white;
+}
+
+.legend-text{
+  fill: black;
+  fill-opacity: 0.55;
+}
+.rainfall-legend-text {
+  font-size:1.2em;
+  font-style: italic;
+}
+.ocean-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-style: italic;
+  font-size:1.2em;
+}
+.state-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.5;
+  font-size:1em;
+}
+
+
 .time-text {
-  fill:black;
+  font-style:italic;
 }
 .nwis-dot, .nwis {
-  stroke:purple;
-  fill:purple;
+  stroke:#057083;
+  fill:#057083;
   fill-opacity:0.6;
 }
 
 .nwis-bold, .nwis-dot:hover, .nwis:hover {
   fill-opacity: 0.7;
-  stroke:purple;
-  fill:purple;
   stroke-width:2;
 }
   
@@ -42,7 +65,12 @@ line, polyline, path{
 
 #storm-track{
   stroke-width:2;
-  stroke: red;
+  stroke: black;
+  opacity: 0.7;
+}
+#storm-track-highlight{
+  stroke-width:3.5;
+  stroke: white;
 }
 
 .state-polygon {
