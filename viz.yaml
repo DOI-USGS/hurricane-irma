@@ -82,6 +82,9 @@ info:
     lubridate:
       repo: CRAN
       version: 1.6.0
+    assertthat:
+      repo: CRAN
+      version: 0.2.0
   contributors:
     
 

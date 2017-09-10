@@ -5,7 +5,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   view.lims <- depends[["view-limits"]]
   sites <- depends[['sites']] 
   storm_poly <- depends[['storm-area-filter']]
-  nws.sites <- depends[['nws-data']]
+  nws.sites <- depends[['nws-data']]$sites
   
   library(dplyr)
   sites <- sites %>% arrange(desc(dec_lat_va))
