@@ -91,7 +91,7 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-87, 20, -65, 34]
+    bbox: [-87, 20, -75, 34]
     height: 10
     width: 8
     pointsize: 12

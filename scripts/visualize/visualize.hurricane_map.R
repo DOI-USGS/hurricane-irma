@@ -11,8 +11,9 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_attr(svg, "id") <- viz[['id']]
   
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
+  xml_attr(svg, 'viewBox') <- paste("0", "13", vb[3], vb[4], collapse="") # doing this because there is a weird gutter on top
   
-  xml_add_sibling(xml_children(svg)[[1]], 'rect', .where='before', width=vb[3], height=vb[4], class='ocean-water')
+  xml_add_sibling(xml_children(svg)[[1]], 'rect', .where='before', width="100%", height="100%", class='ocean-water')
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   
