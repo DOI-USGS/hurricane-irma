@@ -33,7 +33,7 @@ var animatePrcp = function(timestep) {
 
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
-  var darkWidth = timestep/prcpTimes.times.length;
+  var darkWidth = (timestep+1)/prcpTimes.times.length;
   $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#spark-full-mask').attr('width', darkWidth);
 };

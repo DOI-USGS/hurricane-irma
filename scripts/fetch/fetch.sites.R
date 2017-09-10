@@ -1,6 +1,6 @@
 #fetch NWIS iv data, downsample to hourly
 
-fetch.sites <- function(viz = as.viz('sites-data')){
+fetch.sites <- function(viz = as.viz('sites')){
   required <- c("location", "pCode")
   checkRequired(viz, required)
   pCode <- viz[['pCode']]
