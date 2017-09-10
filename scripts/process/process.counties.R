@@ -18,8 +18,11 @@ county_map_name_2_mouser <- function(names){
 
 simpleCap <- function(x) {
   s <- strsplit(x, " ")[[1]]
-  paste(toupper(substring(s, 1,1)), substring(s, 2),
+  s <- paste(toupper(substring(s, 1,1)), substring(s, 2),
         sep="", collapse=" ")
+  s <- strsplit(s, "-")[[1]]
+  paste(toupper(substring(s, 1,1)), substring(s, 2),
+        sep="", collapse="-")
 }
 
 #' clip/reduce the actual counties that are used, add a data.frame to them that will be used by `visualize`
