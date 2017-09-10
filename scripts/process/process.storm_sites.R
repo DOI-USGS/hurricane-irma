@@ -18,11 +18,11 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)]
   
   data.out <- data.frame(id = paste0('nwis-', sites$site_no), 
-                         class = ifelse(is.featured, 'active-gage','inactive-gage'),
+                         class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
                          r = ifelse(is.featured, '2','1'),
-                         onmousemove = sprintf("hovertext('USGS %s',evt);",sites$site_no),
-                         onmouseout = sprintf("setNormal('sparkline-%s');hovertext(' ');", sites$site_no),
-                         onmouseover=sprintf("setBold('sparkline-%s');", sites$site_no),
+                         onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites$site_no), ""),
+                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites$site_no), ""),
+                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites$site_no), ""),
                          stringsAsFactors = FALSE) 
   
   row.names(data.out) <- row.names(sites.sp)
@@ -40,7 +40,7 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   checkRequired(viz, required)
   depends <- readDepends(viz)
   siteInfo <- depends[['storm-sites']]
-  sites_active <- dplyr::filter(siteInfo@data, class == 'active-gage')$id
+  sites_active <- dplyr::filter(siteInfo@data, class == 'nwis-dot')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
   # now, use the SORTED dependency "sites" to get these in latitude order
   sites_active <- depends$sites$site_no[depends$sites$site_no %in% sites_active]

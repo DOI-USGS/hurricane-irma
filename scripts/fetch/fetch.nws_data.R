@@ -32,8 +32,11 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
         sites$flood.stage.units[which(sites$NWS %in% i)] <- xml_attr(xml_find_all(sigstages, "flood"),"units")
       }
     }
+    sites <- sites %>% filter(!is.na(flood.stage))
+    location <- viz[['location']]
+    saveRDS(sites, file=location)
+  } else {
+    return(NULL)
   }
-  sites <- sites %>% filter(!is.na(flood.stage))
-  location <- viz[['location']]
-  saveRDS(sites, file=location)
+  
 }
