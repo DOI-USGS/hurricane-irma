@@ -76,6 +76,9 @@ line, polyline, path{
 .storm-dot, .storm-dot-legend {
   fill: #F29E4C;
 }
+.storm-dot {
+  opacity: 0;
+}
 .sparkline {
 	stroke: #057083;
 	stroke-width:1.5;
