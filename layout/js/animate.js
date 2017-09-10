@@ -63,7 +63,8 @@ var playPause = function() {
   }
 };
 
-$(document).ready(function() {
+$('svg').ready(function() {
+  $('.storm-dot').css("opacity", "0")
   $.when(fetchPrcpTimes, fetchPrcpColors)
     .done(function() {
       svg = document.querySelector("svg");
