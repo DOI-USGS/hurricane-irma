@@ -37,6 +37,20 @@ line, polyline, path{
   font-size:1em;
 }
 
+#map-elements-portrait {
+  /* doesn't work in IE */
+  transform: translate(-50px, -118px) scale(1.5);
+}
+
+#sparkline-squiggle-block-portrait {
+  transform: translate(0px, 170px)
+}
+
+
+#map-elements-landscape {
+  /* doesn't work in IE */
+  transform: translate(0px, -130px) scale(1.2);
+}
 
 .time-text {
   font-style:italic;
@@ -50,6 +64,8 @@ line, polyline, path{
 .nwis-bold, .nwis-dot:hover, .nwis:hover {
   fill-opacity: 0.7;
   stroke-width:2;
+  fill:#F29E4C;
+  stroke:#F29E4C;
 }
   
 .inactive-dot {
@@ -57,7 +73,7 @@ line, polyline, path{
   fill:grey;
   fill-opacity:0.6;
 }
-.county-polygon, .island-polygon {
+.county-polygon {
   fill: #efefef;
   stroke: #c6c6c6;
   stroke-width:0.5;
@@ -73,7 +89,7 @@ line, polyline, path{
   stroke: white;
 }
 
-.state-polygon {
+.state-polygon, .island-polygon {
   fill: #9a9a9a;
   stroke: #5f5f5f;
   stroke-width:0.5;
@@ -103,6 +119,7 @@ line, polyline, path{
 }
 .storm-dot, .storm-dot-legend {
   fill: #F29E4C;
+  stroke:white;
 }
 .storm-dot {
   opacity: 0;
@@ -119,7 +136,7 @@ line, polyline, path{
 
 .legend-box {
   fill: #C0C0C0;
-  fill-opacity: 0.5;
+  fill-opacity: 0.7;
   stroke: none;
 }
 
