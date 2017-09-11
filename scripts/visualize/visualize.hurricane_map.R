@@ -51,7 +51,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   rain.w <- 30 # width of a rain legend bin
   rain.h <- 15
   x0 <- 0
-  n.bins <- 4
+  n.bins <- color.meta$bins
   cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
   for (i in 1:n.bins){
     xml_add_child(g.rains, 'rect', x=as.character(x0), y="-10", 
