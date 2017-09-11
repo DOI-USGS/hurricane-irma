@@ -253,7 +253,7 @@ process:
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.2
+    stepSize: 0.15
   - 
     id: precip-classify
     location: cache/precip-classified.rds
