@@ -366,7 +366,7 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
+    "storm-location", "storm-track"]
     css: layout/css/hurricane-svg.css
     time-stamp: "2017-09-09 18:00:00"
     expandBB: "c(0.3,0,0,2)"
@@ -383,8 +383,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
     time-stamp: "2017-09-09 18:00:00"
+    "storm-location", "storm-track"]
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.3,0,0,2)"
     fig-height: 300
@@ -400,8 +400,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
     time-stamp: "2017-09-09 18:00:00"
+    "storm-location", "storm-track"]
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.1,0,0,0)"
     fig-height: 400

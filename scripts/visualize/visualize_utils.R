@@ -228,7 +228,6 @@ visualize.map_thumbnail <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
-  view_box <- depends[["view-limits"]]
     
   # styling details
   css <- readLines(viz$css)
