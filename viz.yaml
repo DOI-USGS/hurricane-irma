@@ -101,6 +101,9 @@ info:
     assertthat:
       repo: CRAN
       version: 0.2.0
+    animation:
+      repo: CRAN
+      version: 2.5.0
   contributors:
     
 
@@ -250,7 +253,7 @@ process:
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.25
+    stepSize: 0.2
   - 
     id: precip-classify
     location: cache/precip-classified.rds
@@ -307,6 +310,14 @@ process:
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
     depends: ["gage-data","timesteps", "sites"]
+  - 
+    id: flood-sites
+    location: cache/flood-sites.rds
+    processor: flood_sites
+    scripts: scripts/process/process.flood_sites.R
+    reader: rds
+    depends: ["gage-data", "nws-data", "storm-sites"]  
+    time-stamp: "2017-09-11 06:00:00"
     
 visualize:
   -
@@ -358,10 +369,10 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
+    "storm-location", "storm-track", "flood-sites"]
     css: layout/css/hurricane-svg.css
-    time-stamp: "2017-09-09 18:00:00"
-    expandBB: "c(0.3,0,0,2)"
+    time-stamp: "2017-09-11 06:00:00"
+    expandBB: "c(0.3,0,0,1.5)"
     fig-height: 820
     fig-width: 1560
     export: true
@@ -375,10 +386,10 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
-    time-stamp: "2017-09-09 18:00:00"
+    "storm-location", "storm-track", "flood-sites"]
+    time-stamp: "2017-09-11 06:00:00"
     css: layout/css/hurricane-svg.css
-    expandBB: "c(0.3,0,0,2)"
+    expandBB: "c(0.3,0,0,1.5)"
     fig-height: 300
     fig-width: 560
     export: true
@@ -392,8 +403,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "view-limits","storm-track"]
-    time-stamp: "2017-09-09 18:00:00"
+    "storm-location", "storm-track", "flood-sites"]
+    time-stamp: "2017-09-11 06:00:00"
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.1,0,0,0)"
     fig-height: 400
@@ -402,6 +413,22 @@ visualize:
     mimetype: image/png
     title: thumbnail
     alttext: "hurricane irma thumbnail"
+  -
+    id: timelapse
+    location: figures/timelapse.gif
+    visualizer: timelapse_gif
+    scripts: ["scripts/visualize/visualize_utils.R", "scripts/process/process.flood_sites.R"]
+    depends: ["storm-states", "storm-islands", "storm-counties", 
+    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
+    "storm-location", "storm-track", "storm-sites", "gage-data", "nws-data"]
+    css: layout/css/hurricane-svg.css
+    expandBB: "c(0.1,0,0,0)"
+    fig-height: 820
+    fig-width: 1560
+    export: true
+    mimetype: image/gif
+    title: irma-timelapse
+    alttext: "hurricane irma timelapse"
     
 publish:
   -
@@ -425,7 +452,7 @@ publish:
     id: play-icon
     location: images/arrow.png
     mimetype: image/png
-    title: "plat icon"
+    title: "play icon"
     alttext: "play icon"
   -
     id: vizlab-logo
