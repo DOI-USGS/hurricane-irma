@@ -110,7 +110,7 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-87, 20, -75, 34]
+    bbox: [-88, 21, -70, 35]
     height: 10
     width: 8
     pointsize: 12
@@ -176,19 +176,6 @@ fetch:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
   -
-    id: precip-cell-data
-    fetcher: precipCellData
-    start.date: "2017-09-07"
-    end.date: "2017-09-08"
-    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
-    sb.geom: "sb:irma_cells"
-    sb.attribute: "id"
-    scripts: scripts/fetch/fetchPrecip_cells.R
-    location: cache/precip_cells.csv
-    mimetype: text/csv
-    refetch: FALSE
-    comment: disabling refetch as this isn't needed yet
-  -
     id: sites
     fetcher: sites
     scripts: scripts/fetch/fetch.sites.R
@@ -202,7 +189,7 @@ fetch:
     id: nws-conversion
     location: cache/nws-conversion.rds
     reader: rds
-    states: ["FL"] # not currently coded to support more...
+    states: ["FL", "GA"] 
     fetcher: nws_conversion
     scripts: scripts/fetch/fetch.nws_conversion.R
   -
@@ -339,15 +326,31 @@ visualize:
     reader: svg_map
     mimetype: image/svg+xml
   -
-    id: hurricane-map
-    location: figures/hurricane-map.svg
-    visualizer: hurricane_map
+    id: hurricane-map-portrait
+    location: figures/hurricane-map-portrait.svg
+    visualizer: hurricane_map_portrait
     depends: ["base-map", "discharge-sparks", "precip-colors"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
+    height: 720
+    width: 576
+    export: true
+    title: "Hurricane Irma's impact on precipitation and streamflow"
+    alttext: "Map of Hurricane Irma's water footprint"
+  -
+    id: hurricane-map-landscape
+    location: figures/hurricane-map-landscape.svg
+    visualizer: hurricane_map_landscape
+    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    scripts: scripts/visualize/visualize.hurricane_map.R
+    mimetype: image/svg+xml
+    height: 576
+    width: 720
     inline: true
+    export: true
     title: "Hurricane Irma's impact on precipitation and river gage height"
     alttext: "Map of Hurricane Irma's water footprint"
+    
   -
     id: thumbnail-facebook
     location: figures/thumb-facebook.png
@@ -436,12 +439,6 @@ publish:
     id: animate-js
     location: layout/js/animate.js
     mimetype: application/javascript
-#  -
-#    id: timesteps_pub
-#    relpath: js/times.json
-#    publisher: json
-#    scripts: scripts/publish/json.R
-#    mimetype: application/json
   -
     id: hurricane-page
     name: index
@@ -451,7 +448,7 @@ publish:
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "thumbnail-facebook",
-      "thumbnail-twitter", "thumbnail-landing"]
+      "thumbnail-twitter", "thumbnail-landing", "hurricane-map-landscape", "hurricane-map-portrait"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
@@ -461,10 +458,8 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
-    depends: [ "hurricane-map" ]
     context:
       id: map-figure
-      figure: hurricane-map
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
@@ -534,9 +529,4 @@ publish:
     id: svg-css
     location: layout/css/hurricane-svg.css
     mimetype: text/css
-#  -
-##    id: facebook-thumb-pub
-#    location: images/facebook-thumb.png
-#    mimetype: image/png
-#    depends: "thumbnail-facebook"
 
