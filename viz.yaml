@@ -329,7 +329,7 @@ visualize:
     id: hurricane-map-portrait
     location: figures/hurricane-map-portrait.svg
     visualizer: hurricane_map_portrait
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
@@ -341,7 +341,7 @@ visualize:
     id: hurricane-map-landscape
     location: figures/hurricane-map-landscape.svg
     visualizer: hurricane_map_landscape
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 576
