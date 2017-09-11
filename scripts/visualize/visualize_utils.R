@@ -247,7 +247,12 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
     precip.col.i <- as.numeric(sapply(precip.classes, FUN = function(x) {strsplit(x,'[-]')[[1]][3]}, USE.NAMES = FALSE))
     t.diffs <- time_idx - precip.time.i
     time.i <- which(t.diffs==min(t.diffs[t.diffs>=0]))
-    counties@data$col[j] <- precip_cols[precip.col.i[time.i]]
+    col.to.use <- precip_cols[precip.col.i[time.i]]
+    if(length(col.to.use) == 0) {
+      col.to.use <- "#5F5A5A"
+      warning("Watch out!  there was a county with no precip data")
+    }
+    counties@data$col[j] <- col.to.use
   }
   
   par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')

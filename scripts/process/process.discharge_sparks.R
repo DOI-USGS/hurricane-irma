@@ -7,6 +7,7 @@ grab_spark <- function(vals){
   xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="polyline"]'),'points')
 }
 
+# Should rename at some point. Not always going to be discharge.
 process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
