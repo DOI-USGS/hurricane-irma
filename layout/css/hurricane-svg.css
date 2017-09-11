@@ -21,10 +21,7 @@ line, polyline, path{
   fill: black;
   fill-opacity: 0.55;
 }
-.rainfall-legend-text {
-  font-size:1.2em;
-  font-style: italic;
-}
+
 .ocean-name {
   fill: #C0C0C0;
   fill-opacity: 0.5;
@@ -57,7 +54,8 @@ line, polyline, path{
   font-size: 0.7em;
 }
 .dark-rain-legend {
-  fill:black;
+  fill: black;
+  fill-opacity: 0.55;
   font-size: 0.7em;
 }
 
