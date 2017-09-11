@@ -13,6 +13,9 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
   precipData <- precipData %>% mutate(cols = cut(precipVal, breaks = precip_breaks, labels = FALSE)) %>% 
     mutate(cols = ifelse(precipVal > tail(precip_breaks,1), length(precip_breaks), cols)) %>% 
     mutate(cols = ifelse(is.na(cols), 1, cols), cols = as.character(cols)) %>% select(fips, DateTime, cols) %>% left_join(fips.data)
+  
+  split_n_drop <- function(x) strsplit(x, ":")[[1]][1]
+  precipData$polyname <- as.character(sapply(precipData$polyname, split_n_drop))
     
   polynames <- unique(precipData$polyname)
   data.out <- data.frame(polyname = polynames, class = NA_character_, stringsAsFactors = FALSE)
@@ -29,6 +32,6 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
 
 process.precip_breaks <- function(viz = as.viz("precip-breaks")){
   colSteps <- readDepends(viz)[['precip-colors']] #vector of actual color palette codes
-  precip_breaks <- seq(0, viz[['stepSize']], length.out =length(colSteps))
+  precip_breaks <- seq(from = 0, to = viz[['stepSize']] * (length(colSteps) - 1), length.out =length(colSteps))
   saveRDS(object = precip_breaks, file = viz[['location']])
 }

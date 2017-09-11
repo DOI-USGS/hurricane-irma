@@ -7,6 +7,19 @@ var running = false;
 var interval = undefined;
 var intervalLength = 160;
 var timestep = 1;
+var filename;
+
+if (window.innerWidth > window.innerHeight) {
+  filename = 'images/hurricane-map-landscape.svg';
+}
+else {
+  filename = 'images/hurricane-map-portrait.svg';
+}
+
+var fetchSvg = $.ajax({
+  url: filename,
+  dataType: 'html'
+});
 
 var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
   prcpColors = data;
@@ -43,12 +56,12 @@ var playPause = function() {
   if (running) {
     clearInterval(interval);
     running = false;
-    button.html("Play");
+    button.css('display', 'block');
     ga('send', 'event', 'figure', 'user pressed pause');
   } else {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
-    button.html("Pause")
+    button.css('display', 'none');
     interval = setInterval(function() {
       if (timestep < prcpTimes.times.length) {
         animatePrcp(timestep);
@@ -57,29 +70,24 @@ var playPause = function() {
         timestep = 1;
         clearInterval(interval);
         running = false;
-        button.html("Play");
+        button.css('display', 'block');
       }
     }, intervalLength);
   }
 };
 $('document').ready(function() {
-  var filename;
-  if (window.innerWidth > window.innerHeight) {
-    filename = 'images/hurricane-map-landscape.svg';
-  }
-  else {
-    filename = 'images/hurricane-map-portrait.svg';
-  }
-  $('#map-figure figure').load(filename, function() {
-    $.when(fetchPrcpTimes, fetchPrcpColors)
-      .done(function() {
-        svg = document.querySelector("svg");
-        pt = svg.createSVGPoint();
-        $('#playButton').click();
-      });
-      
-    var figureHeight = $("#map-figure figure").height();
-    $('#buttonContainer').css('top', figureHeight * .45);
+  fetchSvg.done(function(data) {
+    $('#map-figure figure').html(data);
+    $('#map-figure svg').ready(function() {
+        $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+          svg = document.querySelector("svg");
+          pt = svg.createSVGPoint();
+          $('#map-figure figure').on('click', function(){
+            playPause();
+          });
+          playPause();
+        });
+    });
   });
 });
 
