@@ -46,16 +46,24 @@ figurecaption{
 }
 
 #playButton{
-  background:#ebebeb;
+  background:#003366;
   position: absolute;
   margin: auto;
   text-align: center;
   left:0; right:0;
-  top:35%;
-  height:50px;
-  width:90px;
+  top:25%;
+  height:75px;
+  width:75px;
+  border-radius:45px;
+  border:none;
+  outline:none;
   font-size:24px;
   font-weight:bold;
+}
+
+#playButton img{
+  width:35px;
+  margin:7px auto 0 6px;
 }
 
 
@@ -69,6 +77,10 @@ figurecaption{
     width:760px;
     margin:10px auto 10px auto;
     font-size:1em;
+  }
+  
+  #playButton{
+    top:40%;
   }
 }
 
