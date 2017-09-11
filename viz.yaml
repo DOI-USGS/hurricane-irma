@@ -175,19 +175,6 @@ fetch:
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
-#  -
-#    id: precip-cell-data
-#    fetcher: precipCellData
-#    start.date: "2017-09-07"
-#    end.date: "2017-09-08"
-#    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
-#    sb.geom: "sb:irma_cells"
-#    sb.attribute: "id"
-#    scripts: scripts/fetch/fetchPrecip_cells.R
-#    location: cache/precip_cells.csv
-#    mimetype: text/csv
-#    refetch: FALSE
-#    comment: disabling refetch as this isn't needed yet
   -
     id: precip-cell-data
     fetcher: precipCellData
@@ -210,7 +197,7 @@ fetch:
     refetch: TRUE
     depends: ["precip-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
-    pCode: "00060"
+    pCode: "00065"
   -
     id: nws-conversion
     location: cache/nws-conversion.rds
@@ -243,6 +230,8 @@ process:
     scripts: scripts/process/process.storm_sites.R
     reader: rds
     depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
+    perc_flood_stage: 0.5
+    begin_date_filter: "2017-01-01"
   -
     id: storm-track
     location: cache/storm-track.rds
@@ -357,7 +346,7 @@ visualize:
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     inline: true
-    title: "Hurricane Irma's impact on precipitation and streamflow"
+    title: "Hurricane Irma's impact on precipitation and stream stage"
     alttext: "Map of Hurricane Irma's water footprint"
   -
     id: thumbnail-facebook
@@ -479,7 +468,7 @@ publish:
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept X?, 2017.
-        In the map above, the hurricane's impact on precipitation and streamflow are 
+        In the map above, the hurricane's impact on precipitation and stream stage are 
         shown. Normalized discharge (cubic feet per second) 
         at a selection of U.S. Geological Survey gaging stations impacted by the hurricane is shown 
         in the right panel. Variation in the shape of the hydrographs (right panel) 
