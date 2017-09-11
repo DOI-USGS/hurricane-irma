@@ -50,6 +50,8 @@ line, polyline, path{
 .nwis-bold, .nwis-dot:hover, .nwis:hover {
   fill-opacity: 0.7;
   stroke-width:2;
+  fill:#F29E4C;
+  stroke:#F29E4C;
 }
   
 .inactive-dot {
@@ -57,7 +59,7 @@ line, polyline, path{
   fill:grey;
   fill-opacity:0.6;
 }
-.county-polygon, .island-polygon {
+.county-polygon {
   fill: #efefef;
   stroke: #c6c6c6;
   stroke-width:0.5;
@@ -73,7 +75,7 @@ line, polyline, path{
   stroke: white;
 }
 
-.state-polygon {
+.state-polygon, .island-polygon {
   fill: #9a9a9a;
   stroke: #5f5f5f;
   stroke-width:0.5;
@@ -103,6 +105,7 @@ line, polyline, path{
 }
 .storm-dot, .storm-dot-legend {
   fill: #F29E4C;
+  stroke:white;
 }
 .storm-dot {
   opacity: 0;
