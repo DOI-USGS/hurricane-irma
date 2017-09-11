@@ -192,7 +192,7 @@ fetch:
     id: nws-conversion
     location: cache/nws-conversion.rds
     reader: rds
-    states: ["FL", "GA"] 
+    states: ["FL", "GA", "AL"] 
     fetcher: nws_conversion
     scripts: scripts/fetch/fetch.nws_conversion.R
   -
@@ -485,7 +485,10 @@ publish:
         collects additional information with 
       stnText: Short-Term Network gages
       stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
-      line2: (not shown). 
+      line2: (not shown). Visit USGS’s 
+      irmaText: Hurricane Irma page
+      irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
+      line3: to learn more about how the agency prepared for and measured Irma’s impact. 
   -
     id: header-section
     template: layout/templates/header.mustache
