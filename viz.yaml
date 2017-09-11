@@ -417,10 +417,10 @@ visualize:
     id: timelapse
     location: figures/timelapse.gif
     visualizer: timelapse_gif
-    scripts: ["scripts/visualize/visualize_utils.R"]
+    scripts: ["scripts/visualize/visualize_utils.R", "scripts/process/process.flood_sites.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track"]
+    "storm-location", "storm-track", "storm-sites", "gage-data", "nws-data"]
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.1,0,0,0)"
     fig-height: 820

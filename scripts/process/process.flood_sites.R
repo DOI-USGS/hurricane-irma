@@ -2,9 +2,7 @@
 #' filter sites to just those that have exceed flood stage
 #' for the time stamp selected
 process.flood_sites <- function(viz){
-  
   library(dplyr)
-  library(sp)
   
   time_stamp <- viz[['time-stamp']]
   
@@ -13,17 +11,23 @@ process.flood_sites <- function(viz){
   gage_data <- depends[["gage-data"]]
   storm_sites <- depends[["storm-sites"]]
   
-  flood_stage_info <- select(nws_data$sites, site_no, flood.stage, flood.stage.units)
+  flood_sites_sp <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
   
-  flood_data <- gage_data %>% 
-    filter(site_no %in% unique(nws_data$sites$site_no)) %>% 
+  saveRDS(flood_sites_sp, viz[['location']])
+}
+
+filterFloodSites <- function(gage_height_data, flood_stage_info, sites_sp, time_stamp){
+  library(dplyr)
+  library(sp)
+  
+  flood_data <- gage_height_data %>% 
+    filter(site_no %in% unique(flood_stage_info$sites$site_no)) %>% 
     filter(dateTime == as.POSIXct(time_stamp, tz = "America/New_York")) %>% 
-    left_join(flood_stage_info) %>% 
+    left_join(flood_stage_info$sites) %>% 
     filter(p_Inst >= flood.stage) %>% 
     mutate(id = paste0("nwis-", site_no))
   
-  flood_sites_sp <- storm_sites
-  flood_sites_sp <- flood_sites_sp[which(flood_sites_sp@data$id %in% flood_data$id), ]
+  flood_sites_sp <- sites_sp[which(sites_sp@data$id %in% flood_data$id), ]
   
-  saveRDS(flood_sites_sp, viz[['location']])
+  return(flood_sites_sp)
 }

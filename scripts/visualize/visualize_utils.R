@@ -319,13 +319,20 @@ visualize.timelapse_gif <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
-  flood_sites <- depends[['flood-sites']]
+  storm_sites <- depends[['storm-sites']]
+  gage_data <- depends[['gage-data']]
+  nws_data <- depends[["nws-data"]]
   
   # needed to use ts w/ seq_along b/c times turned numeric otherwise
   ani.options(interval = 0.3)
   saveGIF( 
   for(ts in seq_along(timesteps)){
     time_stamp <- as.character(timesteps[ts])
+    
+    # for the current timestamp, get gages that have exceeded their flood stage
+    flood_sites <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
+    
+    # create map of precip + gages above flood stage
     createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
                             counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
                             expandBB, flood_sites)
