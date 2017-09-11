@@ -523,11 +523,34 @@ publish:
       sections: [ "figure-section", "data-sources", "social-section", "embed-section"]
   -
     id: figure-section
-    embed: true
     template: layout/templates/mapFigure.mustache
     publisher: section
     context:
       id: map-figure
+      title: Hurricane Irma’s Water Footprint
+      line1: >-
+        Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
+        The map above displays the hurricane's impact on precipitation and 
+        river gage height. Normalized gage height at a selection of U.S. 
+        Geological Survey (USGS) gaging stations impacted by the hurricane 
+        is shown in the right panel. Variation in the shape of the hydrographs 
+        (right panel) is due to stream size, storm-surge, reservoir operations, 
+        and other local conditions, which can impact the effect of precipitation 
+        on flow. The USGS also collects additional information with 
+      stnText: Short-Term Network gages
+      stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
+      line2: (these gages are not shown here). 
+  -
+    id: figure-embed-section
+    embed: true
+    template: layout/templates/mapFigure.mustache
+    publisher: section
+    depends: ["figure-section", "data-sources", "map-figure-css", "jquery-js", "animate-js", 
+      "vizlab-js", "timesteps", "precip-colors", "svg-css", "vizlab-favicon","lib-header-css",
+      "lib-footer-css", "hurricane-map-landscape"]
+    context:
+      id: map-embed-figure
+      figure: "hurricane-map-landscape"
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
