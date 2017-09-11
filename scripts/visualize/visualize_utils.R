@@ -230,7 +230,7 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   state_lwd <- locate_css_class_detail(state_css, "stroke-width")
   island_css <- locate_css_class(css, ".island-polygon")
   island_color <- locate_css_class_detail(island_css, "fill")
-  island_lwd <- locate_css_class_detail(island_css, "stroke-width")
+  island_lwd <- 0
   storm_color <- locate_css_class_detail(locate_css_class(css, "storm-dot"), "fill")
   
   counties@data$col <- NA_character_
