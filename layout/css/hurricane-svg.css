@@ -34,7 +34,7 @@ line, polyline, path{
   font-size:1em;
 }
 
-#map-elements-portrait {
+#map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {
   /* doesn't work in IE */
   transform: translate(-50px, -118px) scale(1.5);
 }
@@ -44,7 +44,7 @@ line, polyline, path{
 }
 
 
-#map-elements-landscape {
+#map-elements-landscape, #map-elements-landscape-top, #map-elements-landscape-mid {
   /* doesn't work in IE */
   transform: translate(0px, -130px) scale(1.2);
 }
