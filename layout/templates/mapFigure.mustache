@@ -1,12 +1,13 @@
 <div id="{{id}}" caption="Precipitation from Hurricane Irma">
-  <figure>
-    {{{figure}}}
-  </figure>
-  
-  <button id="playButton" onclick="playPause();">
-    {{{playIcon}}}
-  </button>
-  
+  <div id="figureButtonCenter">
+    <figure>
+      {{{figure}}}
+    </figure>
+    <button id="playButton" onclick="playPause();">
+      {{{playIcon}}}
+    </button>
+  </div>
+
   <figureCaption>
     {{line1}}
     <a href="{{stnLink}}" rel = "external" onclick="vizlab.clicklink('{{stnLink}}'); return false;">{{stnText}}</a>
