@@ -310,6 +310,14 @@ process:
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
     depends: ["gage-data","timesteps", "sites"]
+  - 
+    id: flood-sites
+    location: cache/flood-sites.rds
+    processor: flood_sites
+    scripts: scripts/process/process.flood_sites.R
+    reader: rds
+    depends: ["gage-data", "nws-data", "storm-sites"]  
+    time-stamp: "2017-09-11 06:00:00"
     
 visualize:
   -
@@ -361,9 +369,9 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "gage-data"]
+    "storm-location", "storm-track", "flood-sites"]
     css: layout/css/hurricane-svg.css
-    time-stamp: "2017-09-10 09:00:00"
+    time-stamp: "2017-09-11 06:00:00"
     expandBB: "c(0.3,0,0,1.5)"
     fig-height: 820
     fig-width: 1560
@@ -378,8 +386,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "gage-data"]
-    time-stamp: "2017-09-10 09:00:00"
+    "storm-location", "storm-track", "flood-sites"]
+    time-stamp: "2017-09-11 06:00:00"
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.3,0,0,1.5)"
     fig-height: 300
@@ -395,8 +403,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "gage-data"]
-    time-stamp: "2017-09-10 09:00:00"
+    "storm-location", "storm-track", "flood-sites"]
+    time-stamp: "2017-09-11 06:00:00"
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.1,0,0,0)"
     fig-height: 400
