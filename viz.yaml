@@ -215,7 +215,7 @@ fetch:
     id: nws-conversion
     location: cache/nws-conversion.rds
     reader: rds
-    states: ["FL"] # not currently coded to support more...
+    states: ["FL", "GA"] 
     fetcher: nws_conversion
     scripts: scripts/fetch/fetch.nws_conversion.R
   -
