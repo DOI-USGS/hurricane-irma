@@ -43,13 +43,11 @@ var playPause = function() {
   if (running) {
     clearInterval(interval);
     running = false;
-    button.html("Play");
-    button.css('opacity', '1');
+    button.css('opacity', '.4');
     ga('send', 'event', 'figure', 'user pressed pause');
   } else {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
-    button.html("Pause");
     button.css('opacity', '0');
     interval = setInterval(function() {
       if (timestep < prcpTimes.times.length) {
@@ -59,8 +57,7 @@ var playPause = function() {
         timestep = 1;
         clearInterval(interval);
         running = false;
-        button.html("Play");
-        button.css('opacity', '1');
+        button.css('opacity', '.4');
       }
     }, intervalLength);
   }
@@ -85,7 +82,7 @@ $('document').ready(function() {
   $('#map-figure figure').on('click', function(){
     playPause();
   });
-  
+
 });
 
 var hoverTimer = null;
