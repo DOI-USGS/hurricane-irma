@@ -21,7 +21,7 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   
   sparks <- group_by(depends[["gage-data"]], site_no) %>% 
     filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2]) %>% 
-    summarize(points = interp_q(dateTime, Flow_Inst)) %>% 
+    summarize(points = interp_q(dateTime, p_Inst)) %>% 
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            style = "mask: url(#spark-opacity);",
