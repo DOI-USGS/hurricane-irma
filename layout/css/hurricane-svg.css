@@ -98,10 +98,14 @@ line, polyline, path{
   stroke: white;
 }
 
-.state-polygon, .island-polygon {
+ .state-polygon{
   fill: #9a9a9a;
   stroke: #5f5f5f;
   stroke-width:0.5;
+}
+
+.island-polygon{
+  fill:#d1d6d8;
 }
 
 .ocean-water {
