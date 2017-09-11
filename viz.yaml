@@ -350,9 +350,9 @@ visualize:
     reader: svg_map
     mimetype: image/svg+xml
   -
-    id: hurricane-map
-    location: figures/hurricane-map.svg
-    visualizer: hurricane_map
+    id: hurricane-map-portrait
+    location: figures/hurricane-map-portrait.svg
+    visualizer: hurricane_map_portrait
     depends: ["base-map", "discharge-sparks", "precip-colors"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
@@ -472,10 +472,10 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
-    depends: [ "hurricane-map" ]
+    depends: [ "hurricane-map-portrait" ]
     context:
       id: map-figure
-      figure: hurricane-map
+      figure: hurricane-map-portrait
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept X?, 2017.
