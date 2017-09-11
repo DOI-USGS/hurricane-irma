@@ -62,19 +62,26 @@ var playPause = function() {
     }, intervalLength);
   }
 };
-
-$('svg').ready(function() {
-  $.when(fetchPrcpTimes, fetchPrcpColors)
-    .done(function() {
-      svg = document.querySelector("svg");
-      pt = svg.createSVGPoint();
-      $('#playButton').click();
-    });
-    
-  var figureHeight = $("#map-figure figure").height();
-  $('#buttonContainer').css('top', figureHeight * .45);
+$('document').ready(function() {
+  var filename;
+  if ($(window).width() > 1200) {
+    filename = 'svg/hurricane-map-desktop.svg';
+  }
+  else {
+    filename = 'svg/hurricane-map-portrait.svg';
+  }
+  $('#map-figure figure').load(filename, function() {
+    $.when(fetchPrcpTimes, fetchPrcpColors)
+      .done(function() {
+        svg = document.querySelector("svg");
+        pt = svg.createSVGPoint();
+        $('#playButton').click();
+      });
+      
+    var figureHeight = $("#map-figure figure").height();
+    $('#buttonContainer').css('top', figureHeight * .45);
+  });
 });
-
 
 var hoverTimer = null;
 var hoverDelay = 400; //ms
