@@ -1,6 +1,6 @@
 #' function for placing add-ons to the svg base map
 #' 
-visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map')){
+visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrait')){
   library(xml2)
   
   depends <- readDepends(viz)
@@ -47,7 +47,7 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map')){
   rain.w <- 30 # width of a rain legend bin
   rain.h <- 15
   x0 <- 0
-  n.bins <- 4
+  n.bins <- color.meta$bins
   cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
   for (i in 1:n.bins){
     xml_add_child(g.rains, 'rect', x=as.character(x0), y="-10", 
