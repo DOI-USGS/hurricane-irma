@@ -28,12 +28,14 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # overlays 
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class='svg-text ocean-name', id="atlantic-ocean", transform="translate(220,290)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class='svg-text ocean-name', id="gulf-of-mexico", transform="translate(50,380)")
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(50,380)")
   xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(60,290)")
   xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(120,190)")
   xml_add_child(g.overlays, 'text', "Alabama", class='svg-text state-name', id="alabama", transform="translate(38,210)")
   xml_add_child(g.overlays, 'text', "South Carolina", class='svg-text state-name', id="south-carolina", transform="translate(180,180)")
+  xml_add_child(g.overlays, 'text', "Tennessee", class='svg-text state-name', id="tennessee", transform="translate(55,128)")
+  xml_add_child(g.overlays, 'text', "North Carolina", class='svg-text state-name', id="north-carolina", transform="translate(215,135)")
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   

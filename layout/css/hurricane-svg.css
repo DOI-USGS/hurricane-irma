@@ -22,15 +22,22 @@ line, polyline, path{
   fill-opacity: 0.55;
 }
 
-.ocean-name {
+.ocean-name-landscape {
   fill: #C0C0C0;
   fill-opacity: 0.5;
   font-style: italic;
   font-size:1.2em;
 }
-.state-name {
+
+.ocean-name-portrait{
   fill: #C0C0C0;
   fill-opacity: 0.5;
+  font-style: italic;
+}
+
+.state-name {
+  fill: #C0C0C0;
+  fill-opacity: 0.7;
   font-size:1em;
 }
 
