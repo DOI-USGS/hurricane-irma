@@ -346,7 +346,7 @@ visualize:
     height: 720
     width: 576
     export: true
-    title: "Hurricane Irma's impact on precipitation and streamflow"
+    title: "Hurricane Irma's impact on precipitation on river stage"
     alttext: "Map of Hurricane Irma's water footprint"
   -
     id: hurricane-map-landscape
