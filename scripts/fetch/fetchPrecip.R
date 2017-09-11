@@ -8,10 +8,15 @@ fetch.precip <- function(viz = as.viz('precip-data')){
   
   getPrecip <- function(counties, startDate, endDate){
     
-    counties_fips <- maps::county.fips %>% 
+    counties_fips <- maps::county.fips 
+    
+    split_n_drop <- function(x) strsplit(x, ":")[[1]][1]
+
+    counties_fips$polyname <- as.character(sapply(counties_fips$polyname, split_n_drop))
+    
+    counties_fips <- counties_fips %>%
       dplyr::filter(polyname %in% counties) %>% 
       mutate(fips = sprintf('%05d', fips))# fips need 5 digits to join w/ geoknife result
-      
     
     stencil <- webgeom(geom = 'derivative:US_Counties',
                        attribute = 'FIPS',
@@ -38,12 +43,9 @@ fetch.precip <- function(viz = as.viz('precip-data')){
   attr(startDate, 'tzone') <- "UTC"
   
   counties <- readDepends(viz)[['counties']] 
-  
+
   precip <- getPrecip(names(counties), startDate, endDate)
   attr(precip$DateTime, 'tzone') <- "America/New_York" #back to eastern
   location <- viz[['location']]
   write.csv(precip, file=location, row.names = FALSE)
 }
-
-
-
