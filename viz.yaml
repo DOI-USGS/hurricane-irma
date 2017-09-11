@@ -423,10 +423,10 @@ publish:
     alttext: "USGS Logo"
   -
     id: play-icon
-    location: images/arrow.svg
-    mimetype: image/svg+xml
-    title: "test"
-    alttext: "test"
+    location: images/arrow.png
+    mimetype: image/png
+    title: "plat icon"
+    alttext: "play icon"
   -
     id: vizlab-logo
     location: images/vizlab.svg

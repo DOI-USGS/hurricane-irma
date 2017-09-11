@@ -82,11 +82,7 @@ $('document').ready(function() {
   $('#map-figure figure').on('click', function(){
     playPause();
   });
-  
-  $('#playButton').children().on('click', function(){
-    debugger; 
-  });
-  
+
 });
 
 var hoverTimer = null;

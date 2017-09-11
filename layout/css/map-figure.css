@@ -51,7 +51,7 @@ figurecaption{
   margin: auto;
   text-align: center;
   left:0; right:0;
-  top:40%;
+  top:25%;
   height:75px;
   width:75px;
   border-radius:45px;
@@ -61,7 +61,7 @@ figurecaption{
   font-weight:bold;
 }
 
-#play-icon{
+#playButton img{
   width:35px;
   margin:7px auto 0 6px;
 }
@@ -77,6 +77,10 @@ figurecaption{
     width:760px;
     margin:10px auto 10px auto;
     font-size:1em;
+  }
+  
+  #playButton{
+    top:40%;
   }
 }
 
