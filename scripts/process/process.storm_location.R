@@ -37,7 +37,7 @@ process.storm_location <- function(viz = as.viz('storm-location')){
   
   data.out <- data.frame(id = paste0('storm-', 1:length(location)), 
                          class = "storm-dot", 
-                         r = "8", 
+                         r = "12", 
                          stringsAsFactors = FALSE) 
   row.names(data.out) <- row.names(location)
   sp.data.frame <- as(object = location, Class = paste0(class(location), "DataFrame"))

@@ -1,6 +1,6 @@
 #' function for placing add-ons to the svg base map
 #' 
-visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
+visualize_hurricane_map <- function(viz, height, width, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
@@ -10,29 +10,33 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   color.meta <- getContentInfo('precip-colors')
   xml_attr(svg, "id") <- viz[['id']]
   
-  vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
-  top.bmp <- "13"
+  # get the big dog that has all the stuff that is geo:
+  map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
+  
+  xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
+
   side.panel <- 145
-  height <- as.character(as.numeric(vb[4])+as.numeric(top.bmp))
-  xml_attr(svg, 'viewBox') <- paste("0", top.bmp, vb[3], height, collapse="") # doing this because there is a weird gutter on top
+  xml_attr(svg, 'viewBox') <- sprintf("0 0 %s %s", width, height)
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
   
-  xml_add_child(xml_children(svg)[[1]], 'rect', .where='before', x=as.character(as.numeric(vb[3])-side.panel), 
-                width = as.character(side.panel), height='100%', class='legend-box')
-  xml_add_sibling(xml_children(svg)[[1]], 'rect', .where='before', width="100%", height="100%", class='ocean-water')
+  non.geo <- xml_add_sibling(xml_children(svg)[[1]], 'g', 'id' = 'non-geo', .where='before')
+  
+  
   xml_add_sibling(xml_children(svg)[[1]], 'desc', .where='before', viz[["alttext"]])
   xml_add_sibling(xml_children(svg)[[1]], 'title', .where='before', viz[["title"]])
   
   # overlays 
-  g.overlays <- xml_add_child(svg, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class='svg-text ocean-name', id="atlantic-ocean", transform="translate(300,190)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class='svg-text ocean-name', id="gulf-of-mexico", transform="translate(50,310)")
-  xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(50,202)")
-  xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(140,60)")
-  xml_add_child(g.overlays, 'text', "Alabama", class='svg-text state-name', id="alabama", transform="translate(30,95)")
-  xml_add_child(g.overlays, 'text', "South Carolina", class='svg-text state-name', id="south-carolina", transform="translate(230,30)")
+  g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class='svg-text ocean-name', id="atlantic-ocean", transform="translate(220,290)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class='svg-text ocean-name', id="gulf-of-mexico", transform="translate(50,380)")
+  xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(60,290)")
+  xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(120,190)")
+  xml_add_child(g.overlays, 'text', "Alabama", class='svg-text state-name', id="alabama", transform="translate(38,210)")
+  xml_add_child(g.overlays, 'text', "South Carolina", class='svg-text state-name', id="south-carolina", transform="translate(180,180)")
   
-  g.rain <- xml_add_child(g.overlays, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
+  
+  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water')
+  g.rain <- xml_add_child(non.geo, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
   
   # lower left legend:
   xml_add_child(g.rain, 'text', "Rainfall totals", class='svg-text rainfall-legend-text legend-text', dy="-1em")
@@ -47,7 +51,7 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   rain.w <- 30 # width of a rain legend bin
   rain.h <- 15
   x0 <- 0
-  n.bins <- 4
+  n.bins <- color.meta$bins
   cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
   for (i in 1:n.bins){
     xml_add_child(g.rains, 'rect', x=as.character(x0), y="-10", 
@@ -57,14 +61,17 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   }
   
   
-  # sparklines:
-  g.spark <- xml_add_child(svg, 'g', transform=sprintf('translate(%s,%s)', as.numeric(vb[3])-side.panel, top.bmp))
-  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
-  xml_add_child(g.spark, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  # sparkline container:
+  g.spark <- xml_add_child(non.geo, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
+  xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
+  # sparklines within container:
+  g.sparkles <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
+  xml_add_child(g.sparkles, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
+  xml_add_child(g.sparkles, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   
   ys <- seq(45, 400, length.out = nrow(sparks))
   for (i in 1:nrow(sparks)){ 
-    g.single <- xml_add_child(g.spark, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
+    g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
   }
 
@@ -75,7 +82,7 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
   xml_add_child(g.tool, 'text', id="tooltip-text", dy="-1.1em", 'text-anchor'="middle", class="tooltip-text-label svg-text", " ")
   
-  g.watermark <- xml_add_child(svg, 'g', id='usgs-watermark',
+  g.watermark <- xml_add_child(non.geo, 'g', id='usgs-watermark',
                                transform=sprintf('translate(%s,%s)scale(0.20)', 
                                                  as.character(as.numeric(vb[3])-110), 
                                                  as.character(as.numeric(vb[4])-40)))
@@ -89,6 +96,29 @@ visualize.hurricane_map <- function(viz = as.viz('hurricane-map')){
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  
+  return(svg)
+}
+
+
+visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrait')){
+  height <- viz[['height']]
+  width <- viz[['width']]
+  svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'portrait')
+  
+  # find and remove
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='g'][@id='storm-islands']") 
+  xml_remove(to.rm)
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
+  xml_remove(to.rm)
+  write_xml(svg, file = viz[['location']])
+  
+}
+
+visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landscape')){
+  height <- viz[['height']]
+  width <- viz[['width']]
+  svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'landscape')
   
   write_xml(svg, file = viz[['location']])
 }
