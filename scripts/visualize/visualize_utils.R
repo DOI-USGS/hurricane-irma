@@ -214,9 +214,12 @@ locate_css_class_detail <- function(css, item_nm){
   return(item_details)
 }
 
+#'
+#' Take style and data inputs to create a saved 
+#' image file of a snapshot in time.
 createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, states, islands, 
                                     counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
-                                    expandBB){
+                                    expandBB, gage_data){
   
   library(dplyr)
   
@@ -249,14 +252,15 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   
   par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
   sp::plot(counties, col = NA, border = "#c6c6c6",
-           expandBB = eval(parse(text = expandBB))) #decimals not working?
+           expandBB = eval(parse(text = expandBB)))
   sp::plot(states, col = state_color, border = "#c6c6c6", add = TRUE)
-  sp::plot(islands, add = TRUE, border = "#c6c6c6", col = island_color)
+  sp::plot(islands, add = TRUE, border = "#c6c6c6", col = island_color, 
+           expandBB = eval(parse(text = expandBB)))
   sp::plot(counties, add = TRUE, border = "#c6c6c6", col = counties@data$col)
-  sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
+  sp::plot(hurricane_track, add=TRUE, col = "#5f5f5f", lwd=3)
   cols <- rep("#FFFFFF00", length(storm))
   cols[time_idx] <- storm_color
-  sp::plot(storm, pch=20, cex=3, col=cols, add = TRUE)
+  sp::plot(storm, pch=20, cex=5, col=cols, add = TRUE)
 }
 
 #' script to turn the dataviz into a thumbnail
@@ -280,11 +284,12 @@ visualize.map_thumbnail <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
+  gage_data <- depends[['gage-data']]
   
   png(file = file_location, height = fig_height, width = fig_width)
   createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
                           counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
-                          expandBB)
+                          expandBB, gage_data)
   dev.off()
 }
 
@@ -307,15 +312,16 @@ visualize.timelapse_gif <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
-
+  gage_data <- depends[['gage-data']]
+  
   # needed to use ts w/ seq_along b/c times turned numeric otherwise
-  ani.options(interval = 0.5)
+  ani.options(interval = 0.3)
   saveGIF( 
   for(ts in seq_along(timesteps)){
     time_stamp <- as.character(timesteps[ts])
     createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
                             counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
-                            expandBB)
+                            expandBB, gage_data)
     title(time_stamp, line = -2)
   }, movie.name = file_location)
   
