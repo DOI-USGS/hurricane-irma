@@ -45,19 +45,21 @@ figurecaption{
   text-decoration:underline;
 }
 
-#buttonContainer {
-  position: absolute;
-  margin: 10px auto 10px auto;
-  text-align: center;
-  left: 20px;
-}
-
 #playButton{
   background:#ebebeb;
+  position: absolute;
+  margin: auto;
+  text-align: center;
+  left:0; right:0;
+  top:35%;
+  height:50px;
+  width:90px;
+  font-size:24px;
+  font-weight:bold;
 }
 
 
-#map-figure {
+#map-figure{
   position: relative;
 }
 
