@@ -62,19 +62,26 @@ var playPause = function() {
     }, intervalLength);
   }
 };
-
-$('svg').ready(function() {
-  $.when(fetchPrcpTimes, fetchPrcpColors)
-    .done(function() {
-      svg = document.querySelector("svg");
-      pt = svg.createSVGPoint();
-      $('#playButton').click();
-    });
-    
-  var figureHeight = $("#map-figure figure").height();
-  $('#buttonContainer').css('top', figureHeight * .45);
+$('document').ready(function() {
+  var filename;
+  if (window.innerWidth > window.innerHeight) {
+    filename = 'images/hurricane-map-landscape.svg';
+  }
+  else {
+    filename = 'images/hurricane-map-portrait.svg';
+  }
+  $('#map-figure figure').load(filename, function() {
+    $.when(fetchPrcpTimes, fetchPrcpColors)
+      .done(function() {
+        svg = document.querySelector("svg");
+        pt = svg.createSVGPoint();
+        $('#playButton').click();
+      });
+      
+    var figureHeight = $("#map-figure figure").height();
+    $('#buttonContainer').css('top', figureHeight * .45);
+  });
 });
-
 
 var hoverTimer = null;
 var hoverDelay = 400; //ms

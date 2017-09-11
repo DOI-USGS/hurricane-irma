@@ -458,10 +458,8 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
-    depends: [ "hurricane-map-landscape","hurricane-map-portrait"  ]
     context:
       id: map-figure
-      figure: hurricane-map-landscape
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept X?, 2017.
@@ -529,9 +527,4 @@ publish:
     id: svg-css
     location: layout/css/hurricane-svg.css
     mimetype: text/css
-#  -
-##    id: facebook-thumb-pub
-#    location: images/facebook-thumb.png
-#    mimetype: image/png
-#    depends: "thumbnail-facebook"
 
