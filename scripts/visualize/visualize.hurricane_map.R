@@ -133,5 +133,8 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   width <- viz[['width']]
   svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'landscape')
   
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
+  xml_remove(to.rm)
+  
   write_xml(svg, file = viz[['location']])
 }
