@@ -13,7 +13,7 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
   
   # 1) set up shell svg, w/ proper size and aspect
   svg <- init.svg(width = view.limits$width, height = view.limits$height)
-  
+  geom.base.group <- xml2::xml_add_child(svg, 'g', 'id' = 'map-elements')
   # 2) add basic groups etc, including <defs><g id="template-geoms"/></defs> and <g id="styled-geoms"/>
   # 3) read in depends geoms
   # 4) loop through depends, trim, then add geoms to <use/> elements (in id="template-geoms"), with id="u-{id}"
@@ -22,7 +22,7 @@ visualize.svg_base_map <- function(viz = as.viz('base-map')){
   for (g in geoms){
     # clip the spatial object so that it only contains features and data that are within the plotting range:
     g.clip <- clip_sp(g, xlim, ylim)
-    g.node <- xml2::xml_add_child(svg, do.call(get_svg_geoms, append(list(sp = g.clip), view.limits)))
+    g.node <- xml2::xml_add_child(geom.base.group, do.call(get_svg_geoms, append(list(sp = g.clip), view.limits)))
     xml2::xml_attr(g.node, 'id') <- g.ids[1L]
     if ("data" %in% slotNames(g.clip)){
       # add svg attributes based on data.frame that the sp object is carrying

@@ -62,19 +62,26 @@ var playPause = function() {
     }, intervalLength);
   }
 };
-
-$('svg').ready(function() {
-  $.when(fetchPrcpTimes, fetchPrcpColors)
-    .done(function() {
-      svg = document.querySelector("svg");
-      pt = svg.createSVGPoint();
-      $('#playButton').click();
-    });
-    
-  var figureHeight = $("#map-figure figure").height();
-  $('#buttonContainer').css('top', figureHeight * .45);
+$('document').ready(function() {
+  var filename;
+  if (window.innerWidth > window.innerHeight) {
+    filename = 'images/hurricane-map-landscape.svg';
+  }
+  else {
+    filename = 'images/hurricane-map-portrait.svg';
+  }
+  $('#map-figure figure').load(filename, function() {
+    $.when(fetchPrcpTimes, fetchPrcpColors)
+      .done(function() {
+        svg = document.querySelector("svg");
+        pt = svg.createSVGPoint();
+        $('#playButton').click();
+      });
+      
+    var figureHeight = $("#map-figure figure").height();
+    $('#buttonContainer').css('top', figureHeight * .45);
+  });
 });
-
 
 var hoverTimer = null;
 var hoverDelay = 400; //ms
@@ -127,10 +134,11 @@ function cursorPoint(evt){
 function openNWIS(id, event){
  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
    event.stopPropagation();
-}else{
-   vizlab.clicklink('http://waterdata.usgs.gov/nwis/uv?site_no='+id,'_blank');
+  }else{
+    url = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + id;
+    ga('send', 'event', 'outbound', 'click', url);
+    window.open(url, '_blank');
   }
-  
 }
 
 function setBold(id){
