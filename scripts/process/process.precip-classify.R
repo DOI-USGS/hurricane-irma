@@ -29,6 +29,6 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
 
 process.precip_breaks <- function(viz = as.viz("precip-breaks")){
   colSteps <- readDepends(viz)[['precip-colors']] #vector of actual color palette codes
-  precip_breaks <- seq(0, viz[['stepSize']], length.out =length(colSteps))
+  precip_breaks <- seq(from = 0, to = viz[['stepSize']] * (length(colSteps) - 1), length.out =length(colSteps))
   saveRDS(object = precip_breaks, file = viz[['location']])
 }
