@@ -52,6 +52,11 @@ line, polyline, path{
   transform: translate(0px, -130px) scale(1.2);
 }
 
+.state-borders-overlay {
+  stroke: #057083;
+  fill: none;
+  fill-opacity: 0;
+}
 .time-text {
   font-style:italic;
 }

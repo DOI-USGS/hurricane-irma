@@ -97,6 +97,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
   
+  xml_add_child(map.elements, 'use', "xlink:href"="#storm-states", style="fill:red;", class='state-borders-overlay')
+  
   return(svg)
 }
 
