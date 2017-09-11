@@ -24,7 +24,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   
   storm_poly <- sp::spTransform(storm_poly, sp::CRS(view.lims$proj.string))
   
-  percent_flood_stage <- viz[["perc_flood_stage"]]
+  percent_flood_stage <- as.numeric(viz[["perc_flood_stage"]])
   
   nws_flood_predicted <- unique(nws.data %>% 
     left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
@@ -80,6 +80,9 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
                                 tz = "America/New_York"))
   
   nwisData <- dplyr::filter(nwisData, dateTime %in% dateTimes_fromJSON)
+  
+  names(nwisData)[which(grepl(".*_Inst$", names(nwisData)))] <- "p_Inst"
+  names(nwisData)[which(grepl(".*_Inst_cd$", names(nwisData)))] <- "p_Inst_cd"
   
   location <- viz[['location']]
   saveRDS(nwisData, file=location)
