@@ -448,7 +448,7 @@ publish:
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "thumbnail-facebook",
-      "thumbnail-twitter", "thumbnail-landing"]
+      "thumbnail-twitter", "thumbnail-landing", "hurricane-map-landscape", "hurricane-map-portrait"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
