@@ -38,7 +38,8 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
     as.logical() & 
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
     sites$begin_date < begin_date_filter & # has period of record longer than some begin date
-    sites$site_no %in% nws_flood_predicted$site_no # is precicted to be within a configurable percent of flood stage
+    sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
+    !(sites$site_no %in% c('02223000', '02207220')) # is not one of our manually selected bad sites
   
   sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
