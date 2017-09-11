@@ -548,12 +548,12 @@ publish:
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
       "hurricane-map-portrait", "thumbnail-facebook", "thumbnail-twitter", "thumbnail-landing", 
-      "social-section", "embed-section", "social-media-css"]
+      "social-section", "social-media-css"]#, "embed-section"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
         "vizlab-favicon", "social-media-css"]
-      sections: [ "figure-section", "data-sources", "social-section", "embed-section"]
+      sections: [ "figure-section", "data-sources", "social-section"]#, "embed-section"]
   -
     id: figure-section
     template: layout/templates/mapFigure.mustache
@@ -622,24 +622,24 @@ publish:
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
-      embedIcon: embedIcon 
+#      embedIcon: embedIcon 
     context:
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
-      embedIcon: embedIcon 
-  -
-    id: embed-section
-    publisher: section
-    template: layout/templates/embedTemplate.mustache
-    depends:
-      blackEmbedIcon: blackEmbedIcon
-    context:
-      blackEmbedIcon: blackEmbedIcon
-      embeds: 
-        -
-          description: Embed Description Area
-          url: "https://owi.usgs.gov/vizlab/hurricane-irma/embed/figure-section.html"
+#      embedIcon: embedIcon 
+#  -
+#    id: embed-section
+#    publisher: section
+#    template: layout/templates/embedTemplate.mustache
+#    depends:
+#      blackEmbedIcon: blackEmbedIcon
+#    context:
+#      blackEmbedIcon: blackEmbedIcon
+#      embeds: 
+#        -
+#          description: Embed Description Area
+#          url: "https://owi.usgs.gov/vizlab/hurricane-irma/embed/figure-section.html"
   -
     id: footer
     publisher: section
