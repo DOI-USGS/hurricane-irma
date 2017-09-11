@@ -425,7 +425,7 @@ publish:
     id: play-icon
     location: images/arrow.png
     mimetype: image/png
-    title: "plat icon"
+    title: "play icon"
     alttext: "play icon"
   -
     id: vizlab-logo
