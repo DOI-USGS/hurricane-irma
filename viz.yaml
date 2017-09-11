@@ -332,7 +332,7 @@ visualize:
     mimetype: image/svg+xml
     height: 720
     width: 576
-    inline: true
+    export: true
     title: "Hurricane Irma's impact on precipitation and streamflow"
     alttext: "Map of Hurricane Irma's water footprint"
   -
@@ -345,6 +345,7 @@ visualize:
     height: 576
     width: 720
     inline: true
+    export: true
     title: "Hurricane Irma's impact on precipitation and streamflow"
     alttext: "Map of Hurricane Irma's water footprint"
     
@@ -455,7 +456,7 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
-    depends: [ "hurricane-map-landscape" ]
+    depends: [ "hurricane-map-landscape","hurricane-map-portrait"  ]
     context:
       id: map-figure
       figure: hurricane-map-landscape
