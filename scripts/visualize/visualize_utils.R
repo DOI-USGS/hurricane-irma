@@ -261,6 +261,8 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   cols[time_idx] <- storm_color
   sp::plot(storm, pch=20, cex=5, col=cols, add = TRUE)
   sp::plot(flood_sites, pch=20, col = "red", add = TRUE)
+  text(sp::bbox(counties)[1, 'min'], sp::bbox(counties)[2, 'min'], 
+       labels = paste("Rivers over\n flood stage:", nrow(flood_sites@data)))
 }
 
 #' script to turn the dataviz into a thumbnail
