@@ -422,6 +422,12 @@ publish:
     title: "USGS Logo"
     alttext: "USGS Logo"
   -
+    id: play-icon
+    location: images/arrow.png
+    mimetype: image/png
+    title: "plat icon"
+    alttext: "play icon"
+  -
     id: vizlab-logo
     location: images/vizlab.svg
     mimetype: image/svg+xml
@@ -458,9 +464,12 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
+    depends:
+      playIcon: play-icon
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
+      playIcon: playIcon
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
         The map above displays the hurricane's impact on precipitation and 

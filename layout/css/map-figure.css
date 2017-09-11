@@ -45,19 +45,29 @@ figurecaption{
   text-decoration:underline;
 }
 
-#buttonContainer {
-  position: absolute;
-  margin: 10px auto 10px auto;
-  text-align: center;
-  left: 20px;
-}
-
 #playButton{
-  background:#ebebeb;
+  background:#003366;
+  position: absolute;
+  margin: auto;
+  text-align: center;
+  left:0; right:0;
+  top:25%;
+  height:75px;
+  width:75px;
+  border-radius:45px;
+  border:none;
+  outline:none;
+  font-size:24px;
+  font-weight:bold;
+}
+
+#playButton img{
+  width:35px;
+  margin:7px auto 0 6px;
 }
 
 
-#map-figure {
+#map-figure{
   position: relative;
 }
 
@@ -67,6 +77,10 @@ figurecaption{
     width:760px;
     margin:10px auto 10px auto;
     font-size:1em;
+  }
+  
+  #playButton{
+    top:40%;
   }
 }
 
