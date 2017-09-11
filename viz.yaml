@@ -230,7 +230,8 @@ process:
     scripts: scripts/process/process.storm_sites.R
     reader: rds
     depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
-    perc_flood_stage: 1
+    perc_flood_stage: 0.5
+    begin_date_filter: "2017-01-01"
   -
     id: storm-track
     location: cache/storm-track.rds
