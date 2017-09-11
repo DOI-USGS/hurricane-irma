@@ -134,10 +134,11 @@ function cursorPoint(evt){
 function openNWIS(id, event){
  if( /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ) {
    event.stopPropagation();
-}else{
-   vizlab.clicklink('http://waterdata.usgs.gov/nwis/uv?site_no='+id,'_blank');
+  }else{
+    url = 'http://waterdata.usgs.gov/nwis/uv?site_no=' + id;
+    ga('send', 'event', 'outbound', 'click', url);
+    window.open(url, '_blank');
   }
-  
 }
 
 function setBold(id){
