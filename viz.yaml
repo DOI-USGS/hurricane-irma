@@ -105,7 +105,34 @@ info:
       repo: CRAN
       version: 2.5.0
   contributors:
-    
+    -
+      name: Mary Bucknell
+      email: mbucknell@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Lindsay Carr
+      email: lcarr@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Jordan Read
+      email: jread@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: David Watkins
+      email: wwatkins@usgs.gov
+      affiliation: U.S. Geological Survey
+    -
+      name: Marty Wernimont
+      email: mwernimont@usgs.gov
+      affiliation: U.S. Geological Survey
+    - 
+      name: Dave Blodgett
+      email: dblodgett@usgs.gov
+      affiliation: U.S. Geological Survey
+    - 
+      name: Alicia Rhodes
+      email: arhoades@usgs.gov
+      affiliation: U.S. Geological Survey
 
 fetch:
   -
