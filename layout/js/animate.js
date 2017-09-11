@@ -43,12 +43,12 @@ var playPause = function() {
   if (running) {
     clearInterval(interval);
     running = false;
-    button.css('opacity', '.4');
+    button.css('display', 'block');
     ga('send', 'event', 'figure', 'user pressed pause');
   } else {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
-    button.css('opacity', '0');
+    button.css('display', 'none');
     interval = setInterval(function() {
       if (timestep < prcpTimes.times.length) {
         animatePrcp(timestep);
@@ -57,7 +57,7 @@ var playPause = function() {
         timestep = 1;
         clearInterval(interval);
         running = false;
-        button.css('opacity', '.4');
+        button.css('display', 'block');
       }
     }, intervalLength);
   }
