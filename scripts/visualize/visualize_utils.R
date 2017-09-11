@@ -193,11 +193,16 @@ set_sp_plot <- function(){
 }
 
 locate_css_class <- function(css, class_nm){
-  start_class <- grep(class_nm, css)
-  stopifnot(length(start_class) > 0)
+  class_declare_line <- grep(class_nm, css)
+  stopifnot(length(class_declare_line) > 0)
   close_classes <- grep("}", css)
-  end_class <- close_classes[which(start_class < close_classes)[1]]
-  css_details <- css[start_class:end_class]
+  
+  css_details <- c()
+  for(start_class in class_declare_line){
+    end_class <- close_classes[which(start_class < close_classes)[1]]
+    css_details <- c(css_details, css[start_class:end_class])
+  }
+  
   return(css_details)
 }
 
