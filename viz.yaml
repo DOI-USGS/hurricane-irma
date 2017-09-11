@@ -545,12 +545,11 @@ publish:
     embed: true
     template: layout/templates/mapFigure.mustache
     publisher: section
-    depends: ["figure-section", "data-sources", "map-figure-css", "jquery-js", "animate-js", 
-      "vizlab-js", "timesteps", "precip-colors", "svg-css", "vizlab-favicon","lib-header-css",
-      "lib-footer-css", "hurricane-map-landscape"]
+    depends: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", 
+    "vizlab-favicon", "hurricane-map-landscape"]
     context:
       id: map-embed-figure
-      figure: "hurricane-map-landscape"
+      figure: hurricane-map-landscape
       title: Hurricane Irma’s Water Footprint
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
@@ -564,6 +563,7 @@ publish:
       stnText: Short-Term Network gages
       stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
       line2: (these gages are not shown here). 
+      resources: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", "vizlab-favicon"]
   -
     id: header-section
     template: layout/templates/header.mustache
