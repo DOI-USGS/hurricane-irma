@@ -77,9 +77,10 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.spark <- xml_add_child(non.geo, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
   xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
   # sparklines within container:
-  g.sparkles <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
-  xml_add_child(g.sparkles, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
-  xml_add_child(g.sparkles, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  g.sparkle.blck <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
+  xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
+  g.sparkles <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggles-%s', mode))
   
   ys <- seq(45, 400, length.out = nrow(sparks))
   for (i in 1:nrow(sparks)){ 
@@ -109,7 +110,9 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
   
-  xml_add_child(map.elements, 'use', "xlink:href"="#storm-states", style="fill:red;", class='state-borders-overlay')
+  xml_add_child(map.elements, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
+  xml_add_child(map.elements, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
+  xml_add_child(non.geo.top, 'use', "xlink:href"=sprintf('#sparkline-squiggles-%s', mode), class='sparklines-overlay')
   
   return(svg)
 }

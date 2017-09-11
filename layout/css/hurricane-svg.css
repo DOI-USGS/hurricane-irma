@@ -43,7 +43,7 @@ line, polyline, path{
 }
 
 #sparkline-squiggle-block-portrait {
-  transform: translate(0px, 170px)
+  transform: translate(0px, 130px)
 }
 
 
@@ -53,11 +53,22 @@ line, polyline, path{
 }
 
 
+.sparklines-overlay {
+  opacity: 0;
+}
+
 .state-borders-overlay {
   stroke: #057083;
-  fill: none;
+  fill: white;
   fill-opacity: 0;
 }
+
+.county-borders-overlay {
+  stroke: white;
+  opacity: 0;
+  fill: white;
+}
+
 .light-rain-legend {
   fill:white;
   font-size: 0.7em;
@@ -139,14 +150,15 @@ line, polyline, path{
 .storm-dot {
   opacity: 0;
 }
-.sparkline {
+.sparkline, .sparklines-overlay {
 	stroke: #057083;
 	stroke-width:1.5;
 }
-.sparkline-bold,.sparkline:hover  {
+.sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
   cursor: pointer;
   stroke: #F29E4C;
   stroke-width:3.0;
+  opacity: 1.0;
 }
 
 .legend-box {
