@@ -63,6 +63,7 @@ line, polyline, path{
 
 .state-borders-overlay {
   stroke: #057083;
+  stroke-opacity: 0.7;
   fill: white;
   fill-opacity: 0;
 }
