@@ -6,16 +6,12 @@ fetch.precip <- function(viz = as.viz('precip-data')){
   required <- c("location","start.date", "end.date")
   checkRequired(viz, required)
   
-  getPrecip <- function(counties, startDate, endDate){
+  getPrecip <- function(sb.url, sb.geom, sb.attribute, startDate, endDate, sb.attribute_values = NULL){
     
-    counties_fips <- maps::county.fips %>% 
-      dplyr::filter(polyname %in% counties) %>% 
-      mutate(fips = sprintf('%05d', fips))# fips need 5 digits to join w/ geoknife result
-      
-    
-    stencil <- webgeom(geom = 'derivative:US_Counties',
-                       attribute = 'FIPS',
-                       values = unique(counties_fips$fips))
+    stencil <- geoknife::webgeom(url=sb.url,
+                                 geom = sb.geom,
+                                 attribute = sb.attribute,
+                                 values = sb.attribute_values)
     
     fabric <- webdata(url = 'https://cida.usgs.gov/thredds/dodsC/stageiv_combined', 
                       variables = "Total_precipitation_surface_1_Hour_Accumulation", 
@@ -37,9 +33,20 @@ fetch.precip <- function(viz = as.viz('precip-data')){
   endDate <- as.POSIXct(paste(viz[["end.date"]],"22:00:00"), tz="America/New_York")
   attr(startDate, 'tzone') <- "UTC"
   
-  counties <- readDepends(viz)[['counties']] 
+  sb.url <- viz[["sb.url"]]
+  sb.geom <- viz[["sb.geom"]]
+  sb.attribute <- viz[["sb.attribute"]]
   
-  precip <- getPrecip(names(counties), startDate, endDate)
+  counties <- names(readDepends(viz)[['counties']])
+  
+  counties_fips <- maps::county.fips %>% 
+    dplyr::filter(polyname %in% counties) %>% 
+    mutate(fips = sprintf('%05d', fips))# fips need 5 digits to join w/ geoknife result
+  
+  sb.attribute_values <- unique(counties_fips$fips)
+  
+  precip <- getPrecip(sb.url, sb.geom, sb.attribute, startDate, endDate, sb.attribute_values = sb.attribute_values)
+  
   attr(precip$DateTime, 'tzone') <- "America/New_York" #back to eastern
   location <- viz[['location']]
   write.csv(precip, file=location, row.names = FALSE)

@@ -168,6 +168,9 @@ fetch:
     fetcher: precip
     start.date: "2017-09-07"
     end.date: "2017-09-13"
+    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b6c404e4b08b1644ddf886"
+    sb.geom: "sb:US_Historical_Counties"
+    sb.attribute: "FIPS"
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
