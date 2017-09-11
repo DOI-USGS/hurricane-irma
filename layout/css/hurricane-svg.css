@@ -52,11 +52,21 @@ line, polyline, path{
   transform: translate(0px, -130px) scale(1.2);
 }
 
+
 .state-borders-overlay {
   stroke: #057083;
   fill: none;
   fill-opacity: 0;
 }
+.light-rain-legend {
+  fill:white;
+  font-size: 0.7em;
+}
+.dark-rain-legend {
+  fill:black;
+  font-size: 0.7em;
+}
+
 .time-text {
   font-style:italic;
 }

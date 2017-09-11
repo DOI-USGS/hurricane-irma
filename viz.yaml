@@ -205,8 +205,8 @@ fetch:
     location: cache/storm-area-filter.rds
     reader: rds
     fetcher: storm_area_filter
-    lats: [24.5, 30.9, 32.7, 27, 24.5, 24.5]
-    lons: [-83.4, -84, -80.5, -78.9, -79.6, -83.4]
+    lats: [34.7, 34.8, 25.2, 23.9, 34.7]
+    lons: [-87.5, -80.1, -78.8, -82.4, -87.5]
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     
 process:
@@ -250,7 +250,7 @@ process:
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.1
+    stepSize: 0.2
   - 
     id: precip-classify
     location: cache/precip-classified.rds
@@ -329,7 +329,7 @@ visualize:
     id: hurricane-map-portrait
     location: figures/hurricane-map-portrait.svg
     visualizer: hurricane_map_portrait
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
@@ -341,7 +341,7 @@ visualize:
     id: hurricane-map-landscape
     location: figures/hurricane-map-landscape.svg
     visualizer: hurricane_map_landscape
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 576
@@ -422,6 +422,12 @@ publish:
     title: "USGS Logo"
     alttext: "USGS Logo"
   -
+    id: play-icon
+    location: images/arrow.png
+    mimetype: image/png
+    title: "play icon"
+    alttext: "play icon"
+  -
     id: vizlab-logo
     location: images/vizlab.svg
     mimetype: image/svg+xml
@@ -447,8 +453,8 @@ publish:
     scripts: scripts/publish/json.R
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
-      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "thumbnail-facebook",
-      "thumbnail-twitter", "thumbnail-landing", "hurricane-map-landscape", "hurricane-map-portrait"]
+      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", "hurricane-map-portrait", "thumbnail-facebook",
+      "thumbnail-twitter", "thumbnail-landing"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
@@ -458,9 +464,12 @@ publish:
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
+    depends:
+      playIcon: play-icon
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
+      playIcon: playIcon
       line1: >-
         Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
         The map above displays the hurricane's impact on precipitation and 
