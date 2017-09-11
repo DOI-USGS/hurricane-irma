@@ -101,6 +101,9 @@ info:
     assertthat:
       repo: CRAN
       version: 0.2.0
+    animation:
+      repo: CRAN
+      version: 2.5.0
   contributors:
     
 
@@ -368,7 +371,7 @@ visualize:
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
     "storm-location", "storm-track"]
     css: layout/css/hurricane-svg.css
-    time-stamp: "2017-09-09 18:00:00"
+    time-stamp: "2017-09-09 20:00:00"
     expandBB: "c(0.3,0,0,2)"
     fig-height: 820
     fig-width: 1560
@@ -383,8 +386,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    time-stamp: "2017-09-09 18:00:00"
     "storm-location", "storm-track"]
+    time-stamp: "2017-09-09 20:00:00"
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.3,0,0,2)"
     fig-height: 300
@@ -400,8 +403,8 @@ visualize:
     scripts: ["scripts/visualize/visualize_utils.R"]
     depends: ["storm-states", "storm-islands", "storm-counties", 
     "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    time-stamp: "2017-09-09 18:00:00"
     "storm-location", "storm-track"]
+    time-stamp: "2017-09-09 20:00:00"
     css: layout/css/hurricane-svg.css
     expandBB: "c(0.1,0,0,0)"
     fig-height: 400
@@ -410,6 +413,22 @@ visualize:
     mimetype: image/png
     title: thumbnail
     alttext: "hurricane irma thumbnail"
+  -
+    id: timelapse-figures
+    location: figures/timelapse.gif
+    visualizer: timelapse_gif
+    scripts: ["scripts/visualize/visualize_utils.R"]
+    depends: ["storm-states", "storm-islands", "storm-counties", 
+    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
+    "storm-location", "storm-track"]
+    css: layout/css/hurricane-svg.css
+    expandBB: "c(0.1,0,0,0)"
+    fig-height: 820
+    fig-width: 1560
+    export: true
+    mimetype: image/gif
+    title: irma-timelapse
+    alttext: "hurricane irma timelapse"
     
 publish:
   -
