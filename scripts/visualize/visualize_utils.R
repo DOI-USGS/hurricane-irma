@@ -263,10 +263,11 @@ visualize.map_thumbnail <- function(viz){
   
   
   par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
-  sp::plot(counties, col = NA, expandBB = eval(parse(text = viz[["expandBB"]]))) #decimals not working?
-  sp::plot(states, col = state_color, add = TRUE)
-  sp::plot(islands, add = TRUE, col = island_color)
-  sp::plot(counties, add = TRUE, col = counties@data$col)
+  sp::plot(counties, col = NA, border = "#c6c6c6",
+           expandBB = eval(parse(text = viz[["expandBB"]]))) #decimals not working?
+  sp::plot(states, col = state_color, border = "#c6c6c6", add = TRUE)
+  sp::plot(islands, add = TRUE, border = "#c6c6c6", col = island_color)
+  sp::plot(counties, add = TRUE, border = "#c6c6c6", col = counties@data$col)
   sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
   cols <- rep("#FFFFFF00", length(storm))
   cols[time.idx] <- storm_color
