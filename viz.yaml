@@ -346,7 +346,7 @@ visualize:
     height: 720
     width: 576
     export: true
-    title: "Hurricane Irma's impact on precipitation on river stage"
+    title: "Hurricane Irma's impact on precipitation and river gage height"
     alttext: "Map of Hurricane Irma's water footprint"
   -
     id: hurricane-map-landscape
@@ -504,7 +504,7 @@ publish:
         gage height at a selection of U.S. Geological Survey (USGS) gaging 
         stations impacted by the hurricane. Variation in the shape of the 
         hydrographs is due to a number of factors that impact the effect 
-        of precipitation on flow, including stream size, storm-surge, 
+        of precipitation on river gage height, including stream size, storm-surge, 
         reservoir operations, and other local conditions. The USGS also 
         collects additional information with 
       stnText: Short-Term Network gages
