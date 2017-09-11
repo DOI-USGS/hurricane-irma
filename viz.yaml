@@ -414,7 +414,7 @@ visualize:
     title: thumbnail
     alttext: "hurricane irma thumbnail"
   -
-    id: timelapse-figures
+    id: timelapse
     location: figures/timelapse.gif
     visualizer: timelapse_gif
     scripts: ["scripts/visualize/visualize_utils.R"]
