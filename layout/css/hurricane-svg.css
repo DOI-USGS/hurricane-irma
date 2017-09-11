@@ -37,6 +37,20 @@ line, polyline, path{
   font-size:1em;
 }
 
+#map-elements-portrait {
+  /* doesn't work in IE */
+  transform: translate(-50px, -118px) scale(1.5);
+}
+
+#sparkline-squiggle-block-portrait {
+  transform: translate(0px, 170px)
+}
+
+
+#map-elements-landscape {
+  /* doesn't work in IE */
+  transform: translate(0px, -130px) scale(1.2);
+}
 
 .time-text {
   font-style:italic;
@@ -122,7 +136,7 @@ line, polyline, path{
 
 .legend-box {
   fill: #C0C0C0;
-  fill-opacity: 0.5;
+  fill-opacity: 0.7;
   stroke: none;
 }
 
