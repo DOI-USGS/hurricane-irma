@@ -397,7 +397,7 @@ publish:
     scripts: scripts/publish/json.R
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
-      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css"]# "thumbnail-facebook",
+      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", "hurricane-map-portrait"]# "thumbnail-facebook",
      # "thumbnail-twitter", "thumbnail-landing"]
     context:
       header: header-section
