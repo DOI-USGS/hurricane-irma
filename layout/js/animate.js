@@ -64,11 +64,11 @@ var playPause = function() {
 };
 $('document').ready(function() {
   var filename;
-  if ($(window).width() > 1200) {
-    filename = 'svg/hurricane-map-desktop.svg';
+  if (window.innerWidth > window.innerHeight) {
+    filename = 'images/hurricane-map-landscape.svg';
   }
   else {
-    filename = 'svg/hurricane-map-portrait.svg';
+    filename = 'images/hurricane-map-portrait.svg';
   }
   $('#map-figure figure').load(filename, function() {
     $.when(fetchPrcpTimes, fetchPrcpColors)
