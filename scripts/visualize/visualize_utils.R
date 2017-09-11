@@ -239,9 +239,7 @@ visualize.map_thumbnail <- function(viz){
   island_css <- locate_css_class(css, ".island-polygon")
   island_color <- locate_css_class_detail(island_css, "fill")
   island_lwd <- locate_css_class_detail(island_css, "stroke-width")
-
- 
-  
+  storm_color <- locate_css_class_detail(locate_css_class(css, "storm-dot"), "fill")
   
   counties@data$col <- NA_character_
   # process precip to get county & color category together w/ time
@@ -271,7 +269,7 @@ visualize.map_thumbnail <- function(viz){
   sp::plot(counties, add = TRUE, col = counties@data$col)
   sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
   cols <- rep("#FFFFFF00", length(storm))
-  cols[time.idx] <- 'red'
+  cols[time.idx] <- storm_color
   sp::plot(storm, pch=20, cex=3, col=cols, add = TRUE)
   
   dev.off()
