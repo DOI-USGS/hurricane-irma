@@ -1,13 +1,19 @@
 process.storm_sites <- function(viz = as.viz('storm-sites')){
   library(magrittr)
+  
+  checkRequired(viz, "perc_flood_stage")
   depends <- readDepends(viz)
   checkRequired(depends, c("view-limits", "sites", "storm-area-filter", "nws-data"))
+  
   view.lims <- depends[["view-limits"]]
   sites <- depends[['sites']] 
   storm_poly <- depends[['storm-area-filter']]
   nws.sites <- depends[['nws-data']]$sites
+  nws.data <- depends[['nws-data']]$forecasts
   
   library(dplyr)
+  
+  sites$begin_date <- as.Date(sites$begin_date)
   
   sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
                                                sites$dec_lat_va), 
@@ -17,9 +23,21 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
   
   storm_poly <- sp::spTransform(storm_poly, sp::CRS(view.lims$proj.string))
+  
+  percent_flood_stage <- viz[["perc_flood_stage"]]
+  
+  nws_flood_predicted <- unique(nws.data %>% 
+    left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
+    mutate(forecast_vals = as.numeric(forecast_vals)) %>% 
+    filter(forecast_vals > (percent_flood_stage * flood.stage)) %>% 
+    select(site_no))
 
-  is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% rowSums() %>% as.logical() &
-    sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)]
+  is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% 
+    rowSums() %>% 
+    as.logical() & 
+    sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
+    sites$begin_date < as.Date("2017-01-01") & # has period of record longer than some begin date
+    sites$site_no %in% nws_flood_predicted$site_no # is precicted to be within a configurable percent of flood stage
   
   sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),

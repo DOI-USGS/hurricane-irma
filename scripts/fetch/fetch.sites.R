@@ -36,7 +36,7 @@ fetch.sites <- function(viz = as.viz('sites')){
       filter(end_date >= start.date,
              count_nu >= 3000,
              !(is.na(alt_datum_cd))) %>%
-      select(site_no, station_nm, dec_lat_va, dec_long_va) %>%
+      select(site_no, station_nm, dec_lat_va, dec_long_va, begin_date) %>%
       data.frame() 
     
     site_sum_all <- bind_rows(site_sum_all, sites_sum)
