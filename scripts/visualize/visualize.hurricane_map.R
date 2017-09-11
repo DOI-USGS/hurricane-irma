@@ -4,10 +4,11 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map",'discharge-sparks', 'precip-colors'))
+  checkRequired(depends, c("base-map",'discharge-sparks', 'precip-colors', "precip-breaks"))
   svg <- depends[["base-map"]]
   sparks <- depends[["discharge-sparks"]]
   color.meta <- getContentInfo('precip-colors')
+  break.meta <- getContentInfo('precip-breaks')
   xml_attr(svg, "id") <- viz[['id']]
   
   # get the big dog that has all the stuff that is geo:
@@ -39,24 +40,35 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.rain <- xml_add_child(non.geo, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
   
   # lower left legend:
-  xml_add_child(g.rain, 'text', "Rainfall totals", class='svg-text rainfall-legend-text legend-text', dy="-1em")
+  xml_add_child(g.rain, 'text', "Hourly rainfall amount", class='svg-text rainfall-legend-text legend-text', dy="-1em")
   g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
   g.irma <- xml_add_child(g.rain, 'g', id = 'irma-legend', transform="translate(15,20)")
   g.gage <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,35)")
+  g.rains.bn <- xml_add_child(g.rains, 'g', id = 'rain-legend-bin')
+  g.rains.tx <- xml_add_child(g.rains, 'g', id = 'rain-legend-text')
   xml_add_child(g.irma, 'circle', r="8", class="storm-dot-legend")
   xml_add_child(g.gage, 'circle', r="2", class="nwis-dot")
   xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage, 'text', "USGS stream gage", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.rains, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', y="70")
-  rain.w <- 30 # width of a rain legend bin
-  rain.h <- 15
+  rain.w <- 28 # width of a rain legend bin
+  rain.h <- 14
   x0 <- 0
   n.bins <- color.meta$bins
+  col.breaks <- seq(0, length.out = color.meta$bins, by = break.meta$stepSize)
+  col.rng <- paste(head(col.breaks, -1L), tail(col.breaks, -1L), sep='-')
+  col.txt <- c(paste(col.rng, '"', sep = ""), sprintf('>%s"', tail(col.breaks, 1)))
   cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
   for (i in 1:n.bins){
-    xml_add_child(g.rains, 'rect', x=as.character(x0), y="-10", 
+    text.class <- ifelse(any(col2rgb(cols[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+    xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
                   class='rain-box', style=sprintf("fill:%s;",cols[i]))
+    if (i == 1 | i == n.bins){
+      # only do the extreme values
+      xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0), dx="0.2em")  
+    }
+    
     x0 <- x0+rain.w
   }
   

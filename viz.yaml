@@ -166,7 +166,7 @@ fetch:
   -
     id: precip-data
     fetcher: precip
-    start.date: "2017-09-07"
+    start.date: "2017-09-08 12:00"
     end.date: "2017-09-13"
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
@@ -329,7 +329,7 @@ visualize:
     id: hurricane-map-portrait
     location: figures/hurricane-map-portrait.svg
     visualizer: hurricane_map_portrait
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
@@ -341,14 +341,14 @@ visualize:
     id: hurricane-map-landscape
     location: figures/hurricane-map-landscape.svg
     visualizer: hurricane_map_landscape
-    depends: ["base-map", "discharge-sparks", "precip-colors"]
+    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 576
     width: 720
     inline: true
     export: true
-    title: "Hurricane Irma's impact on precipitation and stream stage"
+    title: "Hurricane Irma's impact on precipitation and river gage height"
     alttext: "Map of Hurricane Irma's water footprint"
     
   -
@@ -462,14 +462,14 @@ publish:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
       line1: >-
-        Hurricane Irma approached the U.S. Gulf coast on Sept X?, 2017.
-        In the map above, the hurricane's impact on precipitation and stream stage are 
-        shown. Normalized discharge (cubic feet per second) 
-        at a selection of U.S. Geological Survey gaging stations impacted by the hurricane is shown 
-        in the right panel. Variation in the shape of the hydrographs (right panel) 
-        is due to stream size, storm-surge, reservoir operations, and other local conditions, 
-        which can impact the effect of precipitation on flow. The the U.S. Geological Survey 
-        also collects additional information with 
+        Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
+        The map above displays the hurricane's impact on precipitation and 
+        river gage height. Normalized gage height at a selection of U.S. 
+        Geological Survey (USGS) gaging stations impacted by the hurricane 
+        is shown in the right panel. Variation in the shape of the hydrographs 
+        (right panel) is due to stream size, storm-surge, reservoir operations, 
+        and other local conditions, which can impact the effect of precipitation 
+        on flow. The USGS also collects additional information with 
       stnText: Short-Term Network gages
       stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
       line2: (these gages are not shown here). 
@@ -505,12 +505,14 @@ publish:
     context:
       id: dataSources
       title: Data Sources
-      line1: "Streamflow: U.S. Geological Survey "
+      line1: "Gage Height: U.S. Geological Survey "
       waterDataText: National Water Information System
       waterDataLink: "https://waterdata.usgs.gov/nwis"
       line2: >-
-        . Time series of discharge at selected gages impacted by the storm are shown through time, 
-        ordered by latitude and normalized to site-specific maximum discharge observed over the duration of the hurricane. 
+        . Time series of gage height at selected sites impacted by 
+        the storm are shown through time, ordered by latitude and 
+        normalized to site-specific maximum gage height observed 
+        over the duration of the hurricane.
       line4: "Precipitation: National Weather Service Environmental Modeling Center National Center for Environmental Prediction "
       emcText: "Stage IV precipitation analysis"
       emcLink: "http://www.emc.ncep.noaa.gov/mmb/ylin/pcpanl/stage4/"
