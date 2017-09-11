@@ -245,8 +245,7 @@ visualize.map_thumbnail <- function(viz){
   # process precip to get county & color category together w/ time
   time.stamp <- as.POSIXct(viz$`time-stamp`, tz = "America/New_York")
   time.idx <- which(timesteps == time.stamp)
-  
-  
+
   for (j in 1:nrow(counties@data)){
     class <- counties@data[j, ]$class
     precip.classes <- tail(strsplit(class, '[ ]')[[1]], -1L)
@@ -261,7 +260,6 @@ visualize.map_thumbnail <- function(viz){
   
   png(file = viz[['location']], height = viz$`fig-height`, width = viz$`fig-width`)
   
-  
   par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
   sp::plot(counties, col = NA, border = "#c6c6c6",
            expandBB = eval(parse(text = viz[["expandBB"]]))) #decimals not working?
@@ -274,11 +272,5 @@ visualize.map_thumbnail <- function(viz){
   sp::plot(storm, pch=20, cex=3, col=cols, add = TRUE)
   
   dev.off()
-  
-}
-
-createTimeStepPlots <- function(precip, states, counties, islands, hurricane_track, 
-                                hurricane_location, view_box, 
-                                precip_cols, state_color, island_color, ocean_color){
   
 }
