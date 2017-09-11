@@ -7,6 +7,19 @@ var running = false;
 var interval = undefined;
 var intervalLength = 160;
 var timestep = 1;
+var filename;
+
+if (window.innerWidth > window.innerHeight) {
+  filename = 'images/hurricane-map-landscape.svg';
+}
+else {
+  filename = 'images/hurricane-map-portrait.svg';
+}
+
+var fetchSvg = $.ajax({
+  url: filename,
+  dataType: 'html'
+});
 
 var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
   prcpColors = data;
@@ -63,26 +76,19 @@ var playPause = function() {
   }
 };
 $('document').ready(function() {
-  var filename;
-  if (window.innerWidth > window.innerHeight) {
-    filename = 'images/hurricane-map-landscape.svg';
-  }
-  else {
-    filename = 'images/hurricane-map-portrait.svg';
-  }
-  $('#map-figure figure').load(filename, function() {
-    $.when(fetchPrcpTimes, fetchPrcpColors)
-      .done(function() {
-        svg = document.querySelector("svg");
-        pt = svg.createSVGPoint();
-        playPause();
-      });
+  fetchSvg.done(function(data) {
+    $('#map-figure figure').html(data);
+    $('#map-figure svg').ready(function() {
+        $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+          svg = document.querySelector("svg");
+          pt = svg.createSVGPoint();
+          $('#map-figure figure').on('click', function(){
+            playPause();
+          });
+          playPause();
+        });
+    });
   });
-  
-  $('#map-figure figure').on('click', function(){
-    playPause();
-  });
-
 });
 
 var hoverTimer = null;
