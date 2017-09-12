@@ -625,9 +625,9 @@ publish:
       github-url: https://github.com/USGS-VIZLAB/hurricane-irma
       vizzies:
         -
-          url: https://owi.usgs.gov/vizlab/hurricane-matthew/
-          name: Hurricane Matthew
-          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-matthew/images/matthew_water2.png
+          url: https://owi.usgs.gov/vizlab/hurricane-harvey/
+          name: Hurricane Harvey
+          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-matthew/images/harvey1.png
   -
     id: data-sources
     template: layout/templates/dataSources.mustache
