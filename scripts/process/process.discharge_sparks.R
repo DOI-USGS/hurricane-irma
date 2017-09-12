@@ -38,5 +38,7 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
     arrange(desc(dec_lat_va)) %>%
     select(-site_no, -dec_lat_va) 
   
+  sparks <- unique(sparks)
+  
   saveRDS(sparks, viz[['location']])
 }
