@@ -3,11 +3,11 @@ process.node_precip <- function(viz = as.viz('node-precip')){
   deps <- readDepends(viz)
   checkRequired(deps, c("precip-spatial", "precip-cell-data", 'precip-breaks'))
   
-  sp.cells <- deps[["precip-spatial"]]
+  sp.cells <- deps[["precip-spatial"]]$points
   cell.precip <- deps[["precip-cell-data"]]
   precip.breaks <- deps[['precip-breaks']] 
   
-  stopifnot(all(cell.precip %in% sp.cells$id))
+  stopifnot(all(cell.precip$id %in% sp.cells$id))
   library(dplyr)
 
   precipData <- cell.precip %>% group_by(id) %>% 

@@ -14,6 +14,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
   precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
+  xml_attr(precip.centroids, "clip-path") <- "url(#state-clip)"
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
 
@@ -115,6 +116,10 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  # clips for pixel-based precip!
+  cp <- xml_add_child(d, 'clipPath', id="state-clip")
+  storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-states']") ), 'id')
+  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', href=sprintf("#%s", x)))
   
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
