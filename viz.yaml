@@ -12,6 +12,7 @@ info:
     water, hurricane, irma, USGS, NOAA, VIZLAB, NWIS, flood
   audience: General public
   url: https://owi.usgs.gov/vizlab/hurricane-irma/
+  twitter: "@USGS-R"
   thumbnail:
     url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
     width: 1560
