@@ -415,74 +415,6 @@ visualize:
     title: "Hurricane Irma's impact on precipitation and river gage height"
     alttext: "Map of Hurricane Irma's water footprint"
     
-  -
-    id: thumbnail-facebook
-    location: figures/thumb-facebook.png
-    visualizer: map_thumbnail
-    scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", 
-    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "flood-sites"]
-    css: layout/css/hurricane-svg.css
-    time-stamp: "2017-09-11 06:00:00"
-    expandBB: "c(0.3,0,0,1.5)"
-    fig-height: 820
-    fig-width: 1560
-    export: true
-    mimetype: image/png
-    title: thumbnail
-    alttext: "hurricane irma thumbnail"
-  -
-    id: thumbnail-twitter
-    location: figures/thumb-twitter.png
-    visualizer: map_thumbnail
-    scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", 
-    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "flood-sites"]
-    time-stamp: "2017-09-11 06:00:00"
-    css: layout/css/hurricane-svg.css
-    expandBB: "c(0.3,0,0,1.5)"
-    fig-height: 300
-    fig-width: 560
-    export: true
-    mimetype: image/png
-    title: thumbnail
-    alttext: "hurricane irma thumbnail"
-  -
-    id: thumbnail-landing
-    location: figures/thumb-landing.png
-    visualizer: map_thumbnail
-    scripts: ["scripts/visualize/visualize_utils.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", 
-    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "flood-sites"]
-    time-stamp: "2017-09-11 06:00:00"
-    css: layout/css/hurricane-svg.css
-    expandBB: "c(0.1,0,0,0)"
-    fig-height: 400
-    fig-width: 400
-    export: true
-    mimetype: image/png
-    title: thumbnail
-    alttext: "hurricane irma thumbnail"
-  -
-    id: timelapse
-    location: figures/timelapse.gif
-    visualizer: timelapse_gif
-    scripts: ["scripts/visualize/visualize_utils.R", "scripts/process/process.flood_sites.R"]
-    depends: ["storm-states", "storm-islands", "storm-counties", 
-    "precip-data", "precip-breaks", "precip-colors", "timesteps", 
-    "storm-location", "storm-track", "storm-sites", "gage-data", "nws-data"]
-    css: layout/css/hurricane-svg.css
-    expandBB: "c(0.1,0,0,0)"
-    fig-height: 820
-    fig-width: 1560
-    export: true
-    mimetype: image/gif
-    title: irma-timelapse
-    alttext: "hurricane irma timelapse"
-    
 publish:
   -
     id: vizlab-favicon
@@ -555,6 +487,24 @@ publish:
     title: "Embed"
     alttext: "Vizlab Embed Icon"
   -
+    id: thumb-facebook
+    location: images/thumb-facebook.png
+    mimetype: image/png
+    title: "Facebook Thumbnail"
+    alttext: "Facebook Thumbnail"
+  -
+    id: thumb-twitter
+    location: images/thumb-twitter.png
+    mimetype: image/png
+    title: "Twitter Thumbnail"
+    alttext: "Twitter Thumbnail"
+  -
+    id: thumb-landing
+    location: images/thumb-landing.png
+    mimetype: image/png
+    title: "Landing Page Thumbnail"
+    alttext: "Landing Page Thumbnail"
+  -
     id: social-media-css
     location: layout/css/social-media.css
     mimetype: text/css
@@ -579,7 +529,7 @@ publish:
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
-      "hurricane-map-portrait", "thumbnail-facebook", "thumbnail-twitter", "thumbnail-landing", 
+      "hurricane-map-portrait", "thumb-facebook", "thumb-twitter", "thumb-landing", 
       "social-section", "social-media-css"]#, "embed-section"]
     context:
       header: header-section
@@ -658,6 +608,9 @@ publish:
       facebookLogo: facebookLogo
 #      embedIcon: embedIcon 
     context:
+      githubLink: "https://github.com/USGS-VIZLAB/hurricane-irma"
+      twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F&text=Impact%20of%20Hurricane%20Irma%20on%20precipitation%20and%20rivers&hashtags=IrmaHurricane2017,hurricane,flood,dataviz"
+      facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F"
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
