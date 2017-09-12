@@ -28,7 +28,7 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            style = "mask: url(#spark-opacity);",
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
-           onclick=sprintf("openNWIS('%s');", site_no),
+           onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
   sites <- depends[['sites']][c("site_no", "dec_lat_va")]
