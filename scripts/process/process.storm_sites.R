@@ -47,7 +47,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
                          onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites.sp@data$site_no), ""),
                          onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites.sp@data$site_no), ""),
                          onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites.sp@data$site_no), ""),
-                         onclick=ifelse(is.featured, sprintf("openNWIS('%s');", sites.sp@data$site_no), ""), 
+                         onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
   saveRDS(sites.sp, viz[['location']])
