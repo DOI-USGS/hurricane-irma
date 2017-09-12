@@ -51,14 +51,9 @@ var animatePrcp = function(timestep) {
   $('#spark-full-mask').attr('width', darkWidth);
 };
 
-var playPause = function() {
+var play = function() {
   var button = $('#playButton');
-  if (running) {
-    clearInterval(interval);
-    running = false;
-    button.css('display', 'block');
-    ga('send', 'event', 'figure', 'user pressed pause');
-  } else {
+  if (!running) {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
     button.css('display', 'none');
@@ -73,6 +68,15 @@ var playPause = function() {
         button.css('display', 'block');
       }
     }, intervalLength);
+  }  
+}
+var pause = function() {
+  var button = $('#playButton');
+  if (running) {
+    clearInterval(interval);
+    running = false;
+    button.css('display', 'block');
+    ga('send', 'event', 'figure', 'user pressed pause');
   }
 };
 $('document').ready(function() {
@@ -83,9 +87,9 @@ $('document').ready(function() {
           svg = document.querySelector("svg");
           pt = svg.createSVGPoint();
           $('#map-figure figure').on('click', function(){
-            playPause();
+            pause();
           });
-          playPause();
+          play();
         });
     });
   });
