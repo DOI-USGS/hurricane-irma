@@ -24,13 +24,20 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   sp_grid <- raster::raster(sp::SpatialGrid(grid_topology, proj))
   
   sp_cells <- raster::rasterToPolygons(sp_grid)
+  IDs <- paste0("p",sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID")))
+  sp::spChFIDs(sp_cells) <- IDs
+  
   sp_points <- sp::SpatialPoints(raster::rasterToPoints(sp_grid),proj)
   
-  IDs <- sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID"))
-  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells, data.frame(id=c(1:length(sp_cells)), row.names = IDs))
+  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells, data.frame(id=IDs, 
+                                                                row.names = IDs, 
+                                                                stringsAsFactors = F))
+
   sp_point_ids <- sp::over(sp_points, sp_cells, returnList = F, fn=NULL)
   sp_points <- sp::SpatialPointsDataFrame(sp_points, sp_point_ids)
 
+  # Now we have sp_points and sp_cells that share IDs.
+  
   stateIDs <- sapply(slot(states, "polygons"), function(x) slot(x, "ID"))
   state_boundary <- rgeos::gBuffer(sp::SpatialPolygonsDataFrame(states, 
                                              data.frame(viz=rep("viz", 
@@ -46,20 +53,25 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   
   sp_cells <- sp_cells[which(!is.na(sp::over(sp_cells, storm_states, returnList = F))),]
   
-  sp_cells <- rgeos::gIntersection(sp_cells, state_boundary, byid = T)
+  sp_cells_i <- rgeos::gIntersection(sp_cells, state_boundary, byid = T)
+  sp_cells_ids <- sp::over(sp_cells_i, sp_cells, returnList = F, fn=NULL)
   
-  IDs <- sapply(slot(sp_cells, "polygons"), function(x) strsplit(slot(x, "ID")," ")[[1]][1])
+  IDs <- sapply(slot(sp_cells_i, "polygons"), function(x) strsplit(slot(x, "ID")," ")[[1]][1])
   
-  sp::spChFIDs(sp_cells) <- IDs
+  sp::spChFIDs(sp_cells_i) <- IDs
   
-  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells, data.frame(id = as.numeric(IDs), row.names = IDs))
+  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells_i, data.frame(id = IDs, 
+                                                                  row.names = IDs, 
+                                                                  stringsAsFactors = F))
   
   sp_points <- sp_points[which(sp_points@data$id %in% sp_cells@data$id),]
   
-  saveRDS(sp_cells, viz[['location']])
+  saveRDS(sp_points, viz[['location']])
   
-  rgdal::writeOGR(sp_cells, "irma_cells.shp",
-                  layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE) 
+  # rgdal::writeOGR(sp_cells, "irma_cells.shp",
+  #                 layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE) 
+  # rgdal::writeOGR(sp_points, "irma_points.shp",
+  #                 layer = "irma_points", driver = "ESRI Shapefile", overwrite_layer=TRUE)
 }
 
 
