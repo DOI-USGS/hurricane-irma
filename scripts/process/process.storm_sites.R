@@ -13,7 +13,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   
   library(dplyr)
   
-  sites$begin_date <- as.Date(sites$begin_date)
+  sites$dv_begin_date <- as.Date(sites$dv_begin_date)
   
   sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
                                                sites$dec_lat_va), 
@@ -26,6 +26,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
   
   percent_flood_stage <- as.numeric(viz[["perc_flood_stage"]])
   begin_date_filter <- as.Date(viz[["begin_date_filter"]])
+  mobile_date_filter <- as.Date(viz[["mobile_date_filter"]])
   
   nws_flood_predicted <- unique(nws.data %>% 
     left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
@@ -37,9 +38,13 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
     rowSums() %>% 
     as.logical() & 
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
-    sites$begin_date < begin_date_filter & # has period of record longer than some begin date
+    sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
     sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
     !(sites$site_no %in% c('02223000', '02207220')) # is not one of our manually selected bad sites
+  
+  mobile_featured <- is.featured %>% as.logical() & sites$dv_begin_date < mobile_date_filter
+  
+  mobile_featured <- sites$site_no[mobile_featured]
   
   sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
@@ -50,7 +55,9 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
                          onclick=ifelse(is.featured, sprintf("openNWIS('%s');", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
-  saveRDS(sites.sp, viz[['location']])
+  out <- list(sites.sp = sites.sp, mobile_featured = mobile_featured)
+  
+  saveRDS(out, viz[['location']])
 }
 
 #fetch NWIS iv data, downsample to hourly
@@ -59,7 +66,7 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   required <- c("depends", "location")
   checkRequired(viz, required)
   depends <- readDepends(viz)
-  siteInfo <- depends[['storm-sites']]
+  siteInfo <- depends[['storm-sites']]$sites.sp
   sites_active <- dplyr::filter(siteInfo@data, class == 'nwis-dot')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
   

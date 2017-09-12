@@ -9,7 +9,7 @@ process.flood_sites <- function(viz){
   depends <- readDepends(viz)
   nws_data <- depends[["nws-data"]]
   gage_data <- depends[["gage-data"]]
-  storm_sites <- depends[["storm-sites"]]
+  storm_sites <- depends[["storm-sites"]]$sites.sp
   
   flood_sites_sp <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
   

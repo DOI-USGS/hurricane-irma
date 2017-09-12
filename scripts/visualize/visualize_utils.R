@@ -318,7 +318,7 @@ visualize.timelapse_gif <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
-  storm_sites <- depends[['storm-sites']]
+  storm_sites <- depends[['storm-sites']]$sites.sp
   gage_data <- depends[['gage-data']]
   nws_data <- depends[["nws-data"]]
   
