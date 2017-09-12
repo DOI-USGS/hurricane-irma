@@ -86,7 +86,7 @@ $('document').ready(function() {
         $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
           svg = document.querySelector("svg");
           pt = svg.createSVGPoint();
-          $('.ocean-water').on('click', function(){
+          $('.viz-pause').on('click', function(){
             pause();
           });
           play();
