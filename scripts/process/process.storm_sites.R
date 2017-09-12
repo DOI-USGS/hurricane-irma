@@ -55,9 +55,7 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
                          onclick=ifelse(is.featured, sprintf("openNWIS('%s');", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
-  out <- list(sites.sp = sites.sp, mobile_featured = mobile_featured)
-  
-  saveRDS(out, viz[['location']])
+  saveRDS(sites.sp, viz[['location']])
 }
 
 #fetch NWIS iv data, downsample to hourly
@@ -66,7 +64,7 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   required <- c("depends", "location")
   checkRequired(viz, required)
   depends <- readDepends(viz)
-  siteInfo <- depends[['storm-sites']]$sites.sp
+  siteInfo <- depends[['storm-sites']]
   sites_active <- dplyr::filter(siteInfo@data, class == 'nwis-dot')$id
   sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
   
