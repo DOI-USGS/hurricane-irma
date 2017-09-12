@@ -12,16 +12,13 @@ info:
     water, hurricane, irma, USGS, NOAA, VIZLAB, NWIS, flood
   audience: General public
   url: https://owi.usgs.gov/vizlab/hurricane-irma/
-  thumbnail:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
-    width: 1560
-    height: 820
-    alttext: "Hurricane Irma"
+  twitter: "@USGS-R"
   thumbnail-facebook:
     url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-facebook.png
     width: 1560
     height: 820
     alttext: "Hurricane Irma"
+    type: image/png
   thumbnail-twitter:
     url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
     width: 560
@@ -241,14 +238,38 @@ fetch:
     
 process:
   -
-    id: storm-sites
-    location: cache/storm-sites.rds
-    processor: storm_sites
+    id: all-sites
+    location: cache/all-sites.rds
+    processor: all_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
     depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
     perc_flood_stage: 1
-    begin_date_filter: "2017-01-01"
+    begin_date_filter: "1995-01-01"
+    mobile_date_filter: "1960-01-01"
+  -
+    id: mobile-sites
+    processor: getMobileSites
+    location: cache/mobile-sites.rds
+    scripts: scripts/process/process.storm_sites.R
+    depends: ["all-sites"]
+    reader: rds
+  -
+    id: storm-sites
+    processor: getDesktopSites
+    location: cache/storm-sites.rds
+    scripts: scripts/process/process.storm_sites.R
+    depends: ["all-sites"]
+    reader: rds
+  -
+    id: gage-data
+    processor: getNWISdata
+    location: cache/gage-data.rds
+    scripts: scripts/process/process.storm_sites.R
+    depends: ["precip-data","storm-sites", "sites", "timesteps"]
+    reader: rds
+    refetch: TRUE
+    comment: disabling refetch for now, re-enable to get updates to work
   -
     id: storm-track
     location: cache/storm-track.rds
@@ -321,15 +342,6 @@ process:
     depends: "precip-data"
     export: true
     mimetype: application/javascript
-  -
-    id: gage-data
-    processor: getNWISdata
-    location: cache/gage-data.rds
-    scripts: scripts/process/process.storm_sites.R
-    depends: ["precip-data","storm-sites", "sites", "timesteps"]
-    reader: rds
-    refetch: TRUE
-    comment: disabling refetch for now, re-enable to get updates to work
   - 
     id: discharge-sparks
     location: cache/discharge-sparks.rds
