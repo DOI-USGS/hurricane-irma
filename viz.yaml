@@ -3,7 +3,7 @@ info:
   id: hurricane-irma
   name: Hurricane Irma's Water Footprint
   date: 2017-09-07
-  publish-date: 2017-09-21
+  publish-date: 2017-09-12
   path: /hurricane-irma
   analytics-id: UA-78530187-8
   description: >-
@@ -194,7 +194,7 @@ fetch:
     id: precip-data
     fetcher: precip
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
+    end.date: "2017-09-15"
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
