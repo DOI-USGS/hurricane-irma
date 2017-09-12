@@ -43,14 +43,14 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   
   library(dplyr)
   data.out <- data.frame(id = NA_character_, 
-                         base.class = rep('county-polygon', length(sp)), 
+                         class = rep('county-polygon', length(sp)), 
                          polyname = names(sp), 
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
     left_join(precip.classes) %>% 
-    mutate(id = county_map_name_2_id(polyname)) %>% mutate(class = paste0(base.class, class)) %>% 
+    mutate(id = county_map_name_2_id(polyname)) %>% 
     mutate(onmousemove = sprintf("hovertext('%s',evt);", county_map_name_2_mouser(polyname))) %>%  
-    select(-polyname, -base.class) 
+    select(-polyname) 
   
   row.names(data.out) <- row.names(sp)
   
