@@ -1,0 +1,16 @@
+<div id="embedSection" class="responsiveGrid">
+  <div class="spacer">
+    <h3>Copy below to embed figures</h3>
+    {{#embeds}}
+      <h4>{{description}}</h4>
+      <div class="embedHolder">
+        <div class="embed">
+          <div class="socialMediaImage">
+            {{{blackEmbedIcon}}}
+          </div>
+        </div>
+        <input type="text" onclick="this.select();" value='<iframe src="{{{url}}}"></iframe>' readonly="readonly">
+      </div>
+    {{/embeds}}
+  </div>
+</div>

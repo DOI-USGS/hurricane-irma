@@ -1,0 +1,141 @@
+.socialHolder{
+  width:30px;
+  min-height:20px;
+  position:fixed;
+  z-index:1000;
+  top:55px;
+  right:5px;
+}
+
+.socialMediaOption{
+  height:30px;
+  margin-bottom:5px;
+  position:relative;
+  cursor:pointer;
+  transition: all .5s ease;
+}
+
+.socialMediaOption:hover{
+  transform: scale(1.2);
+}
+
+.socialMediaOption:nth-child(4){
+  margin-bottom:0;
+}
+
+.socialMediaImage{
+  width:25px;
+  height:25px;
+  position:absolute;
+  margin:auto;
+  top:0; bottom:0; right:0; left:0;
+}
+
+#github{
+  background:rgb(38,40,47);
+}
+
+#twitter{
+  background:rgb(108,175,224);
+}
+
+#facebook{
+  background:rgb(66,88,149);
+}
+
+#embed{
+  background:rgb(86,130,189);
+}
+
+#embedSection{
+  margin-top: 20px;
+  background:rgb(225,225,225);
+  border-radius:5px;
+}
+
+.spacer{
+  padding:10px;
+}
+
+#embedSection h3,
+#embedSection h4{
+  font-weight:normal;
+}
+
+#embedSection h3{
+  margin-bottom:15px;
+}
+
+#embedSection h4{
+  margin-bottom:5px;
+}
+
+.embedHolder{
+  display:flex;
+  flex-direction:row;
+}
+
+.embed,
+#embedSection input{
+  border:1px solid rgb(150,150,150);
+  background:#fff;
+  height:30px;
+  outline:none;
+}
+
+.embed{
+  margin:0 -5px 0 0;
+  border-radius:5px 0 0 5px;
+  width:30px;
+  position:relative;
+  cursor:pointer;
+}
+
+.embed:hover{
+  background:#ccc;
+}
+
+.embed .socialMediaImage{
+  width:20px;
+  height:20px;
+}
+
+#embedSection input{
+  flex:1;
+  padding:0 10px;
+  border-radius:0 5px 5px  0;
+}
+
+.responsiveGrid{
+  padding:15px 40px;
+  margin-top:10px;
+}
+
+@media screen and (min-width:768px){
+  #header h3{
+    font-size:1.2em;
+    margin:0 0 0 10px;
+    padding:0;
+  }
+}
+
+@media screen and (min-width:1024px){
+  .responsiveGrid{
+    width:770px;
+    margin:10px auto 0 auto;
+    padding:0;
+  }
+}
+
+@media screen and (min-width:1500px){
+  .responsiveGrid{
+    width:810px;
+  }
+}
+
+@media screen and (min-width:2000px){
+  .responsiveGrid{
+    width:1210px;
+    
+  }
+}
