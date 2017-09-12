@@ -79,7 +79,7 @@ figurecaption{
     from {-webkit-transform: rotate(0deg);}
     to   {-webkit-transform: rotate(359deg);}
 }
-@keyframes spin { 
+@keyframes rotation { 
   from {transform:rotate(0deg);} 
   to {transform:rotate(360deg);} 
 }
