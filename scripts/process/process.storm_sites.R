@@ -1,4 +1,4 @@
-process.storm_sites <- function(viz = as.viz('storm-sites')){
+process.all_sites <- function(viz = as.viz('all-sites')){
   library(magrittr)
   
   checkRequired(viz, c("perc_flood_stage", "begin_date_filter"))
@@ -55,7 +55,20 @@ process.storm_sites <- function(viz = as.viz('storm-sites')){
                          onclick=ifelse(is.featured, sprintf("openNWIS('%s');", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
-  saveRDS(sites.sp, viz[['location']])
+  out<- list(sites.sp = sites.sp, mobile_featured = mobile_featured)
+  
+  saveRDS(out, viz[['location']])
+}
+
+process.getMobileSites <- function(viz = as.viz('mobile-sites')){
+  
+  saveRDS(readDepends(viz)[['all-sites']]$mobile_featured, viz[['location']])
+}
+
+process.getDesktopSites <- function(viz = as.viz('storm-sites')){
+
+  saveRDS(readDepends(viz)[['all-sites']]$sites.sp, viz[['location']])
+
 }
 
 #fetch NWIS iv data, downsample to hourly
