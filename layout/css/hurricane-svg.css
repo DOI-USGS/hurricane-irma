@@ -38,7 +38,7 @@ line, polyline, path{
 .state-name {
   fill: #C0C0C0;
   fill-opacity: 0.7;
-  font-size:0.95em;
+  font-size:0.8em;
 }
 
 #map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {

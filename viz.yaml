@@ -280,7 +280,7 @@ process:
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.15
+    stepSize: 1.5
   - 
     id: precip-classify
     location: cache/precip-classified.rds
@@ -482,6 +482,12 @@ publish:
     title: "play icon"
     alttext: "play icon"
   -
+    id: loading-icon
+    location: images/loader-01.png
+    mimetype: image/png
+    title: "loading icon"
+    alttext: "loading icon"
+  -
     id: vizlab-logo
     location: images/vizlab.svg
     mimetype: image/svg+xml
@@ -560,10 +566,12 @@ publish:
     publisher: section
     depends:
       playIcon: play-icon
+      loadingIcon: loading-icon
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
       playIcon: playIcon
+      figure: loadingIcon
       line1: >-
         Hurricane Irma approached the west coast of Florida on Sept 10th, 2017. 
         The map above displays the hurricane's path and its impact on precipitation 
