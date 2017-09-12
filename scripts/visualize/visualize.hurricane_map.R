@@ -15,7 +15,6 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
-  xml2::xml_attr(map.elements, 'clip-path') <- "url(#ocean-background)"
 
   side.panel <- 145
   xml_attr(svg, 'viewBox') <- sprintf("0 0 %s %s", width, height)
