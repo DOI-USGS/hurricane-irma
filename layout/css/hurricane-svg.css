@@ -92,12 +92,17 @@ line, polyline, path{
   fill:#057083;
   fill-opacity:0.6;
 }
+.nwis-mouser {
+  fill-opacity: 0;
+  stroke-opacity: 0;
+}
 
-.nwis-bold, .nwis-dot:hover, .nwis:hover {
+.nwis-bold, .nwis-dot:hover, .nwis:hover, .nwis-mouser:hover {
   fill-opacity: 0.7;
   stroke-width:2;
   fill:#F29E4C;
   stroke:#F29E4C;
+  stroke-opacity: 1;
 }
   
 .inactive-dot {
