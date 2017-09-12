@@ -28,8 +28,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # overlays 
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(50,380)")
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(50,380)")
   xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(60,290)")
   xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(120,210)")
   xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(38,210)")
@@ -39,7 +39,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   
-  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water')
+  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause')
   g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   
   # lower left legend:
@@ -122,8 +122,18 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-location")
   # tops are only things we want mouseovers on:
   xml_add_child(map.elements.top, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
-  xml_add_child(map.elements.top, 'use', "xlink:href"="#storm-sites", class='county-borders-overlay')
+  g.mouse <- xml_add_child(map.elements.top, 'g', id = 'gage-mousers')
   
+  # now replicate and move the gages up to the top, but make their mousers invisible:
+  storm.sites <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='nwis-dot']") 
+  lapply(storm.sites, xml_add_child, .x = g.mouse)
+  mouse.kids <- xml_children(g.mouse)
+  xml_attr(mouse.kids, "class") <- 'nwis-mouser'
+  xml_attr(mouse.kids, "xmlns") <- NULL
+  xml_attr(storm.sites, "onmousemove") <- NULL
+  xml_attr(storm.sites, "onmouseout") <- NULL
+  xml_attr(storm.sites, "onmouseover") <- NULL
+  xml_attr(storm.sites, "onclick") <- NULL
   return(svg)
 }
 
