@@ -1,4 +1,4 @@
-vizlab: "0.1.8"
+vizlab: "0.1.8.10"
 info:
   id: hurricane-irma
   name: Hurricane Irma's Water Footprint
@@ -20,12 +20,12 @@ info:
     alttext: "Hurricane Irma"
     type: image/png
   thumbnail-twitter:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
+    url: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-twitter.png
     width: 560
     height: 300
     alttext: "Hurricane Irma"
   thumbnail-landing:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-landing.png
+    url: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-landing.png
     width: 400
     height: 400
     alttext: "Hurricane Irma"
@@ -33,9 +33,9 @@ info:
   required-packages:
     vizlab:
       repo: github
-      version: 0.1.8
+      version: 0.1.8.10
       name: USGS-VIZLAB/vizlab
-      ref: v0.1.8
+      ref: v0.1.8.10
     svglite: 
       repo: github
       version: 1.2.0.9003
