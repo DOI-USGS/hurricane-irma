@@ -43,7 +43,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
   
   # lower left legend:
-  xml_add_child(g.rain, 'text', "Hourly rainfall amount (inches)", class='svg-text legend-text', dy="-1em")
+  xml_add_child(g.rain, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em")
   g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
   g.irma <- xml_add_child(g.rain, 'g', id = 'irma-legend', transform="translate(15,20)")
   g.gage <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,35)")
