@@ -66,12 +66,10 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   
   sp_points <- sp_points[which(sp_points@data$id %in% sp_cells@data$id),]
   
-  saveRDS(sp_points, viz[['location']])
+  out <- list(cells = sp::spTransform(sp_cells, sp::CRS('+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0')), points = sp_points)
   
-  # rgdal::writeOGR(sp_cells, "irma_cells.shp",
-  #                 layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE) 
-  # rgdal::writeOGR(sp_points, "irma_points.shp",
-  #                 layer = "irma_points", driver = "ESRI Shapefile", overwrite_layer=TRUE)
+  saveRDS(out, viz[['location']])
+
 }
 
 
