@@ -4,15 +4,14 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
     return(NULL)
   }
   
-  view <- readDepends(viz)[["view-limits"]]
+  checkRequired(viz, "cell_size")
   
-  ### constants
-  cell_size <- 12000 # meters -- set to make grid more course or dense.
-  states <- c("florida", "georgia", "alabama", "south carolina") # from maps states id list.
-  ### /constants
-    
-  xlim <- view[["xlim"]]
-  ylim <- view[["ylim"]]
+  view <- readDepends(viz)[["view-limits"]]
+  storm_area <- readDepends(viz)[["storm-area-filter"]]
+  states <- readData("states")
+  cell_size <- viz[["cell_size"]] # meters -- set to make grid more course or dense.
+  
+  bbox <- sp::spTransform(storm_area,view$proj.string)
   proj.string <- view[["proj.string"]]
   proj <- sp::CRS(proj.string)
   
@@ -27,10 +26,7 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   sp_cells <- raster::rasterToPolygons(sp_grid)
   sp_points <- sp::SpatialPoints(raster::rasterToPoints(sp_grid),proj)
   
-  state_boundary <- to_sp("state", proj.string = proj.string)
-  
-  state_IDs <- sapply(slot(state_boundary, "polygons"), function(x) slot(x, "ID"))
-  index <- which(state_IDs %in% states)
+  stateIDs <- sapply(slot(states, "polygons"), function(x) slot(x, "ID"))
   
   state_boundary <- SpatialPolygonsDataFrame(state_boundary[index,], data.frame(viz=rep("viz", length(index)), 
                                                                                 stringsAsFactors = F, row.names = states))

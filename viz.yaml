@@ -188,11 +188,12 @@ fetch:
   -
     id: precip-spatial
     fetcher: precipSpatial
-    depends: ["view-limits"]
-    scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
+    depends: ["view-limits", "storm-area-filter", "states"]
+    scripts: [scripts/fetch/fetch.precip_spatial.R]
     location: cache/irma_cells.rds
+    cell_size: 1200
     mimetype: application/zip
-    refetch: TRUE
+    refetch: FALSE
     comment: disabling refetch as this isn't needed yet
   -
     id: precip-cell-data
@@ -205,7 +206,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
-    refetch: TRUE
+    refetch: FALSE
     comment: disabling refetch to avoid too many GDP requests
   -
     id: precip-data
@@ -240,7 +241,7 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: TRUE
+    refetch: FALSE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
