@@ -7,13 +7,13 @@ info:
   path: /hurricane-irma
   analytics-id: UA-78530187-8
   description: >-
-    Describe project here
+    Hurricane Irma's impact on precipitation and river gage height
   keywords: >-
     water, hurricane, irma, USGS, NOAA, VIZLAB, NWIS, flood
   audience: General public
   url: https://owi.usgs.gov/vizlab/hurricane-irma/
   thumbnail:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-facebook.png
+    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
     width: 1560
     height: 820
     alttext: "Hurricane Irma"
@@ -280,7 +280,7 @@ process:
     scripts: scripts/process/process.precip-classify.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 0.15
+    stepSize: 1.5
   - 
     id: precip-classify
     location: cache/precip-classified.rds
@@ -373,7 +373,7 @@ visualize:
     height: 720
     width: 576
     export: true
-    title: "Hurricane Irma's impact on precipitation and streamflow"
+    title: "Hurricane Irma's impact on precipitation and river gage height"
     alttext: "Map of Hurricane Irma's water footprint"
   -
     id: hurricane-map-landscape
@@ -482,11 +482,56 @@ publish:
     title: "play icon"
     alttext: "play icon"
   -
+    id: loading-icon
+    location: images/loader-01.png
+    mimetype: image/png
+    title: "loading icon"
+    alttext: "loading icon"
+  -
     id: vizlab-logo
     location: images/vizlab.svg
     mimetype: image/svg+xml
     title: "Vizlab Logo"
     alttext: "Vizlab Logo"
+  -
+    id: githubLogo
+    location: images/github.svg
+    mimetype: image/svg
+    inline: true
+    title: "Github"
+    alttext: "Github Logo"
+  -
+    id: twitterLogo
+    location: images/twitter.svg
+    mimetype: image/svg
+    inline: true
+    title: "Twitter"
+    alttext: "Twitter Logo"
+  -
+    id: facebookLogo
+    location: images/facebook.svg
+    mimetype: image/svg
+    inline: true
+    title: "Facebook"
+    alttext: "Facebook Logo"
+  -
+    id: embedIcon
+    location: images/embed.svg
+    mimetype: image/svg
+    inline: true
+    title: "Embed"
+    alttext: "Vizlab Embed Icon"
+  -
+    id: blackEmbedIcon
+    location: images/blackEmbed.svg
+    mimetype: image/svg
+    inline: true
+    title: "Embed"
+    alttext: "Vizlab Embed Icon"
+  -
+    id: social-media-css
+    location: layout/css/social-media.css
+    mimetype: text/css
   -
     id: jquery-js
     location: layout/js/jquery-3.1.1.min.js
@@ -507,23 +552,26 @@ publish:
     scripts: scripts/publish/json.R
     depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
-      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", "hurricane-map-portrait", "thumbnail-facebook",
-      "thumbnail-twitter", "thumbnail-landing"]
+      "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
+      "hurricane-map-portrait", "thumbnail-facebook", "thumbnail-twitter", "thumbnail-landing", 
+      "social-section", "social-media-css"]#, "embed-section"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
-        "vizlab-favicon"]
-      sections: [ "figure-section", "data-sources"]
+        "vizlab-favicon", "social-media-css"]
+      sections: [ "figure-section", "data-sources", "social-section"]#, "embed-section"]
   -
     id: figure-section
     template: layout/templates/mapFigure.mustache
     publisher: section
     depends:
       playIcon: play-icon
+      loadingIcon: loading-icon
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
       playIcon: playIcon
+      figure: loadingIcon
       line1: >-
         Hurricane Irma approached the west coast of Florida on Sept 10th, 2017. 
         The map above displays the hurricane's path and its impact on precipitation 
@@ -531,7 +579,7 @@ publish:
         gage height at a selection of U.S. Geological Survey (USGS) gaging 
         stations impacted by the hurricane. Variation in the shape of the 
         hydrographs is due to a number of factors that impact the effect 
-        of precipitation on flow, including stream size, storm-surge, 
+        of precipitation on river gage height, including stream size, storm-surge, 
         reservoir operations, and other local conditions. The USGS also 
         collects additional information with 
       stnText: Short-Term Network gages
@@ -540,6 +588,30 @@ publish:
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
       line3: to learn more about how the agency prepared for and measured Irma’s impact. 
+  -
+    id: figure-embed-section
+    embed: true
+    template: layout/templates/mapFigure.mustache
+    publisher: section
+    depends: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", 
+    "vizlab-favicon", "hurricane-map-landscape"]
+    context:
+      id: map-embed-figure
+      figure: hurricane-map-landscape
+      title: Hurricane Irma’s Water Footprint
+      line1: >-
+        Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
+        The map above displays the hurricane's impact on precipitation and 
+        river gage height. Normalized gage height at a selection of U.S. 
+        Geological Survey (USGS) gaging stations impacted by the hurricane 
+        is shown in the right panel. Variation in the shape of the hydrographs 
+        (right panel) is due to stream size, storm-surge, reservoir operations, 
+        and other local conditions, which can impact the effect of precipitation 
+        on flow. The USGS also collects additional information with 
+      stnText: Short-Term Network gages
+      stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
+      line2: (these gages are not shown here). 
+      resources: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", "vizlab-favicon"]
   -
     id: header-section
     template: layout/templates/header.mustache
@@ -550,6 +622,32 @@ publish:
       title: Hurricane Irma's Water Footprint
       logo: usgs-logo
       caption: Water impacts from Hurricane Irma
+  -
+    id: social-section
+    publisher: section
+    template: layout/templates/socialMedia.mustache
+    depends:
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+#      embedIcon: embedIcon 
+    context:
+      githubLogo: githubLogo
+      twitterLogo: twitterLogo 
+      facebookLogo: facebookLogo
+#      embedIcon: embedIcon 
+#  -
+#    id: embed-section
+#    publisher: section
+#    template: layout/templates/embedTemplate.mustache
+#    depends:
+#      blackEmbedIcon: blackEmbedIcon
+#    context:
+#      blackEmbedIcon: blackEmbedIcon
+#      embeds: 
+#        -
+#          description: Embed Description Area
+#          url: "https://owi.usgs.gov/vizlab/hurricane-irma/embed/figure-section.html"
   -
     id: footer
     publisher: section

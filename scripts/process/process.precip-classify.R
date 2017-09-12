@@ -8,7 +8,9 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
   fips.data <- maps::county.fips
   fips.data$fips <- as.character(fips.data$fips)
   fips.data$fips <- ifelse(nchar(fips.data$fips) == 4, paste0("0", fips.data$fips), fips.data$fips)
-  precipData$precipVal <- precipData$precipVal/25.4 #convert mm to inches
+  precipData <- precipData %>% group_by(fips) %>% 
+    mutate(precipVal = precipVal/25.4, summ = cumsum(precipVal)) %>% #convert mm to inches, do cumulative
+    select(DateTime, fips, precipVal = summ)
   
   precipData <- precipData %>% mutate(cols = cut(precipVal, breaks = precip_breaks, labels = FALSE)) %>% 
     mutate(cols = ifelse(precipVal > tail(precip_breaks,1), length(precip_breaks), cols)) %>% 
@@ -31,7 +33,7 @@ process.precip_classify <- function(viz = as.viz('precip-classify')){
 }
 
 process.precip_breaks <- function(viz = as.viz("precip-breaks")){
-  colSteps <- readDepends(viz)[['precip-colors']] #vector of actual color palette codes
+  colSteps <- readDepends(viz)[['precip-colors']] #vector of actual color palette codes, now used for cumulative
   precip_breaks <- seq(from = 0, to = viz[['stepSize']] * (length(colSteps) - 1), length.out =length(colSteps))
   saveRDS(object = precip_breaks, file = viz[['location']])
 }
