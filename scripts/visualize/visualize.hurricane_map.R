@@ -13,6 +13,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
+  precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
 

@@ -49,7 +49,7 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   
   sp_points <- SpatialPointsDataFrame(sp_points, sp_point_ids)
   
-  saveRDS(sp_cells, viz[['location']])
+  saveRDS(sp_points, viz[['location']])
   
   # Used for ScienceBase item.
   # rgdal::writeOGR(sp_points, irma_points.shp, # Will be used later instead of cells.
