@@ -644,6 +644,9 @@ publish:
       facebookLogo: facebookLogo
 #      embedIcon: embedIcon 
     context:
+      githubLink: "https://github.com/USGS-VIZLAB/hurricane-irma"
+      twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F&text=Impact%20of%20Hurricane%20Irma%20on%20precipitation%20and%20rivers&hashtags=IrmaHurricane2017,hurricane,flood,dataviz"
+      facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F"
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
