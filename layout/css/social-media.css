@@ -13,10 +13,14 @@
   position:relative;
   cursor:pointer;
   transition: all .5s ease;
+  opacity: 0.85;
+  filter: alpha(opacity=85); /* For IE8 and earlier */
 }
 
 .socialMediaOption:hover{
   transform: scale(1.2);
+  opacity: 1.0;
+  filter: alpha(opacity=100); /* For IE8 and earlier */
 }
 
 .socialMediaOption:nth-child(4){
