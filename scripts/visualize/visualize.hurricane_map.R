@@ -15,6 +15,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
+  xml2::xml_attr(map.elements, 'clip-path') <- "url(#ocean-background)"
 
   side.panel <- 145
   xml_attr(svg, 'viewBox') <- sprintf("0 0 %s %s", width, height)
@@ -39,7 +40,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   
-  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause')
+  xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   
   # lower left legend:
