@@ -191,7 +191,6 @@ fetch:
     reader: rds
     refetch: TRUE
     mimetype: application/zip
-    refetch: FALSE
     comment: disabling refetch as this isn't needed yet
   -
     id: precip-cell-data
