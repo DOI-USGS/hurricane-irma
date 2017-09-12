@@ -30,17 +30,17 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
   xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
   xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(50,380)")
-  xml_add_child(g.overlays, 'text', "Florida", class='svg-text state-name', id="florida", transform="translate(60,290)")
-  xml_add_child(g.overlays, 'text', "Georgia", class='svg-text state-name', id="georgia", transform="translate(120,190)")
-  xml_add_child(g.overlays, 'text', "Alabama", class='svg-text state-name', id="alabama", transform="translate(38,210)")
-  xml_add_child(g.overlays, 'text', "South Carolina", class='svg-text state-name', id="south-carolina", transform="translate(180,180)")
-  xml_add_child(g.overlays, 'text', "Tennessee", class='svg-text state-name', id="tennessee", transform="translate(55,128)")
-  xml_add_child(g.overlays, 'text', "North Carolina", class='svg-text state-name', id="north-carolina", transform="translate(215,135)")
+  xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(60,290)")
+  xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(120,210)")
+  xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(38,210)")
+  xml_add_child(g.overlays, 'text', toupper("South Carolina"), class='svg-text state-name', id="south-carolina", transform="translate(180,180)")
+  xml_add_child(g.overlays, 'text', toupper("Tennessee"), class='svg-text state-name', id="tennessee", transform="translate(55,128)")
+  xml_add_child(g.overlays, 'text', toupper("North Carolina"), class='svg-text state-name', id="north-carolina", transform="translate(215,135)")
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   
   xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water')
-  g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-80))
+  g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   
   # lower left legend:
   xml_add_child(g.rain, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em")
@@ -53,7 +53,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.gage, 'circle', r="2", class="nwis-dot")
   xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage, 'text', "USGS stream gage", class='svg-text legend-text', dx='20', dy="0.33em")
-  xml_add_child(g.rains, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', y="70")
+  
   rain.w <- 28 # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
@@ -77,14 +77,15 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   
   # sparkline container:
-  g.spark <- xml_add_child(non.geo, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
+  g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
   xml_add_child(g.spark, 'rect', width = as.character(side.panel), height='100%', class='legend-box')
   # sparklines within container:
   g.sparkle.blck <- xml_add_child(g.spark, 'g', id = sprintf('sparkline-squiggle-block-%s', mode))
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
-  
+  xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                y="450", x = as.character(side.panel/2), 'text-anchor'='middle')
   ys <- seq(45, 400, length.out = nrow(sparks))
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
@@ -113,6 +114,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
