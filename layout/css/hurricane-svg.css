@@ -167,12 +167,12 @@ line, polyline, path{
 }
 .sparkline, .sparklines-overlay {
 	stroke: #057083;
-	stroke-width:1.5;
+	stroke-width: 3;
 }
 .sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
   cursor: pointer;
   stroke: #F29E4C;
-  stroke-width:3.0;
+  stroke-width: 5;
   opacity: 1.0;
 }
 
