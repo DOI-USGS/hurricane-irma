@@ -7,18 +7,18 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   checkRequired(viz, "cell_size")
   
   view <- readDepends(viz)[["view-limits"]]
-  storm_area <- readDepends(viz)[["storm-area-filter"]]
+  proj.string <- view[["proj.string"]]
+  proj <- sp::CRS(proj.string)
+  storm_area <- sp::spTransform(readDepends(viz)[["storm-area-filter"]],proj)
   states <- readData("states")
   cell_size <- viz[["cell_size"]] # meters -- set to make grid more course or dense.
   
-  bbox <- sp::spTransform(storm_area,view$proj.string)
-  proj.string <- view[["proj.string"]]
-  proj <- sp::CRS(proj.string)
+  bbox <- sp::bbox(storm_area)
   
-  x_range <- (xlim[2] - xlim[1])/cell_size
-  y_range <- (ylim[2] - ylim[1])/cell_size
+  x_range <- (bbox[3] - bbox[1])/cell_size
+  y_range <- (bbox[4] - bbox[2])/cell_size
   
-  grid_topology <- sp::GridTopology(c(xlim[1],ylim[1]),
+  grid_topology <- sp::GridTopology(c(bbox[1],bbox[2]),
                                     cellsize = c(cell_size,cell_size),
                                     cells.dim = c(x_range, y_range))
   sp_grid <- raster::raster(sp::SpatialGrid(grid_topology, proj))
@@ -26,32 +26,40 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   sp_cells <- raster::rasterToPolygons(sp_grid)
   sp_points <- sp::SpatialPoints(raster::rasterToPoints(sp_grid),proj)
   
+  IDs <- sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID"))
+  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells, data.frame(id=c(1:length(sp_cells)), row.names = IDs))
+  sp_point_ids <- sp::over(sp_points, sp_cells, returnList = F, fn=NULL)
+  sp_points <- sp::SpatialPointsDataFrame(sp_points, sp_point_ids)
+
   stateIDs <- sapply(slot(states, "polygons"), function(x) slot(x, "ID"))
+  state_boundary <- rgeos::gBuffer(sp::SpatialPolygonsDataFrame(states, 
+                                             data.frame(viz=rep("viz", 
+                                                                length(stateIDs)), 
+                                                        stringsAsFactors = F, 
+                                                        row.names = stateIDs)),
+                                   byid = T,
+                                   width = 0) # zero buffer to fix topology exception.
   
-  state_boundary <- SpatialPolygonsDataFrame(state_boundary[index,], data.frame(viz=rep("viz", length(index)), 
-                                                                                stringsAsFactors = F, row.names = states))
   state_boundary <- maptools::unionSpatialPolygons(state_boundary, state_boundary@data$viz)
   
-  sp_cells <- rgeos::gIntersection(state_boundary, sp_cells, byid = T, drop_lower_td = T)
+  storm_states <- rgeos::gIntersection(storm_area, state_boundary)
   
-  IDs <- sapply(slot(sp_cells, "polygons"), function(x) slot(x, "ID"))
-  sp_cells <- SpatialPolygonsDataFrame(sp_cells, data.frame(id=c(1:length(sp_cells)), row.names = IDs))
+  sp_cells <- sp_cells[which(!is.na(sp::over(sp_cells, storm_states, returnList = F))),]
   
-  sp_point_selector <- sp::over(sp_points, sp_cells, fn=NULL)
+  sp_cells <- rgeos::gIntersection(sp_cells, state_boundary, byid = T)
   
-  sp_points <- sp_points[which(!is.na(sp_point_selector))]
+  IDs <- sapply(slot(sp_cells, "polygons"), function(x) strsplit(slot(x, "ID")," ")[[1]][1])
   
-  sp_point_ids <- sp::over(sp_points, sp_cells, returnList = F, fn=NULL)
+  sp::spChFIDs(sp_cells) <- IDs
   
-  sp_points <- SpatialPointsDataFrame(sp_points, sp_point_ids)
+  sp_cells <- sp::SpatialPolygonsDataFrame(sp_cells, data.frame(id = as.numeric(IDs), row.names = IDs))
+  
+  sp_points <- sp_points[which(sp_points@data$id %in% sp_cells@data$id),]
   
   saveRDS(sp_cells, viz[['location']])
   
-  # Used for ScienceBase item.
-  # rgdal::writeOGR(sp_points, irma_points.shp, # Will be used later instead of cells.
-  #                 layer = "irma_points", driver = "ESRI Shapefile", overwrite_layer=TRUE)
-  # rgdal::writeOGR(sp_cells, "irma_cells.shp",
-  #                 layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE)
+  rgdal::writeOGR(sp_cells, "irma_cells.shp",
+                  layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE) 
 }
 
 
