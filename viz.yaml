@@ -13,16 +13,12 @@ info:
   audience: General public
   url: https://owi.usgs.gov/vizlab/hurricane-irma/
   twitter: "@USGS-R"
-  thumbnail:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
-    width: 1560
-    height: 820
-    alttext: "Hurricane Irma"
   thumbnail-facebook:
     url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-facebook.png
     width: 1560
     height: 820
     alttext: "Hurricane Irma"
+    type: image/png
   thumbnail-twitter:
     url: https://owi.usgs.gov/vizlab/hurricane-irma/thumb-twitter.png
     width: 560
