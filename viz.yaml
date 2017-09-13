@@ -350,13 +350,12 @@ process:
     reader: rds
     depends: ["gage-data","timesteps", "sites"]
   - 
-    id: flood-sites
+    id: flood-sites-classify
     location: cache/flood-sites.rds
     processor: flood_sites
     scripts: scripts/process/process.flood_sites.R
     reader: rds
-    depends: ["gage-data", "nws-data", "storm-sites"]  
-    time-stamp: "2017-09-11 06:00:00"
+    depends: ["gage-data", "nws-data", "storm-sites", "timesteps"]  
     
 visualize:
   -

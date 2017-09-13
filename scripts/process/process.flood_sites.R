@@ -1,33 +1,39 @@
 #' 
 #' filter sites to just those that have exceed flood stage
 #' for the time stamp selected
-process.flood_sites <- function(viz){
+process.flood_sites <- function(viz = as.viz("flood-sites-classify")){
   library(dplyr)
-  
-  time_stamp <- viz[['time-stamp']]
   
   depends <- readDepends(viz)
-  nws_data <- depends[["nws-data"]]
+  nws_data <- depends[["nws-data"]]$sites
   gage_data <- depends[["gage-data"]]
   storm_sites <- depends[["storm-sites"]]
+  times <- as.POSIXct(strptime(depends[['timesteps']]$times, 
+                                        format = '%b %d %I:%M %p', 
+                                        tz = "America/New_York"))
+  times_df <- data.frame(dateTime = times, index = 1:length(times))
   
-  flood_sites_sp <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
+  #this won't work if we switched to discharge
+  pcode <- getContentInfo('sites')$pCode
+  stopifnot(pcode == "00065")
   
-  saveRDS(flood_sites_sp, viz[['location']])
+  storm_site_ids <- filter(storm_sites@data, class == "nwis-dot")$id
+  storm_site_ids <- gsub(pattern = "nwis-", replacement = "", x = storm_site_ids)
+  nwis_flood_indexed <- filter(gage_data, site_no %in% storm_site_ids) %>% 
+        left_join(nws_data, by = "site_no") %>% filter(p_Inst > flood.stage) %>% 
+        left_join(times_df, by = "dateTime") %>% select(site_no, index)
+  
+  class_df <- data.frame()
+  #actually create the classes
+  for(site in unique(nwis_flood_indexed$site_no)) {
+    site_df <- filter(nwis_flood_indexed, site_no == site)
+    site_class <- paste(paste("f", site_df$index, sep = "-"), collapse = " ")
+    class_df_row <- data.frame(site_no = site, class = site_class, 
+                               stringsAsFactors = FALSE)
+    class_df <- bind_rows(class_df, class_df_row)
+  }
+  
+  saveRDS(class_df, viz[['location']])
 }
 
-filterFloodSites <- function(gage_height_data, flood_stage_info, sites_sp, time_stamp){
-  library(dplyr)
-  library(sp)
-  
-  flood_data <- gage_height_data %>% 
-    filter(site_no %in% unique(flood_stage_info$sites$site_no)) %>% 
-    filter(dateTime == as.POSIXct(time_stamp, tz = "America/New_York")) %>% 
-    left_join(flood_stage_info$sites) %>% 
-    filter(p_Inst >= flood.stage) %>% 
-    mutate(id = paste0("nwis-", site_no))
-  
-  flood_sites_sp <- sites_sp[which(sites_sp@data$id %in% flood_data$id), ]
-  
-  return(flood_sites_sp)
-}
+
