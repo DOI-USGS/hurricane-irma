@@ -39,43 +39,42 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   saveRDS(sparks, viz[['location']])
 }
 
+grab_clip_rect <- function(vals, flood){
+  
+  x = svglite::xmlSVG({
+    par(omi=c(0,0,0,0), mai=c(0,0,0,0))
+    plot(vals, type='l', axes=F, ann=F)
+    abline(h = flood)
+  }, height=0.4, width=2)
+  y.out <- xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="line"]'),'y1')
+  if (is.na(y.out)){
+    return("0")
+  } else {
+    return(y.out)
+  }
+}
+
 # Should rename at some point. Not always going to be discharge.
 process.flood_sparks <- function(viz = as.viz('flood-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("timestep-discharge", "sites", "flood-sites-classify"))
+  checkRequired(depends, c("timestep-discharge", "sites", "nws-data"))
   
-  
+  nws_data <- depends[["nws-data"]]$sites
   ids <- names(depends[["timestep-discharge"]])
   site.nos <- sapply(ids, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
+
   
-  flood.data <- depends$`flood-sites-classify`@data %>% filter(id %in% names(depends[["timestep-discharge"]]))
-  num.times <- length(depends$`timestep-discharge`[[1]]$y)
-  
-  grab_clip_path <- function(class){
-    flags <- as.numeric(strsplit(class, 'f-')[[1]])
-    flags <- flags[!is.na(flags)]
-    
-    buf <- 5.33
-    tot.w <- 144 #px
-    #buffer isn't right here.
-    x = seq(buf/2, to = tot.w-buf/2, length.out = num.times)
-    if (length(flags) == 0){
-      #return(x)
-    } else {
-      return(paste(x[flags], sep=' '))
-    }
-    
+  sparks <- data.frame(site_no = site.nos, id = ids, stringsAsFactors = FALSE)
+  for (i in 1:length(sparks$site_no)){
+    site <- sparks$site_no[i]
+    flood <- filter(nws_data, site_no == site) %>% .$flood.stage %>% .[1]
+    sparks$y[i] = grab_clip_rect(depends[["timestep-discharge"]][[sparks$id[i]]]$y, flood)
   }
-  
-  
-  sparks <- data.frame(points = sapply(depends[["timestep-discharge"]], function(x) grab_spark(x$y), USE.NAMES = FALSE),
-                       site_no = site.nos, id = ids, stringsAsFactors = FALSE) %>% 
-    left_join(depends$`flood-sites-classify`@data) %>% 
-    mutate(clip.x = grab_clip_path(class)) %>% select(clip.x)
-    mutate(class = "sparkline", 
-           id = sprintf("sparkline-%s", site_no), 
-           style = "mask: url(#spark-opacity);",
+  sparks <- sparks %>% 
+    mutate(class = "floodline", 
+           id = sprintf("floodline-%s", site_no), 
+           style = "mask: url(#flood-opacity);",
            onmouseover=sprintf("setBold('nwis-%s');", site_no), 
            onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
