@@ -28,18 +28,18 @@ process.all_sites <- function(viz = as.viz('all-sites')){
   begin_date_filter <- as.Date(viz[["begin_date_filter"]])
   mobile_date_filter <- as.Date(viz[["mobile_date_filter"]])
   
-  nws_flood_predicted <- unique(nws.data %>% 
-    left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
-    mutate(forecast_vals = as.numeric(forecast_vals)) %>% 
-    filter(forecast_vals > (percent_flood_stage * flood.stage)) %>% 
-    select(site_no))
+  # nws_flood_predicted <- unique(nws.data %>% 
+  #   left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
+  #   mutate(forecast_vals = as.numeric(forecast_vals)) %>% 
+  #   filter(forecast_vals > (percent_flood_stage * flood.stage)) %>% 
+  #   select(site_no))
 
   is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% 
     rowSums() %>% 
     as.logical() & 
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
-    sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
-    sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
+  #  sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
+  #  sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
     !(sites$site_no %in% c('02223000', '02207220')) # is not one of our manually selected bad sites
   
   mobile_featured <- is.featured %>% as.logical() & sites$dv_begin_date < mobile_date_filter
