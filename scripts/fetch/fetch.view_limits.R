@@ -18,11 +18,16 @@ fetch.view_limits <- function(viz = as.viz('view-limits')){
   saveRDS(out, viz[['location']])
 }
 
+# Generates a WGS84 polygon that defines the storm area independent of the viz bounding box.
 fetch.storm_area_filter <- function(viz = as.viz('storm-area-filter')) {
+  
   pointsVec <- as.numeric(c(lats = viz[['lons']], lons = viz[['lats']]))
+  
   pointsMatrix <- matrix(pointsVec, nrow = length(pointsVec)/2, ncol = 2)
+  
   poly <- sp::SpatialPolygons(list(
     sp::Polygons(list(sp::Polygon(pointsMatrix)), ID =1 )), 
     pO = 1L, proj4string = sp::CRS("+proj=longlat +datum=WGS84"))
+  
   saveRDS(poly, viz[['location']])
 }

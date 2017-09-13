@@ -32,19 +32,23 @@ simpleCap <- function(x) {
 process.storm_counties <- function(viz = as.viz('storm-counties')){
   library(dplyr)
   depends <- readDepends(viz)
-  sp <- depends[['counties']]
+  counties <- depends[['counties']]
   precip.classes <- depends[['precip-classify']]
   epsg_code <- getContentInfo('view-limits')[['proj.string']]
-  footy <- depends[['storm-area-filter']] %>% sp::spTransform(epsg_code) %>% 
-    rgeos::gBuffer(width=200000, byid=TRUE )
-  counties <- sp::spTransform(sp, sp::CRS(epsg_code))
-  overlap <- rgeos::gContains(footy, counties, byid = TRUE) %>% rowSums() %>% as.logical()
-  sp <- sp[overlap, ]
+  
+  storm_area_filter <- depends[['storm-area-filter']] %>% sp::spTransform(epsg_code)# %>% 
+    #rgeos::gBuffer(width=200000, byid=TRUE )
+  
+  counties <- sp::spTransform(counties, sp::CRS(epsg_code))
+  
+  overlap <- rgeos::gContains(storm_area_filter, counties, byid = TRUE) %>% rowSums() %>% as.logical()
+  counties <- counties[overlap, ]
   
   library(dplyr)
+  county_ids <- sapply(slot(counties, "polygons"), function(x) slot(x, "ID"))
   data.out <- data.frame(id = NA_character_, 
-                         class = rep('county-polygon', length(sp)), 
-                         polyname = names(sp), 
+                         class = rep('county-polygon', length(county_ids)), 
+                         polyname = county_ids, 
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
     left_join(precip.classes) %>% 
@@ -52,11 +56,10 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
     mutate(onmousemove = sprintf("hovertext('%s',evt);", county_map_name_2_mouser(polyname))) %>%  
     select(-polyname) 
   
-  row.names(data.out) <- row.names(sp)
+  row.names(data.out)  <- county_ids
   
-  sp.data.frame <- as(object = sp, Class = paste0(class(sp), "DataFrame"))
-  sp.data.frame@data <- data.out
+  counties <- sp::SpatialPolygonsDataFrame(counties, data.out)
   
-  saveRDS(sp.data.frame, viz[['location']])
+  saveRDS(counties, viz[['location']])
 }
 
