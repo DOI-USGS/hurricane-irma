@@ -137,7 +137,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.mouse <- xml_add_child(map.elements.top, 'g', id = 'gage-mousers')
   
   # now replicate and move the gages up to the top, but make their mousers invisible:
-  storm.sites <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='nwis-dot']") 
+  storm.sites <- xml2::xml_find_all(svg, "//*[local-name()='circle'][contains(./@class,'nwis-dot')]")
   lapply(storm.sites, xml_add_child, .x = g.mouse)
   mouse.kids <- xml_children(g.mouse)
   xml_attr(mouse.kids, "class") <- 'nwis-mouser'
