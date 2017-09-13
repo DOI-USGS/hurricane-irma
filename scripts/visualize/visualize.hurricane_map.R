@@ -31,8 +31,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # overlays 
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(30,400)")
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(280,290)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(20,343)")
   xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(80,282)")
   xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(110,210)")
   xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(18,190)")
@@ -168,6 +168,17 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrai
   xml_remove(to.rm)
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
   xml_remove(to.rm)
+  
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='alabama']") 
+  xml_remove(to.rm)
+  
+  # move some things:
+  
+  to.mv <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='atlantic-ocean']")
+  xml_attr(to.mv, 'transform') <- "translate(210,270)"
+  to.mv <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='gulf-of-mexico']")
+  xml_attr(to.mv, 'transform') <- "translate(60,400)"
+  
   write_xml(svg, file = viz[['location']])
   
 }
@@ -179,6 +190,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
   xml_remove(to.rm)
+  
   
   write_xml(svg, file = viz[['location']])
 }
