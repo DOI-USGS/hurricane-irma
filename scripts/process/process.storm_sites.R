@@ -3,7 +3,8 @@ process.all_sites <- function(viz = as.viz('all-sites')){
   
   checkRequired(viz, c("perc_flood_stage", "begin_date_filter"))
   depends <- readDepends(viz)
-  checkRequired(depends, c("view-limits", "sites", "storm-area-filter", "nws-data"))
+  checkRequired(depends, c("view-limits", "sites", "storm-area-filter", 
+                           "nws-data"))
   
   view.lims <- depends[["view-limits"]]
   sites <- depends[['sites']] 
@@ -12,7 +13,7 @@ process.all_sites <- function(viz = as.viz('all-sites')){
   nws.data <- depends[['nws-data']]$forecasts
   
   library(dplyr)
-  
+  #this should probably be it's own processor
   sites$dv_begin_date <- as.Date(sites$dv_begin_date)
   
   sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
@@ -33,19 +34,21 @@ process.all_sites <- function(viz = as.viz('all-sites')){
     mutate(forecast_vals = as.numeric(forecast_vals)) %>% 
     filter(forecast_vals > (percent_flood_stage * flood.stage)) %>% 
     select(site_no))
-
+  
+  #this will be modified in a later process step, based on NWIS observations
+  #need this filtering first to limit the amount of data pulled from NWIS
   is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% 
     rowSums() %>% 
     as.logical() & 
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
     sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
-    sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
     !(sites$site_no %in% c('02223000', '02207220', '02246000')) # is not one of our manually selected bad sites
   
   mobile_featured <- is.featured %>% as.logical() & sites$dv_begin_date < mobile_date_filter
   
   mobile_featured <- sites$site_no[mobile_featured]
   
+  #might be nice to have this in it's own step 
   sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
                          r = ifelse(is.featured, '3.5','1'),
@@ -107,3 +110,4 @@ process.getNWISdata <- function(viz = as.viz('gage-data')){
   location <- viz[['location']]
   saveRDS(nwisData, file=location)
 }
+

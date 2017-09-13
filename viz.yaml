@@ -266,10 +266,17 @@ process:
     processor: getNWISdata
     location: cache/gage-data.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ["precip-data","storm-sites", "sites", "timesteps"]
+    depends: ["precip-data","all-sites", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
     comment: disabling refetch for now, re-enable to get updates to work
+  -
+    id: select-gages-flood
+    processor: select_flood_sites
+    location: cache/flood-gage-data
+    scripts: scripts/process/process.flood_sites.R
+    depends: ['gage-data', '',]
+    
   -
     id: storm-track
     location: cache/storm-track.rds
@@ -352,7 +359,7 @@ process:
   - 
     id: flood-sites-classify
     location: cache/flood-sites.rds
-    processor: flood_sites
+    processor: flood_sites_classify
     scripts: scripts/process/process.flood_sites.R
     reader: rds
     depends: ["timestep-discharge", "nws-data", "storm-sites"]  

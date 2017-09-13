@@ -1,7 +1,7 @@
 #' 
 #' filter sites to just those that have exceed flood stage
 #' for the time stamp selected
-process.flood_sites <- function(viz = as.viz("flood-sites-classify")){
+process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
   library(dplyr)
   
   depends <- readDepends(viz)
@@ -33,4 +33,6 @@ process.flood_sites <- function(viz = as.viz("flood-sites-classify")){
   saveRDS(storm_sites, viz[['location']])
 }
 
-
+process.select_flood_sites <- function(viz = as.viz('select-flood-sites')) {
+  
+}
