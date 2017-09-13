@@ -25,7 +25,7 @@ info:
     height: 300
     alttext: "Hurricane Irma"
   thumbnail-landing:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-landing.png
+    url: images/thumb-landing.png
     width: 400
     height: 400
     alttext: "Hurricane Irma"
