@@ -33,11 +33,10 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
   library(dplyr)
   depends <- readDepends(viz)
   counties <- depends[['counties']]
-  precip.classes <- depends[['precip-classify']]
   epsg_code <- getContentInfo('view-limits')[['proj.string']]
   
-  storm_area_filter <- depends[['storm-area-filter']] %>% sp::spTransform(epsg_code)# %>% 
-    #rgeos::gBuffer(width=200000, byid=TRUE )
+  storm_area_filter <- depends[['storm-area-filter']] %>% sp::spTransform(epsg_code) %>% 
+  rgeos::gBuffer(width=200000, byid=TRUE )
   
   counties <- sp::spTransform(counties, sp::CRS(epsg_code))
   
@@ -51,7 +50,6 @@ process.storm_counties <- function(viz = as.viz('storm-counties')){
                          polyname = county_ids, 
                          onmouseout = "hovertext(' ');", 
                          stringsAsFactors = FALSE) %>% 
-    left_join(precip.classes) %>% 
     mutate(id = county_map_name_2_id(polyname)) %>% 
     mutate(onmousemove = sprintf("hovertext('%s',evt);", county_map_name_2_mouser(polyname))) %>%  
     select(-polyname) 

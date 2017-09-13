@@ -10,7 +10,7 @@ fetch.sites <- function(viz = as.viz('sites')){
   
   counties <- readDepends(viz)[['counties']] 
   #will this be ok with dependency management?
-  start.date <-  as.Date(getContentInfo('precip-data')[['start.date']])
+  start.date <-  as.Date(getContentInfo('precip-cell-data')[['start.date']])
   
   sites_sum_all <- data.frame()
   

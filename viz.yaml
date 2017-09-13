@@ -137,18 +137,19 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-88, 21, -70, 35]
+    bbox: [-87, 21, -70, 34]
     height: 10
     width: 8
     pointsize: 12
     proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+    comment: sets up the basic view window and projection
   -
     id: storm-area-filter
     location: cache/storm-area-filter.rds
     reader: rds
     fetcher: storm_area_filter
-    lats: [21, 35, 35, 21, 21]
+    lats: [21, 35.5, 35, 21, 21]
     lons: [-88, -88, -70, -70, -88]
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     comment: use to limit storm area selected
@@ -187,7 +188,7 @@ fetch:
     fetcher: hurricaneTrack
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
-    refetch: FALSE
+    refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
   -
@@ -211,25 +212,13 @@ fetch:
     refetch: TRUE
     depends: precip-spatial
   -
-    id: precip-data
-    fetcher: precip
-    start.date: "2017-09-08 12:00"
-    end.date: "2017-09-15"
-    scripts: scripts/fetch/fetchPrecip.R
-    location: cache/precip.csv
-    mimetype: text/csv
-    refetch: FALSE
-    depends:
-      counties: counties
-    comment: disabling refetch to avoid too many GDP requests
-  -
     id: sites
     fetcher: sites
     scripts: scripts/fetch/fetch.sites.R
     location: cache/sites.rds
     reader: rds
-    refetch: FALSE
-    depends: ["precip-data", "counties"] #for start time
+    refetch: TRUE
+    depends: ["precip-cell-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
     pCode: "00065"
   -
@@ -243,19 +232,12 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: FALSE
+    refetch: TRUE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
     
 process:
-  - 
-    id: node-precip
-    location: cache/node-precip.rds
-    processor: node_precip
-    scripts: scripts/process/process.node_precip.R
-    depends: ["precip-spatial", "precip-cell-data", 'precip-breaks']
-    reader: rds
   -
     id: all-sites
     location: cache/all-sites.rds
@@ -285,9 +267,9 @@ process:
     processor: getNWISdata
     location: cache/gage-data.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ["precip-data","storm-sites", "sites", "timesteps"]
+    depends: ["precip-cell-data","storm-sites", "sites", "timesteps"]
     reader: rds
-    refetch: FALSE
+    refetch: TRUE
     comment: disabling refetch for now, re-enable to get updates to work
   -
     id: storm-track
@@ -304,37 +286,12 @@ process:
     reader: rds
     depends: ["view-limits", "hurricane-track", "timesteps"] 
   -
-    id: precip-colors
-    location: cache/precip-colors.json
-    processor: precip_colors
-    scripts: scripts/process/process.precip_colors.R
-    reader: json
-    bins: 9
-    pallete: "Blues"
-    mimetype: application/javascript
-    export: true
-  -
-    id: precip-breaks
-    location: cache/precip_breaks.rds
-    processor: precip_breaks
-    scripts: scripts/process/process.precip-classify.R
-    reader: rds
-    depends: ["precip-colors"]
-    stepSize: 1.5
-  - 
-    id: precip-classify
-    location: cache/precip-classified.rds
-    processor: precip_classify
-    scripts: scripts/process/process.precip-classify.R
-    reader: rds
-    depends: ["precip-breaks", "precip-data"]
-  -
     id: storm-counties
     location: cache/storm-counties.rds
     reader: rds
     processor: storm_counties
     scripts: scripts/process/process.counties.R
-    depends: ["counties", "precip-classify", "storm-area-filter", "view-limits"]
+    depends: ["counties", "storm-area-filter", "view-limits"]
     mimetype: application/zip
   -
     id: storm-states
@@ -358,7 +315,7 @@ process:
     processor: timesteps
     scripts: scripts/process/process.timesteps.R
     reader: json
-    depends: "precip-data"
+    depends: "precip-cell-data"
     export: true
     mimetype: application/javascript
   - 
@@ -389,6 +346,31 @@ process:
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
     depends: ["timestep-discharge", "sites", "nws-data"]
+  -
+    id: precip-colors
+    location: cache/precip-colors.json
+    processor: precip_colors
+    scripts: scripts/process/process.precip_colors.R
+    reader: json
+    bins: 9
+    pallete: "Blues"
+    mimetype: application/javascript
+    export: true
+  -
+    id: precip-breaks
+    location: cache/precip_breaks.rds
+    processor: precip_breaks
+    scripts: scripts/process/process.precip_colors.R
+    reader: rds
+    depends: ["precip-colors"]
+    stepSize: 1.5
+  - 
+    id: node-precip
+    location: cache/node-precip.rds
+    processor: node_precip
+    scripts: scripts/process/process.node_precip.R
+    depends: ["precip-spatial", "precip-cell-data", 'precip-breaks']
+    reader: rds
   
     
 visualize:
