@@ -144,6 +144,15 @@ fetch:
     proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
   -
+    id: storm-area-filter
+    location: cache/storm-area-filter.rds
+    reader: rds
+    fetcher: storm_area_filter
+    lats: [21, 35, 35, 21, 21]
+    lons: [-88, -88, -70, -70, -88]
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+    comment: use to limit storm area selected
+  -
     id: states
     location: cache/states.rds
     reader: rds
@@ -178,7 +187,7 @@ fetch:
     fetcher: hurricaneTrack
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
-    refetch: TRUE
+    refetch: FALSE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
     comment: disabling refetch until timestamp is hooked up
   -
@@ -209,7 +218,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip.R
     location: cache/precip.csv
     mimetype: text/csv
-    refetch: TRUE
+    refetch: FALSE
     depends:
       counties: counties
     comment: disabling refetch to avoid too many GDP requests
@@ -219,7 +228,7 @@ fetch:
     scripts: scripts/fetch/fetch.sites.R
     location: cache/sites.rds
     reader: rds
-    refetch: TRUE
+    refetch: FALSE
     depends: ["precip-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
     pCode: "00065"
@@ -234,18 +243,10 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: TRUE
+    refetch: FALSE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
-  -
-    id: storm-area-filter
-    location: cache/storm-area-filter.rds
-    reader: rds
-    fetcher: storm_area_filter
-    lats: [34.7, 34.8, 25.2, 23.9, 34.7]
-    lons: [-87.5, -80.1, -78.8, -82.4, -87.5]
-    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     
 process:
   - 
@@ -286,7 +287,7 @@ process:
     scripts: scripts/process/process.storm_sites.R
     depends: ["precip-data","storm-sites", "sites", "timesteps"]
     reader: rds
-    refetch: TRUE
+    refetch: FALSE
     comment: disabling refetch for now, re-enable to get updates to work
   -
     id: storm-track
