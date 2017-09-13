@@ -55,15 +55,15 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
   grab_clip_path <- function(class){
     flags <- as.numeric(strsplit(class, 'f-')[[1]])
     flags <- flags[!is.na(flags)]
-    138.24/num.times
+    
     buf <- 5.33
     tot.w <- 144 #px
-    
+    #buffer isn't right here.
     x = seq(buf/2, to = tot.w-buf/2, length.out = num.times)
     if (length(flags) == 0){
-      return(x)
+      #return(x)
     } else {
-      return(paste(x[!flags], sep=' '))
+      return(paste(x[flags], sep=' '))
     }
     
   }
