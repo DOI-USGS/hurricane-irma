@@ -7,7 +7,7 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
   depends <- readDepends(viz)
   nws_data <- depends[["nws-data"]]$sites
   gage_data <- depends[["timestep-discharge"]]
-  storm_sites <- depends[["storm-sites"]]
+  storm_sites <- depends[["storm-sites-flood"]]
 
   site.nos <- sapply(names(gage_data), function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
@@ -33,6 +33,37 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
   saveRDS(storm_sites, viz[['location']])
 }
 
-process.select_flood_sites <- function(viz = as.viz('select-flood-sites')) {
+
+#has a site passed flood stage or forecasted to?
+process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
+  library(dplyr)
+  depends <- readDepends(viz)
+  gage_data <- depends[['gage-data']]
+  storm_sites <- depends[['storm-sites']] #this needs to be filtered and resaved
+  storm_sites_ids <- gsub(pattern = "nwis-", replacement = "", 
+                      x = storm_sites$id)
+  nws_list <- depends[['nws-data']]
+  nws_forecast <- nws_list[['forecasts']] %>% rename(NWS=site)
+  nws_sites <- nws_list[['sites']]
+  nws_joined <- left_join(nws_forecast, nws_sites, by = "NWS")
   
+  #filter nws and gage data down to storm sites
+  nws_joined <- filter(nws_joined, site_no %in% storm_sites_ids) %>% 
+            mutate(forecast_vals = as.numeric(forecast_vals))
+  gage_data <- filter(gage_data, site_no %in% storm_sites_ids)
+  
+  gage_data_max <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst))
+  nws_max <- nws_joined %>% group_by(site_no, flood.stage) %>% 
+    summarize(max_forecast = max(forecast_vals))
+ 
+  gage_nws_join <- left_join(gage_data_max, nws_max, by = "site_no") %>% 
+                filter(!is.na(flood.stage))
+  
+  #has it passed flood stage, or forecasted to?
+  gage_nws_flood <- gage_nws_join %>% filter(max_gage > flood.stage | max_forecast > flood.stage) %>% 
+                mutate(site_no = paste("nwis", site_no, sep = "-"))
+  
+  #filter storm sites
+  storm_sites_filtered <- storm_sites[storm_sites$id %in% gage_nws_flood$site_no,]
+  saveRDS(object = storm_sites_filtered, file = viz[['location']])
 }

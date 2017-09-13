@@ -13,7 +13,6 @@ process.all_sites <- function(viz = as.viz('all-sites')){
   nws.data <- depends[['nws-data']]$forecasts
   
   library(dplyr)
-  #this should probably be it's own processor
   sites$dv_begin_date <- as.Date(sites$dv_begin_date)
   
   sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
