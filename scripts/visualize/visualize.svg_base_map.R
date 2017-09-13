@@ -2,6 +2,7 @@
 
 visualize.svg_base_map <- function(viz = as.viz('base-map')){
   
+  # -- added px based precip --
   depends <- readDepends(viz)
   checkRequired(depends, 'view-limits')
   

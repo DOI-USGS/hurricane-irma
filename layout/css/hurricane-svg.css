@@ -48,7 +48,7 @@ line, polyline, path{
 
 #map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {
   /* doesn't work in IE */
-  transform: translate(-50px, -118px) scale(1.5);
+  transform: translate(-80px, -163px) scale(1.55)
 }
 
 #sparkline-squiggle-block-portrait {
@@ -75,9 +75,15 @@ line, polyline, path{
 
 .county-borders-overlay {
   stroke: white;
+  fill-opacity: 0;
+  fill: white;
+}
+.county-borders-mousers {
+  stroke: white;
   opacity: 0;
   fill: white;
 }
+
 
 .light-rain-legend {
   fill:white;
