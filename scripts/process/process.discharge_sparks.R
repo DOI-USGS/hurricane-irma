@@ -11,18 +11,13 @@ grab_spark <- function(vals){
 process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c('timesteps', "gage-data"))
-  times <- as.POSIXct(strptime(depends[['timesteps']]$times, 
-                               format = '%b %d %I:%M %p', 
-                               tz = "America/New_York"))
+  checkRequired(depends, c("timestep-discharge", "sites"))
   
-  interp_q <- function(x,y) {
-    approx(x, y, xout = times)$y %>% grab_spark
-  }
+  site.nos <- site.nos <- sapply(names(depends[["timestep-discharge"]]), 
+                                 function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
-  sparks <- group_by(depends[["gage-data"]], site_no) %>% 
-    filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2]) %>% 
-    summarize(points = interp_q(dateTime, p_Inst)) %>% 
+  sparks <- data.frame(points = sapply(depends[["timestep-discharge"]], function(x) grab_spark(x$y), USE.NAMES = FALSE),
+                       site_no = site.nos, stringsAsFactors = FALSE) %>% 
     mutate(class = "sparkline", 
            id = sprintf("sparkline-%s", site_no), 
            style = "mask: url(#spark-opacity);",
@@ -31,7 +26,7 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
-  sites <- depends[['sites']][c("site_no", "dec_lat_va")]
+  sites <- depends[["sites"]][c("site_no", "dec_lat_va")]
   
   sparks <- sparks %>% 
     left_join(sites, by = "site_no") %>%

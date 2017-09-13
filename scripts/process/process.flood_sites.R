@@ -6,34 +6,31 @@ process.flood_sites <- function(viz = as.viz("flood-sites-classify")){
   
   depends <- readDepends(viz)
   nws_data <- depends[["nws-data"]]$sites
-  gage_data <- depends[["gage-data"]]
+  gage_data <- depends[["timestep-discharge"]]
   storm_sites <- depends[["storm-sites"]]
-  times <- as.POSIXct(strptime(depends[['timesteps']]$times, 
-                                        format = '%b %d %I:%M %p', 
-                                        tz = "America/New_York"))
-  times_df <- data.frame(dateTime = times, index = 1:length(times))
+
+  site.nos <- sapply(names(gage_data), function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   #this won't work if we switched to discharge
   pcode <- getContentInfo('sites')$pCode
   stopifnot(pcode == "00065")
   
-  storm_site_ids <- filter(storm_sites@data, class == "nwis-dot")$id
-  storm_site_ids <- gsub(pattern = "nwis-", replacement = "", x = storm_site_ids)
-  nwis_flood_indexed <- filter(gage_data, site_no %in% storm_site_ids) %>% 
-        left_join(nws_data, by = "site_no") %>% filter(p_Inst > flood.stage) %>% 
-        left_join(times_df, by = "dateTime") %>% select(site_no, index)
-  
-  class_df <- data.frame()
+  class_df <- data.frame(stringsAsFactors = FALSE)
   #actually create the classes
-  for(site in unique(nwis_flood_indexed$site_no)) {
-    site_df <- filter(nwis_flood_indexed, site_no == site)
-    site_class <- paste(paste("f", site_df$index, sep = "-"), collapse = " ")
+  for(site in site.nos) {
+    flood.stage <- filter(nws_data, site_no == site) %>% .$flood.stage %>% .[1]
+    which.floods <- which(gage_data[[paste0('nwis-',site)]]$y > flood.stage)
+    site_class <- paste(paste("f", which.floods, sep = "-"), collapse = " ")
     class_df_row <- data.frame(site_no = site, class = site_class, 
                                stringsAsFactors = FALSE)
     class_df <- bind_rows(class_df, class_df_row)
   }
-  
-  saveRDS(class_df, viz[['location']])
+  d.out <- mutate(class_df, id = paste0('nwis-', site_no)) %>% 
+    select(id, raw.class = class) %>% left_join(storm_sites@data, .) %>% 
+    mutate(raw.class = ifelse(is.na(raw.class), "", paste0(" ", raw.class))) %>% 
+    mutate(class = paste0(class,  raw.class)) %>% select(-raw.class)
+  storm_sites@data <- d.out
+  saveRDS(storm_sites, viz[['location']])
 }
 
 
