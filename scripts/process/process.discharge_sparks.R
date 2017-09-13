@@ -76,8 +76,8 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
            id = sprintf("floodline-%s", site_no), 
            style = "mask: url(#flood-opacity);",
            "clip-path"=sprintf("url(#flood-clip-%s)", site_no), 
-           onmouseover=sprintf("setBold('nwis-%s');", site_no), 
-           onmouseout=sprintf("setNormal('nwis-%s');hovertext(' ');", site_no),
+           onmouseover=sprintf("setBold('nwis-%s');setBold('sparkline-%s');", site_no, site_no),
+           onmouseout=sprintf("setNormal('nwis-%s');setNormal('sparkline-%s');hovertext(' ');", site_no, site_no),
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
