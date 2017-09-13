@@ -28,10 +28,10 @@ process.all_sites <- function(viz = as.viz('all-sites')){
   begin_date_filter <- as.Date(viz[["begin_date_filter"]])
   mobile_date_filter <- as.Date(viz[["mobile_date_filter"]])
   
-  nws_flood_predicted <- unique(nws.data %>% 
-    left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>% 
-    mutate(forecast_vals = as.numeric(forecast_vals)) %>% 
-    filter(forecast_vals > (percent_flood_stage * flood.stage)) %>% 
+  nws_flood_predicted <- unique(nws.data %>%
+    left_join(nws.sites[c("site_no", "flood.stage", "NWS")], by = c("site" = "NWS")) %>%
+    mutate(forecast_vals = as.numeric(forecast_vals)) %>%
+    filter(forecast_vals > (percent_flood_stage * flood.stage)) %>%
     select(site_no))
 
   is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% 
@@ -50,8 +50,8 @@ process.all_sites <- function(viz = as.viz('all-sites')){
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
                          r = ifelse(is.featured, '3.5','1'),
                          onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites.sp@data$site_no), ""),
-                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites.sp@data$site_no), ""),
-                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites.sp@data$site_no), ""),
+                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
+                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');setBold('nwis-%s');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
                          onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
