@@ -14,6 +14,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # get the big dog that has all the stuff that is geo:
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
+  precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
+  xml_attr(precip.centroids, "clip-path") <- "url(#state-clip)"
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
 
@@ -29,14 +31,12 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # overlays 
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(220,290)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(50,380)")
-  xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(60,290)")
-  xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(120,210)")
-  xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(38,210)")
-  xml_add_child(g.overlays, 'text', toupper("South Carolina"), class='svg-text state-name', id="south-carolina", transform="translate(180,180)")
-  xml_add_child(g.overlays, 'text', toupper("Tennessee"), class='svg-text state-name', id="tennessee", transform="translate(55,128)")
-  xml_add_child(g.overlays, 'text', toupper("North Carolina"), class='svg-text state-name', id="north-carolina", transform="translate(215,135)")
+  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(280,290)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(20,343)")
+  xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(80,282)")
+  xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(110,210)")
+  xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(18,190)")
+  xml_add_child(g.overlays, 'text', toupper("South Carolina"), class='svg-text state-name', id="south-carolina", transform="translate(155,150)")
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   
@@ -133,17 +133,23 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+
+  # clips for pixel-based precip!
+  cp <- xml_add_child(d, 'clipPath', id="state-clip")
+  storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-states']") ), 'id')
+  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', href=sprintf("#%s", x)))
+
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
   
-  xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
+  xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-sites", class='county-borders-overlay')
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-location")
   # tops are only things we want mouseovers on:
-  xml_add_child(map.elements.top, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
+  xml_add_child(map.elements.top, 'use', "xlink:href"="#storm-counties", class='county-borders-mousers')
   g.mouse <- xml_add_child(map.elements.top, 'g', id = 'gage-mousers')
   
   # now replicate and move the gages up to the top, but make their mousers invisible:
@@ -176,6 +182,23 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrai
   xml_remove(to.rm)
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
   xml_remove(to.rm)
+  
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='alabama']") 
+  xml_remove(to.rm)
+  
+  
+  # NOT WORKING???
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-mousers']") 
+  xml_remove(to.rm)
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-overlay']") 
+  xml_remove(to.rm)
+  # move some things:
+  
+  to.mv <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='atlantic-ocean']")
+  xml_attr(to.mv, 'transform') <- "translate(210,270)"
+  to.mv <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='gulf-of-mexico']")
+  xml_attr(to.mv, 'transform') <- "translate(60,400)"
+  
   write_xml(svg, file = viz[['location']])
   
 }
@@ -187,6 +210,7 @@ visualize.hurricane_map_landscape <- function(viz = as.viz('hurricane-map-landsc
   
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
   xml_remove(to.rm)
+  
   
   write_xml(svg, file = viz[['location']])
 }
