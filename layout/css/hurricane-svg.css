@@ -22,6 +22,11 @@ line, polyline, path{
   fill-opacity: 0.55;
 }
 
+.floodline {
+  stroke: red;
+  stroke-width: 2;
+  stroke-opacity: 0.7;
+}
 .ocean-name-landscape {
   fill: #C0C0C0;
   fill-opacity: 0.5;
@@ -167,7 +172,7 @@ line, polyline, path{
 }
 .sparkline, .sparklines-overlay {
 	stroke: #057083;
-	stroke-width: 1.5;
+	stroke-width: 2;
 }
 .sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
   cursor: pointer;

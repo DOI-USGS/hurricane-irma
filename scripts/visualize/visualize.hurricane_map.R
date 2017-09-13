@@ -4,9 +4,10 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   library(xml2)
   
   depends <- readDepends(viz)
-  checkRequired(depends, c("base-map",'discharge-sparks', 'precip-colors', "precip-breaks"))
+  checkRequired(depends, c("base-map",'discharge-sparks', 'precip-colors', "precip-breaks", "flood-sparks"))
   svg <- depends[["base-map"]]
   sparks <- depends[["discharge-sparks"]]
+  fl.sparks <- depends[["flood-sparks"]]
   color.meta <- getContentInfo('precip-colors')
   break.meta <- getContentInfo('precip-breaks')
   xml_attr(svg, "id") <- viz[['id']]
@@ -75,6 +76,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
     x0 <- x0+rain.w
   }
   
+  d <- xml_add_child(svg, 'defs', .where='before') 
   
   # sparkline container:
   g.spark <- xml_add_child(non.geo.top, 'g', id = 'sparkline-container', transform=sprintf('translate(%s,0)', as.numeric(vb[3])-side.panel))
@@ -90,6 +92,13 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    fl.spark <- fl.sparks[i,]
+    cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
+    xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
+    fl.spark$y <- NULL
+    fl.spark$points <- sparks[i, ]$points
+    do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
+    # now add flood spark
   }
 
   map.elements.mid <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-mid', mode))
@@ -110,13 +119,13 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.watermark,'path', d=wave.d, onclick="vizlab.clicklink('https://www2.usgs.gov/water/')", 'class'='watermark')
   
   # sparkline masks:
-  d <- xml_add_child(svg, 'defs', .where='before') 
+  
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
-  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='spark-light-mask')
-  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
+  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-states", class='state-borders-overlay')
