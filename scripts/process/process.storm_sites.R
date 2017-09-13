@@ -1,3 +1,4 @@
+# Find sites that are of interest to get data for.
 process.storm_sites <- function(viz = as.viz('storm-sites')){
   library(magrittr)
   

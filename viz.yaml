@@ -354,7 +354,7 @@ process:
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["timestep-discharge", "sites", "storm-sites-flood"]
+    depends: ["timestep-discharge", "sites"]
   - 
     id: flood-sparks
     location: cache/flood-sparks.rds
