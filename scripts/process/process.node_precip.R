@@ -30,5 +30,4 @@ process.node_precip <- function(viz = as.viz('node-precip')){
   
   saveRDS(object = sp.cells, file = viz[['location']])
   
-  
 }
