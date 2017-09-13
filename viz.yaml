@@ -362,7 +362,14 @@ process:
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
     depends: ["timestep-discharge", "sites", "nws-data"]
-  
+  -
+    id: percent-nwis
+    location: cache/percent-nwis.rds
+    processor: percent_nwis
+    scripts: scripts/process/process.storm_sites.R
+    reader: rds
+    depends: ["storm-sites-flood"]
+    nwis-gage-count: 8137
     
 visualize:
   -
@@ -542,21 +549,27 @@ publish:
       playIcon: playIcon
       figure: loadingIcon
       line1: >-
-        Hurricane Irma approached the west coast of Florida on Sept 10th, 2017. 
-        The map above displays the hurricane's path and its impact on precipitation 
-        and river gage height. Hydrographs on the right panel show normalized 
-        gage height at a selection of U.S. Geological Survey (USGS) gaging 
-        stations impacted by the hurricane. Variation in the shape of the 
-        hydrographs is due to a number of factors that impact the effect 
-        of precipitation on river gage height, including stream size, storm-surge, 
-        reservoir operations, and other local conditions. The USGS also 
+        Hurricane Irma, the most intense hurricane observed in the Atlantic in the last 
+        decade, approached the west coast of Florida on September 10th, 2017. The map 
+        above animates the hurricane's path, cumulative precipitation, and its impact on 
+        river gage height. Every six hours, the data are refreshed to show the most up-to-date 
+        information. Hydrographs in the right panel show normalized gage height at U.S. 
+        Geological Survey (USGS) gaging stations that are forecasted to or have exceeded 
+        National Weather Service flood stage. Variation in the shape of the hydrographs is due 
+        to a number of factors that impact the effect of precipitation on flow, including: 
+        stream size, storm-surge, reservoir operations, and other local conditions. The USGS 
+        has many more permanent 
+      mapperText: gaging stations
+      mapperLink: "https://maps.waterdata.usgs.gov/"
+      line2: >-
+        across the country; less than 1% are represented in this visualization. The USGS also 
         collects additional information with 
       stnText: Short-Term Network gages
       stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
-      line2: (not shown). Visit USGS’s 
+      line3: ". Visit USGS's "
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
-      line3: to learn more about how the agency prepared for and measured Irma’s impact. 
+      line4: " to learn more about how the agency prepared for and measured Irma's impact."
       social-section: social-section
   -
     id: figure-embed-section
