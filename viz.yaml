@@ -3,7 +3,7 @@ info:
   id: hurricane-irma
   name: Hurricane Irma's Water Footprint
   date: 2017-09-07
-  publish-date: 2017-09-21
+  publish-date: 2017-09-12
   path: /hurricane-irma
   analytics-id: UA-78530187-8
   description: >-
@@ -25,7 +25,7 @@ info:
     height: 300
     alttext: "Hurricane Irma"
   thumbnail-landing:
-    url: https://owi.usgs.gov/vizlab/hurricane-irma/images/thumb-landing.png
+    url: images/thumb-landing.png
     width: 400
     height: 400
     alttext: "Hurricane Irma"
@@ -143,6 +143,16 @@ fetch:
     pointsize: 12
     proj.string: '+init=epsg:3086'
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+    comment: sets up the basic view window and projection
+  -
+    id: storm-area-filter
+    location: cache/storm-area-filter.rds
+    reader: rds
+    fetcher: storm_area_filter
+    lats: [21, 35.5, 35, 21, 21]
+    lons: [-88, -88, -70, -70, -88]
+    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
+    comment: use to limit storm area selected
   -
     id: states
     location: cache/states.rds
@@ -187,35 +197,20 @@ fetch:
     depends: ["view-limits", "storm-area-filter", "states"]
     scripts: [scripts/fetch/fetch.precip_spatial.R]
     location: cache/irma_cells.rds
-    cell_size: 25000
+    cell_size: 15000
+    reader: rds
+    refetch: TRUE
     mimetype: application/zip
-    refetch: FALSE
-    comment: disabling refetch as this isn't needed yet
   -
     id: precip-cell-data
     fetcher: precipCellData
-    start.date: "2017-09-07"
-    end.date: "2017-09-08"
-    sb.url: "https://www.sciencebase.gov/catalogMaps/mapping/ows/59b31b62e4b08b1644d7c51b"
-    sb.geom: "sb:irma_cells"
-    sb.attribute: "id"
+    start.date: "2017-09-08 12:00"
+    end.date: "2017-09-13"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
-    refetch: FALSE
-    comment: disabling refetch to avoid too many GDP requests
-  -
-    id: precip-data
-    fetcher: precip
-    start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
-    scripts: scripts/fetch/fetchPrecip.R
-    location: cache/precip.csv
-    mimetype: text/csv
     refetch: TRUE
-    depends:
-      counties: counties
-    comment: disabling refetch to avoid too many GDP requests
+    depends: precip-spatial
   -
     id: sites
     fetcher: sites
@@ -223,7 +218,7 @@ fetch:
     location: cache/sites.rds
     reader: rds
     refetch: TRUE
-    depends: ["precip-data", "counties"] #for start time
+    depends: ["precip-cell-data", "counties"] #for start time
     comment: disabling refetch for now, re-enable to get updates to work
     pCode: "00065"
   -
@@ -241,14 +236,6 @@ fetch:
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
-  -
-    id: storm-area-filter
-    location: cache/storm-area-filter.rds
-    reader: rds
-    fetcher: storm_area_filter
-    lats: [34.7, 34.8, 25.2, 23.9, 34.7]
-    lons: [-87.5, -80.1, -78.8, -82.4, -87.5]
-    scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     
 process:
   -
@@ -280,7 +267,7 @@ process:
     processor: getNWISdata
     location: cache/gage-data.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ["precip-data","storm-sites", "sites", "timesteps"]
+    depends: ["precip-cell-data","storm-sites", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
     comment: disabling refetch for now, re-enable to get updates to work
@@ -299,37 +286,12 @@ process:
     reader: rds
     depends: ["view-limits", "hurricane-track", "timesteps"] 
   -
-    id: precip-colors
-    location: cache/precip-colors.json
-    processor: precip_colors
-    scripts: scripts/process/process.precip_colors.R
-    reader: json
-    bins: 9
-    pallete: "Blues"
-    mimetype: application/javascript
-    export: true
-  -
-    id: precip-breaks
-    location: cache/precip_breaks.rds
-    processor: precip_breaks
-    scripts: scripts/process/process.precip-classify.R
-    reader: rds
-    depends: ["precip-colors"]
-    stepSize: 1.5
-  - 
-    id: precip-classify
-    location: cache/precip-classified.rds
-    processor: precip_classify
-    scripts: scripts/process/process.precip-classify.R
-    reader: rds
-    depends: ["precip-breaks", "precip-data"]
-  -
     id: storm-counties
     location: cache/storm-counties.rds
     reader: rds
     processor: storm_counties
     scripts: scripts/process/process.counties.R
-    depends: ["counties", "precip-classify", "storm-area-filter", "view-limits"]
+    depends: ["counties", "storm-area-filter", "view-limits"]
     mimetype: application/zip
   -
     id: storm-states
@@ -353,24 +315,63 @@ process:
     processor: timesteps
     scripts: scripts/process/process.timesteps.R
     reader: json
-    depends: "precip-data"
+    depends: "precip-cell-data"
     export: true
     mimetype: application/javascript
+  - 
+    id: timestep-discharge
+    location: cache/timestep-discharge.rds
+    processor: timestep_discharge
+    scripts: scripts/process/process.timestep_discharge.R
+    reader: rds
+    depends: ["gage-data","timesteps", "storm-sites"]  
+  - 
+    id: flood-sites-classify
+    location: cache/flood-sites.rds
+    processor: flood_sites
+    scripts: scripts/process/process.flood_sites.R
+    reader: rds
+    depends: ["timestep-discharge", "nws-data", "storm-sites"]  
   - 
     id: discharge-sparks
     location: cache/discharge-sparks.rds
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data","timesteps", "sites"]
+    depends: ["timestep-discharge", "sites"]
   - 
-    id: flood-sites
-    location: cache/flood-sites.rds
-    processor: flood_sites
-    scripts: scripts/process/process.flood_sites.R
+    id: flood-sparks
+    location: cache/flood-sparks.rds
+    processor: flood_sparks
+    scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data", "nws-data", "storm-sites"]  
-    time-stamp: "2017-09-11 06:00:00"
+    depends: ["timestep-discharge", "sites", "nws-data"]
+  -
+    id: precip-colors
+    location: cache/precip-colors.json
+    processor: precip_colors
+    scripts: scripts/process/process.precip_colors.R
+    reader: json
+    bins: 9
+    pallete: "Blues"
+    mimetype: application/javascript
+    export: true
+  -
+    id: precip-breaks
+    location: cache/precip_breaks.rds
+    processor: precip_breaks
+    scripts: scripts/process/process.precip_colors.R
+    reader: rds
+    depends: ["precip-colors"]
+    stepSize: 1.5
+  - 
+    id: node-precip
+    location: cache/node-precip.rds
+    processor: node_precip
+    scripts: scripts/process/process.node_precip.R
+    depends: ["precip-spatial", "precip-cell-data", 'precip-breaks']
+    reader: rds
+  
     
 visualize:
   -
@@ -381,10 +382,11 @@ visualize:
       view-limits: view-limits
       storm-states: storm-states
       storm-counties: storm-counties
+      precip-centroids: node-precip
       storm-islands: storm-islands
       storm-track-highlight: storm-track
       storm-track: storm-track
-      storm-sites: storm-sites
+      storm-sites: flood-sites-classify
       storm-location: storm-location
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
@@ -393,7 +395,7 @@ visualize:
     id: hurricane-map-portrait
     location: figures/hurricane-map-portrait.svg
     visualizer: hurricane_map_portrait
-    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
+    depends: ["base-map", "discharge-sparks", "flood-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
@@ -405,7 +407,7 @@ visualize:
     id: hurricane-map-landscape
     location: figures/hurricane-map-landscape.svg
     visualizer: hurricane_map_landscape
-    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
+    depends: ["base-map", "discharge-sparks", "flood-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 576
@@ -530,12 +532,12 @@ publish:
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
       "hurricane-map-portrait", "thumb-facebook", "thumb-twitter", "thumb-landing", 
-      "social-section", "social-media-css"]#, "embed-section"]
+      "social-media-css"]#, "embed-section"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
         "vizlab-favicon", "social-media-css"]
-      sections: [ "figure-section", "data-sources", "social-section"]#, "embed-section"]
+      sections: [ "figure-section", "data-sources"]#, "embed-section"]
   -
     id: figure-section
     template: layout/templates/mapFigure.mustache
@@ -543,6 +545,7 @@ publish:
     depends:
       playIcon: play-icon
       loadingIcon: loading-icon
+      social-section: social-section
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
@@ -564,6 +567,7 @@ publish:
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
       line3: to learn more about how the agency prepared for and measured Irma’s impact. 
+      social-section: social-section
   -
     id: figure-embed-section
     embed: true
@@ -639,9 +643,9 @@ publish:
       github-url: https://github.com/USGS-VIZLAB/hurricane-irma
       vizzies:
         -
-          url: https://owi.usgs.gov/vizlab/hurricane-matthew/
-          name: Hurricane Matthew
-          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-matthew/images/matthew_water2.png
+          url: https://owi.usgs.gov/vizlab/hurricane-harvey/
+          name: Hurricane Harvey
+          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-harvey/images/harvey1.png
   -
     id: data-sources
     template: layout/templates/dataSources.mustache

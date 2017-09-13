@@ -40,7 +40,7 @@ process.all_sites <- function(viz = as.viz('all-sites')){
     sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has a flood stage estimate
     sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
     sites$site_no %in% nws_flood_predicted$site_no & # is precicted to be within a configurable percent of flood stage
-    !(sites$site_no %in% c('02223000', '02207220')) # is not one of our manually selected bad sites
+    !(sites$site_no %in% c('02223000', '02207220', '02246000')) # is not one of our manually selected bad sites
   
   mobile_featured <- is.featured %>% as.logical() & sites$dv_begin_date < mobile_date_filter
   
