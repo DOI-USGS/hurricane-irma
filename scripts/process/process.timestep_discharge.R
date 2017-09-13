@@ -1,7 +1,7 @@
 process.timestep_discharge <- function(viz = as.viz('timestep-discharge')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("gage-data","timesteps", "storm-sites"))
+  checkRequired(depends, c("gage-data","timesteps", "storm-sites-flood"))
   times <- as.POSIXct(strptime(depends[['timesteps']]$times, 
                                format = '%b %d %I:%M %p', 
                                tz = "America/New_York"))

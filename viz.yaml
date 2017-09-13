@@ -238,29 +238,14 @@ fetch:
     
 process:
   -
-    id: all-sites
-    location: cache/all-sites.rds
-    processor: all_sites
+    id: storm-sites
+    location: cache/storm-sites.rds
+    processor: storm_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
     depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
     perc_flood_stage: 1
-    begin_date_filter: "1995-01-01"
-    mobile_date_filter: "1960-01-01"
-  -
-    id: mobile-sites
-    processor: getMobileSites
-    location: cache/mobile-sites.rds
-    scripts: scripts/process/process.storm_sites.R
-    depends: ["all-sites"]
-    reader: rds
-  -
-    id: storm-sites
-    processor: getDesktopSites
-    location: cache/storm-sites.rds
-    scripts: scripts/process/process.storm_sites.R
-    depends: ["all-sites"]
-    reader: rds
+    begin_date_filter: "2000-01-01"
   -
     id: gage-data
     processor: getNWISdata
@@ -274,7 +259,7 @@ process:
     id: storm-sites-flood
     processor: select_flood_sites
     location: cache/past-flood-sites.rds
-    scripts: scripts/process/process.flood_sites.R
+    scripts: scripts/process/process.storm_sites.R
     depends: ['gage-data', 'storm-sites', 'nws-data', 'nws-conversion']
     reader: rds
   -
@@ -355,12 +340,12 @@ process:
     processor: timestep_discharge
     scripts: scripts/process/process.timestep_discharge.R
     reader: rds
-    depends: ["gage-data","timesteps", "storm-sites"]  
+    depends: ["gage-data","timesteps", "storm-sites-flood"]  
   - 
     id: flood-sites-classify
     location: cache/flood-sites.rds
     processor: flood_sites_classify
-    scripts: scripts/process/process.flood_sites.R
+    scripts: scripts/process/process.storm_sites.R
     reader: rds
     depends: ["timestep-discharge", "nws-data", "storm-sites-flood"]  
   - 
@@ -369,7 +354,7 @@ process:
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["timestep-discharge", "sites"]
+    depends: ["timestep-discharge", "sites", "storm-sites-flood"]
   - 
     id: flood-sparks
     location: cache/flood-sparks.rds
