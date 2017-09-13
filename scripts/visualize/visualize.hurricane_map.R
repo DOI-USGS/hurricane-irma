@@ -147,7 +147,6 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   }
   xml_attr(mouse.kids, "class") <- 'mouser-nwis'
   xml_attr(mouse.kids, "xmlns") <- NULL
-  #xml_remove(storm.sites) #clearing up the DOM for testing
   
   xml_attr(storm.sites, "onmousemove") <- NULL
   xml_attr(storm.sites, "onmouseout") <- NULL
