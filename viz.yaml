@@ -526,7 +526,8 @@ publish:
     publisher: page
     template: fullpage
     scripts: scripts/publish/json.R
-    depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
+    depends: ["footer","header-section","figure-section", "social-section", "text-section", 
+      "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
       "hurricane-map-portrait", "thumb-facebook", "thumb-twitter", "thumb-landing", 
@@ -535,7 +536,7 @@ publish:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
         "vizlab-favicon", "social-media-css"]
-      sections: [ "figure-section", "data-sources"]
+      sections: [ "figure-section", "social-section", "text-section", "data-sources"]
   -
     id: embed-page
     name: embed-hurricane-irma
@@ -543,10 +544,10 @@ publish:
     template: embed
     mimetype: text/html
     depends: ["figure-section", "svg-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
-      "vizlab-favicon", "social-media-css","lib-header-css"]
+      "vizlab-favicon", "social-media-css"]
     context:
       resources: ["svg-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
-        "vizlab-favicon", "social-media-css","lib-header-css"]
+        "vizlab-favicon", "social-media-css"]
       embed: ["figure-section"]
   -
     id: figure-section
@@ -555,12 +556,18 @@ publish:
     depends:
       playIcon: play-icon
       loadingIcon: loading-icon
-      social-section: social-section
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
       playIcon: playIcon
       figure: loadingIcon
+  -
+    id: text-section
+    template: layout/templates/text.mustache
+    publisher: section
+    depends:
+    context:
+      id: viz-text
       line1: >-
         Hurricane Irma approached the west coast of Florida on Sept 10th, 2017. 
         The map above displays the hurricane's path and its impact on precipitation 
@@ -577,7 +584,6 @@ publish:
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
       line3: to learn more about how the agency prepared for and measured Irma’s impact. 
-      social-section: social-section
   -
     id: header-section
     template: layout/templates/header.mustache
