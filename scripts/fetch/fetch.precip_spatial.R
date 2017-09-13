@@ -1,5 +1,5 @@
 fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
-
+  
   if(!viz[['refetch']]){
     return(NULL)
   }
@@ -10,7 +10,7 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   cell_size <- 12000 # meters -- set to make grid more course or dense.
   states <- c("florida", "georgia", "alabama", "south carolina") # from maps states id list.
   ### /constants
-    
+  
   xlim <- view[["xlim"]]
   ylim <- view[["ylim"]]
   proj.string <- view[["proj.string"]]
@@ -57,7 +57,6 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   # rgdal::writeOGR(sp_cells, "irma_cells.shp",
   #                 layer = "irma_cells", driver = "ESRI Shapefile", overwrite_layer=TRUE)
 }
-
 
 
 
