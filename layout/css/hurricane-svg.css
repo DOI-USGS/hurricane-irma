@@ -48,7 +48,7 @@ line, polyline, path{
 
 #map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {
   /* doesn't work in IE */
-  transform: translate(-50px, -163px) scale(1.55)
+  transform: translate(-80px, -163px) scale(1.55)
 }
 
 #sparkline-squiggle-block-portrait {

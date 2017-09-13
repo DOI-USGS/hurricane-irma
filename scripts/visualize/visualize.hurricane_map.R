@@ -132,8 +132,6 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
   xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
-
-  
   
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
@@ -178,6 +176,12 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrai
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='alabama']") 
   xml_remove(to.rm)
   
+  
+  # NOT WORKING???
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-mousers']") 
+  xml_remove(to.rm)
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-overlay']") 
+  xml_remove(to.rm)
   # move some things:
   
   to.mv <- xml2::xml_find_all(svg, "//*[local-name()='text'][@id='atlantic-ocean']")
