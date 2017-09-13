@@ -42,11 +42,15 @@ var animatePrcp = function(timestep, $currentStormDot) {
     }
   });
 
+  $('.nwis-dot').css('fill', '#057083').css('stroke', "#057083");
+  $('.f-' + timestep).css('fill', 'red');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
   $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#spark-full-mask').attr('width', darkWidth);
+  $('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  $('#flood-full-mask').attr('width', darkWidth);
 };
 
 var play = function() {
