@@ -19,7 +19,7 @@ process.node_precip <- function(viz = as.viz('node-precip')){
   
   sp.cells$class = NA_character_
   
-  # wow this is SLOW!!
+  
   for (i in 1:length(sp.cells$id)){
     ID <- sp.cells$id[i]
     ID.data <- precipData[precipData$id == ID, ] %>% arrange(DateTime)

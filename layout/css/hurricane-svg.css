@@ -75,9 +75,15 @@ line, polyline, path{
 
 .county-borders-overlay {
   stroke: white;
+  fill-opacity: 0;
+  fill: white;
+}
+.county-borders-mousers {
+  stroke: white;
   opacity: 0;
   fill: white;
 }
+
 
 .light-rain-legend {
   fill:white;
