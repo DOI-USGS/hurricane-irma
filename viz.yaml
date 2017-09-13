@@ -194,13 +194,12 @@ fetch:
   -
     id: precip-spatial
     fetcher: precipSpatial
-    depends: ["view-limits", "storm-area-filter", "states"]
-    scripts: [scripts/fetch/fetch.precip_spatial.R]
+    depends: ["view-limits"]
+    scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells.rds
     cell_size: 15000
     reader: rds
     refetch: TRUE
-    mimetype: application/zip
   -
     id: precip-cell-data
     fetcher: precipCellData

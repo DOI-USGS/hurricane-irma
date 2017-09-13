@@ -1,5 +1,5 @@
 fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
-
+  
   if(!viz[['refetch']]){
     return(NULL)
   }
@@ -42,16 +42,16 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   # Get IDs from cell geometry and make points into SpatialPointsDataFrame
   sp_point_ids <- sp::over(sp_points, sp_cells, returnList = F, fn=NULL)
   sp_points <- sp::SpatialPointsDataFrame(sp_points, sp_point_ids)
-
+  
   ### Now we have sp_points and sp_cells that share IDs. ###
   
   # convert States to SpatialPolygonDataFrame with grouping column for union step.
   stateIDs <- sapply(slot(states, "polygons"), function(x) slot(x, "ID"))
   state_boundary <- rgeos::gBuffer(sp::SpatialPolygonsDataFrame(states, 
-                                             data.frame(viz=rep("viz", 
-                                                                length(stateIDs)), 
-                                                        stringsAsFactors = F, 
-                                                        row.names = stateIDs)),
+                                                                data.frame(viz=rep("viz", 
+                                                                                   length(stateIDs)), 
+                                                                           stringsAsFactors = F, 
+                                                                           row.names = stateIDs)),
                                    byid = T,
                                    width = 0) # zero buffer to fix topology exception.
   
@@ -85,9 +85,8 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   out <- list(cells = sp::spTransform(sp_cells, sp::CRS('+proj=longlat +datum=WGS84 +ellps=WGS84 +towgs84=0,0,0')), points = sp_points)
   
   saveRDS(out, viz[['location']])
-
+  
 }
-
 
 
 
