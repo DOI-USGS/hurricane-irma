@@ -16,9 +16,22 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   map.elements <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='map-elements']") 
   precip.centroids <- xml2::xml_find_first(svg, "//*[local-name()='g'][@id='precip-centroids']") 
   xml_attr(precip.centroids, "clip-path") <- "url(#state-clip)"
+  precip.dots <- xml_children(precip.centroids)
+  xs <- sort(as.numeric(sapply(precip.dots, xml_attr, attr = 'cx')))
+  diameter <- unique(sort(round(diff(xs))))[2]
+  for (dot in precip.dots){
+    xml_name(dot) <- 'path'
+    x <- as.numeric(xml_attr(dot, 'cx')) - diameter/2
+    y <- as.numeric(xml_attr(dot, 'cy')) - diameter/2
+    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f h%s v%s h-%sZ", x, y, diameter, diameter, diameter)
+    xml_attr(dot, 'r') <- NULL
+    xml_attr(dot, 'cx') <- NULL
+    xml_attr(dot, 'cy') <- NULL
+  }
   
   xml2::xml_attr(map.elements, 'id') <- paste(xml2::xml_attr(map.elements, 'id'), sep = '-', mode)
 
+  
   side.panel <- 145
   xml_attr(svg, 'viewBox') <- sprintf("0 0 %s %s", width, height)
   vb <- strsplit(xml_attr(svg, 'viewBox'),'[ ]')[[1]]
@@ -178,9 +191,11 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrai
   
   
   # NOT WORKING???
-  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-mousers']") 
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='g'][@id='storm-counties']") 
   xml_remove(to.rm)
-  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@id='county-borders-overlay']") 
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@class='county-borders-mousers']") 
+  xml_remove(to.rm)
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='use'][@class='county-borders-overlay']") 
   xml_remove(to.rm)
   # move some things:
   
