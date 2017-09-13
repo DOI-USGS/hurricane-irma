@@ -28,19 +28,17 @@ var fetchPrcpTimes = $.get("js/times.json").done(function(data) {
   prcpTimes = data;
 });
 
-var animatePrcp = function(timestep) {
+var animatePrcp = function(timestep, $currentStormDot) {
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
     var $prcpBin = $('.p-' + timestep + '-' + bin);
-    var $stormDot = $('.storm-dot');
-    var $currentStormDot = $('#storm-' + timestep)
-
+    var stormX = $currentStormDot.attr('cx');
+    var stormY = $currentStormDot.attr('cy');
     $prcpBin.css("fill", color);
     
-    $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-    
     if ($currentStormDot){
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+      $currentStormDot.data('cx', stormX);
+      $currentStormDot.data('cy', stormY);
     }
   });
 
@@ -58,8 +56,14 @@ var play = function() {
     ga('send', 'event', 'figure', 'user pressed play');
     button.css('display', 'none');
     interval = setInterval(function() {
+      
+      var $stormDot = $('.storm-dot');
+      $stormDot.css("opacity", "0").css("transform", "scale(0.1");
+      var $currentStormDot = $('#storm-' + timestep);
+      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+      
       if (timestep < prcpTimes.times.length) {
-        animatePrcp(timestep);
+        animatePrcp(timestep, $currentStormDot);
         timestep++;
       } else {
         timestep = 1;
