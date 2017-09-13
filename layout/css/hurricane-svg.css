@@ -97,14 +97,14 @@ line, polyline, path{
   fill:#057083;
   fill-opacity:0.6;
 }
-.nwis-mouser {
+.mouser-nwis {
   fill-opacity: 0;
   stroke-opacity: 0;
 }
 
-.nwis-bold, .nwis-dot:hover, .nwis:hover, .nwis-mouser:hover {
+.nwis-bold, .mouser-bold, .nwis-dot:hover, .nwis:hover, .mouser-nwis:hover {
   fill-opacity: 0.7;
-  stroke-width:2;
+  stroke-width:4;
   fill:#F29E4C;
   stroke:#F29E4C;
   stroke-opacity: 1;

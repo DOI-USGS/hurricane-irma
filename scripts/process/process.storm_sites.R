@@ -52,8 +52,8 @@ process.all_sites <- function(viz = as.viz('all-sites')){
                          class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
                          r = ifelse(is.featured, '3.5','1'),
                          onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites.sp@data$site_no), ""),
-                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');hovertext(' ');", sites.sp@data$site_no), ""),
-                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');", sites.sp@data$site_no), ""),
+                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
+                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');setBold('nwis-%s');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
                          onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites.sp@data$site_no), ""), 
                          stringsAsFactors = FALSE)
   
