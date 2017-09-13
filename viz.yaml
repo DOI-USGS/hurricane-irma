@@ -343,20 +343,34 @@ process:
     export: true
     mimetype: application/javascript
   - 
+    id: timestep-discharge
+    location: cache/timestep-discharge.rds
+    processor: timestep_discharge
+    scripts: scripts/process/process.timestep_discharge.R
+    reader: rds
+    depends: ["gage-data","timesteps", "storm-sites"]  
+  - 
+    id: flood-sites-classify
+    location: cache/flood-sites.rds
+    processor: flood_sites
+    scripts: scripts/process/process.flood_sites.R
+    reader: rds
+    depends: ["timestep-discharge", "nws-data", "storm-sites"]  
+  - 
     id: discharge-sparks
     location: cache/discharge-sparks.rds
     processor: discharge_sparks
     scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data","timesteps", "sites"]
+    depends: ["timestep-discharge", "sites"]
   - 
-    id: flood-sites
-    location: cache/flood-sites.rds
-    processor: flood_sites
-    scripts: scripts/process/process.flood_sites.R
+    id: flood-sparks
+    location: cache/flood-sparks.rds
+    processor: flood_sparks
+    scripts: scripts/process/process.discharge_sparks.R
     reader: rds
-    depends: ["gage-data", "nws-data", "storm-sites"]  
-    time-stamp: "2017-09-11 06:00:00"
+    depends: ["timestep-discharge", "sites", "nws-data"]
+  
     
 visualize:
   -
@@ -370,7 +384,7 @@ visualize:
       storm-islands: storm-islands
       storm-track-highlight: storm-track
       storm-track: storm-track
-      storm-sites: storm-sites
+      storm-sites: flood-sites-classify
       storm-location: storm-location
     scripts: ["scripts/visualize/visualize_utils.R", "scripts/visualize/visualize.svg_base_map.R", "scripts/read/read.svg.R"]
     reader: svg_map
@@ -379,7 +393,7 @@ visualize:
     id: hurricane-map-portrait
     location: figures/hurricane-map-portrait.svg
     visualizer: hurricane_map_portrait
-    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
+    depends: ["base-map", "discharge-sparks", "flood-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 720
@@ -391,7 +405,7 @@ visualize:
     id: hurricane-map-landscape
     location: figures/hurricane-map-landscape.svg
     visualizer: hurricane_map_landscape
-    depends: ["base-map", "discharge-sparks", "precip-colors","precip-breaks"]
+    depends: ["base-map", "discharge-sparks", "flood-sparks", "precip-colors","precip-breaks"]
     scripts: scripts/visualize/visualize.hurricane_map.R
     mimetype: image/svg+xml
     height: 576
@@ -627,9 +641,9 @@ publish:
       github-url: https://github.com/USGS-VIZLAB/hurricane-irma
       vizzies:
         -
-          url: https://owi.usgs.gov/vizlab/hurricane-matthew/
-          name: Hurricane Matthew
-          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-matthew/images/matthew_water2.png
+          url: https://owi.usgs.gov/vizlab/hurricane-harvey/
+          name: Hurricane Harvey
+          thumbLoc: https://owi.usgs.gov/vizlab/hurricane-harvey/images/harvey1.png
   -
     id: data-sources
     template: layout/templates/dataSources.mustache
