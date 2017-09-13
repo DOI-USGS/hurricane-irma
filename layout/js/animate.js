@@ -7,6 +7,19 @@ var running = false;
 var interval = undefined;
 var intervalLength = 160;
 var timestep = 1;
+var filename;
+
+if (window.innerWidth > window.innerHeight) {
+  filename = 'images/hurricane-map-landscape.svg';
+}
+else {
+  filename = 'images/hurricane-map-portrait.svg';
+}
+
+var fetchSvg = $.ajax({
+  url: filename,
+  dataType: 'html'
+});
 
 var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
   prcpColors = data;
@@ -15,71 +28,78 @@ var fetchPrcpTimes = $.get("js/times.json").done(function(data) {
   prcpTimes = data;
 });
 
-var animatePrcp = function(timestep) {
+var animatePrcp = function(timestep, $currentStormDot) {
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
     var $prcpBin = $('.p-' + timestep + '-' + bin);
-    var $stormDot = $('.storm-dot');
-    var $currentStormDot = $('#storm-' + timestep)
-
+    var stormX = $currentStormDot.attr('cx');
+    var stormY = $currentStormDot.attr('cy');
     $prcpBin.css("fill", color);
     
-    $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-    
     if ($currentStormDot){
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+      $currentStormDot.data('cx', stormX);
+      $currentStormDot.data('cy', stormY);
     }
   });
 
+  $('.nwis-dot').css('fill', '#057083').css('stroke', "#057083");
+  $('.f-' + timestep).css('fill', 'red');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
   $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#spark-full-mask').attr('width', darkWidth);
+  $('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
+  $('#flood-full-mask').attr('width', darkWidth);
 };
 
-var playPause = function() {
+var play = function() {
   var button = $('#playButton');
-  if (running) {
-    clearInterval(interval);
-    running = false;
-    button.html("Play");
-    ga('send', 'event', 'figure', 'user pressed pause');
-  } else {
+  if (!running) {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
-    button.html("Pause")
+    button.css('display', 'none');
     interval = setInterval(function() {
+      
+      var $stormDot = $('.storm-dot');
+      $stormDot.css("opacity", "0").css("transform", "scale(0.1");
+      var $currentStormDot = $('#storm-' + timestep);
+      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+      
       if (timestep < prcpTimes.times.length) {
-        animatePrcp(timestep);
+        animatePrcp(timestep, $currentStormDot);
         timestep++;
       } else {
         timestep = 1;
         clearInterval(interval);
         running = false;
-        button.html("Play");
+        button.css('display', 'block');
       }
     }, intervalLength);
+  }  
+}
+var pause = function() {
+  var button = $('#playButton');
+  if (running) {
+    clearInterval(interval);
+    running = false;
+    button.css('display', 'block');
+    ga('send', 'event', 'figure', 'user pressed pause');
   }
 };
 $('document').ready(function() {
-  var filename;
-  if (window.innerWidth > window.innerHeight) {
-    filename = 'images/hurricane-map-landscape.svg';
-  }
-  else {
-    filename = 'images/hurricane-map-portrait.svg';
-  }
-  $('#map-figure figure').load(filename, function() {
-    $.when(fetchPrcpTimes, fetchPrcpColors)
-      .done(function() {
-        svg = document.querySelector("svg");
-        pt = svg.createSVGPoint();
-        $('#playButton').click();
-      });
-      
-    var figureHeight = $("#map-figure figure").height();
-    $('#buttonContainer').css('top', figureHeight * .45);
+  fetchSvg.done(function(data) {
+    $('#map-figure figure').html(data);
+    $('#map-figure svg').ready(function() {
+        $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+          svg = document.querySelector("svg");
+          pt = svg.createSVGPoint();
+          $('.viz-pause').on('click', function(){
+            pause();
+          });
+          play();
+        });
+    });
   });
 });
 

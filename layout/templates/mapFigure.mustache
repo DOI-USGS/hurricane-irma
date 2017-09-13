@@ -1,11 +1,22 @@
 <div id="{{id}}" caption="Precipitation from Hurricane Irma">
-  <figure>{{{figure}}}</figure>
-  <div id="buttonContainer">
-    <button id="playButton" onclick="playPause();" style="height:50px;width:90px;font-size:24px;font-weight:bold"> Play </button>
+  <div id="figureButtonCenter">
+    <figure>
+      {{{figure}}}
+    </figure>
+    <button id="playButton" onclick="play();">
+      {{{playIcon}}}
+    </button>
   </div>
+
+  {{{social-section}}}
+
   <figureCaption>
     {{line1}}
-    <a href="{{stnLink}}" rel = "external" onclick="vizlab.clicklink('{{stnLink}}'); return false;">{{stnText}}</a>
+    <a href="{{mapperLink}}" rel = "external" onclick="vizlab.clicklink('{{mapperLink}}'); return false;">{{mapperText}}</a>
     {{line2}}
+    <a href="{{stnLink}}" rel = "external" onclick="vizlab.clicklink('{{stnLink}}'); return false;">{{stnText}}</a>
+    {{line3}}
+    <a href="{{irmaLink}}" rel = "external" onclick="vizlab.clicklink('{{irmaLink}}'); return false;">{{irmaText}}</a>
+    {{line4}}
   </figureCaption>
 </div>

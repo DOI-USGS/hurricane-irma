@@ -193,11 +193,16 @@ set_sp_plot <- function(){
 }
 
 locate_css_class <- function(css, class_nm){
-  start_class <- grep(class_nm, css)
-  stopifnot(length(start_class) > 0)
+  class_declare_line <- grep(class_nm, css)
+  stopifnot(length(class_declare_line) > 0)
   close_classes <- grep("}", css)
-  end_class <- close_classes[which(start_class < close_classes)[1]]
-  css_details <- css[start_class:end_class]
+  
+  css_details <- c()
+  for(start_class in class_declare_line){
+    end_class <- close_classes[which(start_class < close_classes)[1]]
+    css_details <- c(css_details, css[start_class:end_class])
+  }
+  
   return(css_details)
 }
 
@@ -209,10 +214,70 @@ locate_css_class_detail <- function(css, item_nm){
   return(item_details)
 }
 
+#'
+#' Take style and data inputs to create a saved 
+#' image file of a snapshot in time.
+createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, states, islands, 
+                                    counties, precip_breaks, precip_cols, timesteps, storm, 
+                                    hurricane_track, expandBB, flood_sites){
+  
+  library(dplyr)
+  
+  # styling details
+  ocean_color <- locate_css_class_detail(locate_css_class(css, ".ocean-water"), "fill")
+  state_css <- locate_css_class(css, ".county-polygon")
+  state_color <- locate_css_class_detail(state_css, "fill")
+  state_lwd <- locate_css_class_detail(state_css, "stroke-width")
+  island_css <- locate_css_class(css, ".island-polygon")
+  island_color <- locate_css_class_detail(island_css, "fill")
+  storm_color <- locate_css_class_detail(locate_css_class(css, "storm-dot"), "fill")
+  
+  counties@data$col <- NA_character_
+  # process precip to get county & color category together w/ time
+  time_stamp <- as.POSIXct(time_stamp, tz = "America/New_York")
+  time_idx <- which(timesteps == time_stamp)
+  
+  for (j in 1:nrow(counties@data)){
+    class <- counties@data[j, ]$class
+    precip.classes <- tail(strsplit(class, '[ ]')[[1]], -1L)
+    precip.time.i <- as.numeric(sapply(precip.classes, FUN = function(x) {strsplit(x,'[-]')[[1]][2]}, USE.NAMES = FALSE))
+    # the way we did those was to have the class change only if the value changed, so it is compressed and number of 
+    # classes likely != number of timesteps (i.e., if a never changed it would be p-1-1, if changed twice, p-1-1 p-32-2 p-34-1)
+    precip.col.i <- as.numeric(sapply(precip.classes, FUN = function(x) {strsplit(x,'[-]')[[1]][3]}, USE.NAMES = FALSE))
+    t.diffs <- time_idx - precip.time.i
+    time.i <- which(t.diffs==min(t.diffs[t.diffs>=0]))
+    col.to.use <- precip_cols[precip.col.i[time.i]]
+    if(length(col.to.use) == 0) {
+      col.to.use <- "#5F5A5A"
+      warning("Watch out!  there was a county with no precip data")
+    }
+    counties@data$col[j] <- col.to.use
+  }
+  
+  par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
+  sp::plot(counties, col = NA, border = "#c6c6c6",
+           expandBB = eval(parse(text = expandBB)))
+  sp::plot(states, col = state_color, border = "#c6c6c6", add = TRUE)
+  sp::plot(islands, add = TRUE, border = "#c6c6c6", col = island_color)
+  sp::plot(counties, add = TRUE, border = "#c6c6c6", col = counties@data$col)
+  sp::plot(hurricane_track, add=TRUE, col = "#5f5f5f", lwd=3)
+  cols <- rep("#FFFFFF00", length(storm))
+  cols[time_idx] <- storm_color
+  sp::plot(storm, pch=20, cex=5, col=cols, add = TRUE)
+  sp::plot(flood_sites, pch=20, col = "#c10000", add = TRUE)
+}
+
 #' script to turn the dataviz into a thumbnail
 #' 
 visualize.map_thumbnail <- function(viz){
   library(dplyr)
+  
+  css <- readLines(viz$css)
+  file_location <- viz[['location']]
+  time_stamp <- viz$`time-stamp`
+  fig_height <- viz$`fig-height`
+  fig_width <- viz$`fig-width`
+  expandBB <- viz[["expandBB"]]
   
   depends <- readDepends(viz)
   states <- depends[["storm-states"]]
@@ -223,58 +288,52 @@ visualize.map_thumbnail <- function(viz){
   timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
-  view_box <- depends[["view-limits"]]
-    
-  # styling details
-  css <- readLines(viz$css)
-  ocean_color <- locate_css_class_detail(locate_css_class(css, ".ocean-water"), "fill")
-  state_css <- locate_css_class(css, ".county-polygon")
-  state_color <- locate_css_class_detail(state_css, "fill")
-  state_lwd <- locate_css_class_detail(state_css, "stroke-width")
-  island_css <- locate_css_class(css, ".island-polygon")
-  island_color <- locate_css_class_detail(island_css, "fill")
-  island_lwd <- locate_css_class_detail(island_css, "stroke-width")
-
- 
+  flood_sites <- depends[['flood-sites']]
   
-  
-  counties@data$col <- NA_character_
-  # process precip to get county & color category together w/ time
-  time.stamp <- as.POSIXct(viz$`time-stamp`, tz = "America/New_York")
-  time.idx <- which(timesteps == time.stamp)
-  
-  
-  for (j in 1:nrow(counties@data)){
-    class <- counties@data[j, ]$class
-    precip.classes <- tail(strsplit(class, '[ ]')[[1]], -1L)
-    precip.time.i <- as.numeric(sapply(precip.classes, FUN = function(x) {strsplit(x,'[-]')[[1]][2]}, USE.NAMES = FALSE))
-    # the way we did those was to have the class change only if the value changed, so it is compressed and number of 
-    # classes likely != number of timesteps (i.e., if a never changed it would be p-1-1, if changed twice, p-1-1 p-32-2 p-34-1)
-    precip.col.i <- as.numeric(sapply(precip.classes, FUN = function(x) {strsplit(x,'[-]')[[1]][3]}, USE.NAMES = FALSE))
-    t.diffs <- time.idx - precip.time.i
-    time.i <- which(t.diffs==min(t.diffs[t.diffs>=0]))
-    counties@data$col[j] <- precip_cols[precip.col.i[time.i]]
-  }
-  
-  png(file = viz[['location']], height = viz$`fig-height`, width = viz$`fig-width`)
-  
-  
-  par(mar=c(0,0,0,0), oma=c(0,0,0,0), bg = ocean_color, xaxs = 'i', yaxs = 'i')
-  sp::plot(counties, col = NA, expandBB = eval(parse(text = viz[["expandBB"]]))) #decimals not working?
-  sp::plot(states, col = state_color, add = TRUE)
-  sp::plot(islands, add = TRUE, col = island_color)
-  sp::plot(counties, add = TRUE, col = counties@data$col)
-  sp::plot(hurricane_track, add=TRUE, col = "black", lwd=3)
-  cols <- rep("#FFFFFF00", length(storm))
-  cols[time.idx] <- 'red'
-  sp::plot(storm, pch=20, cex=3, col=cols, add = TRUE)
-  
+  png(file = file_location, height = fig_height, width = fig_width)
+  createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
+                          counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
+                          expandBB, flood_sites)
   dev.off()
-  
 }
 
-createTimeStepPlots <- function(precip, states, counties, islands, hurricane_track, 
-                                hurricane_location, view_box, 
-                                precip_cols, state_color, island_color, ocean_color){
+visualize.timelapse_gif <- function(viz){
+  
+  library(animation)
+  
+  css <- readLines(viz$css)
+  file_location <- viz[['location']]
+  fig_height <- viz$`fig-height`
+  fig_width <- viz$`fig-width`
+  expandBB <- viz[["expandBB"]]
+  
+  depends <- readDepends(viz)
+  states <- depends[["storm-states"]]
+  islands <- depends[["storm-islands"]]
+  counties <- depends[["storm-counties"]]
+  precip_breaks <- depends[["precip-breaks"]]
+  precip_cols <- depends[["precip-colors"]]
+  timesteps <- as.POSIXct(strptime(depends[['timesteps']]$times, format = '%b %d %I:%M %p', tz = "America/New_York"))
+  storm <- depends[["storm-location"]]
+  hurricane_track <- depends[["storm-track"]]
+  storm_sites <- depends[['storm-sites']]
+  gage_data <- depends[['gage-data']]
+  nws_data <- depends[["nws-data"]]
+  
+  # needed to use ts w/ seq_along b/c times turned numeric otherwise
+  ani.options(interval = 0.3)
+  saveGIF( 
+  for(ts in seq_along(timesteps)){
+    time_stamp <- as.character(timesteps[ts])
+    
+    # for the current timestamp, get gages that have exceeded their flood stage
+    flood_sites <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
+    
+    # create map of precip + gages above flood stage
+    createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
+                            counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
+                            expandBB, flood_sites)
+    title(time_stamp, line = -2)
+  }, movie.name = file_location)
   
 }

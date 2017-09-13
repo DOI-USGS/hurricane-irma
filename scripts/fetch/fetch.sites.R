@@ -10,9 +10,9 @@ fetch.sites <- function(viz = as.viz('sites')){
   
   counties <- readDepends(viz)[['counties']] 
   #will this be ok with dependency management?
-  start.date <-  as.Date(getContentInfo('precip-data')[['start.date']])
+  start.date <-  as.Date(getContentInfo('precip-cell-data')[['start.date']])
   
-  site_sum_all <- data.frame()
+  sites_sum_all <- data.frame()
   
   counties_fips <- maps::county.fips %>% 
     dplyr::filter(polyname %in% names(counties)) %>% 
@@ -29,19 +29,29 @@ fetch.sites <- function(viz = as.viz('sites')){
                                          parameterCd=pCode,
                                          countyCd = fips_subset)
     
-    sites_sum <- filter(sites, parm_cd == pCode,
-                        data_type_cd == "uv",
-                        !site_tp_cd %in% c("LK", "ES", "GW")) %>% #others?
+    sites <- filter(sites, parm_cd == pCode,
+                    !site_tp_cd %in% c("LK", "ES", "GW")) %>%
+      data.frame()
+    
+    daily_begin_date <- filter(sites, data_type_cd == "dv") %>% 
+      select(site_no, begin_date) %>%
+      rename(dv_begin_date = begin_date)
+    
+    sites_sum <- filter(sites, data_type_cd == "uv") %>% #others?
       mutate(end_date = as.Date(end_date)) %>%
       filter(end_date >= start.date,
              count_nu >= 3000,
              !(is.na(alt_datum_cd))) %>%
-      select(site_no, station_nm, dec_lat_va, dec_long_va, begin_date) %>%
+      select(site_no, station_nm, dec_lat_va, dec_long_va) %>%
+      left_join(daily_begin_date, by="site_no")
       data.frame() 
     
-    site_sum_all <- bind_rows(site_sum_all, sites_sum)
+    sites_sum_all <- bind_rows(sites_sum_all, sites_sum)
     
   }
+  
+  sites_sum_all <- unique(sites_sum_all)
+  
   location <- viz[['location']]
-  saveRDS(site_sum_all, file=location)
+  saveRDS(sites_sum_all, file=location)
 }
