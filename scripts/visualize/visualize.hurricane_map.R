@@ -60,7 +60,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.rain, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
                 transform="translate(0,35)")
   g.gage_box <- xml_add_child(g.rain, 'rect', x = "0", y = "-52", height = "55", 
-                              width = "260", style="fill:#DAD7C9")
+                              width = "260", class="gage-box")
   g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
   g.irma <- xml_add_child(g.rain, 'g', id = 'irma-legend', transform="translate(15,-65)")
   g.gage_isFlood <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,-10)")
