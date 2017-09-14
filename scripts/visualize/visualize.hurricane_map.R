@@ -55,12 +55,11 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
   g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
+  g.backing <- xml_add_child(non.geo, 'g', id='legend0-back', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   
   # lower left legend:
   xml_add_child(g.rain, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
                 transform="translate(0,35)")
-  g.gage_box <- xml_add_child(g.rain, 'rect', x = "0", y = "-52", height = "55", 
-                              width = "260", style="fill:#DAD7C9")
   g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
   g.irma <- xml_add_child(g.rain, 'g', id = 'irma-legend', transform="translate(15,-65)")
   g.gage_isFlood <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,-10)")
@@ -75,7 +74,9 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
   
   g.main_gage_text <- xml_add_child(g.rain, 'text', "USGS Stream Gages", class='svg-text legend-text', dy="-1em",
-                                    transform="translate(5,-23)")
+                                    transform="translate(0,-23)")
+  g.main_gage_text <- xml_add_child(g.rain, 'text', "(< 1% of US total)", class='svg-text smallprint-text legend-text', dy="-1.33em",
+                                    transform="translate(135,-23)")
   
   
   rain.w <- 28 # width of a rain legend bin
