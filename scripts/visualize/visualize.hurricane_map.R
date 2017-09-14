@@ -148,8 +148,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   # sparkline masks:
   
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
-  xml_add_child(m, 'rect', x="0.001", y="-1", width="0.998", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
-  xml_add_child(m, 'rect', x="0.001", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  xml_add_child(m, 'rect', x="0.002", y="-1", width="0.996", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
+  xml_add_child(m, 'rect', x="0.002", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
 
   # clips for pixel-based precip!
   cp <- xml_add_child(d, 'clipPath', id="state-clip")
@@ -157,8 +157,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
 
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
-  xml_add_child(m, 'rect', x="0.001", y="-1", width="0.998", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
-  xml_add_child(m, 'rect', x="0.001", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
+  xml_add_child(m, 'rect', x="0.002", y="-1", width="0.996", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
+  xml_add_child(m, 'rect', x="0.002", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
