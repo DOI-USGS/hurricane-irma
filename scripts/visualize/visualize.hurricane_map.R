@@ -69,7 +69,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.irma, 'circle', r="8", class="storm-dot-legend")
   xml_add_child(g.gage_isFlood, 'circle', r="4", class="nwis-flooding-legend")
   xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
-  xml_add_child(g.gage_isFlood, 'text', "Exceeded flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.gage_isFlood, 'text', "Above flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot-legend")
   xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
   
@@ -110,9 +110,9 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), 'Featured USGS gages', dy="1.5em", 'text-anchor'='middle', class='svg-text legend-text')
   xml_add_child(g.sparkle.blck, 'text', x=as.character(side.panel/2), '(normalized stage)', dy='3em', 'text-anchor'='middle', class='svg-text smallprint-text legend-text')
   g.sparkles <- xml_add_child(g.sparkle.blck, 'g', id = sprintf('sparkline-squiggles-%s', mode))
-  xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
-                y="450", x = as.character(side.panel/2), 'text-anchor'='middle')
-  ys <- seq(45, 400, length.out = nrow(sparks))
+  
+  ys <- seq(45, height - 120, length.out = nrow(sparks))
+  
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
@@ -124,6 +124,9 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), fl.spark))
     # now add flood spark
   }
+  
+  xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
+                y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
 
   map.elements.mid <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-mid', mode))
   g.tool <- xml_add_child(svg,'g',id='tooltip-group')
@@ -145,8 +148,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   # sparkline masks:
   
   m = xml_add_child(d, 'mask', id="spark-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
-  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
-  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
+  xml_add_child(m, 'rect', x="0.001", y="-1", width="0.998", height="3", style="fill-opacity: 0.18; fill: white;", id='spark-light-mask')
+  xml_add_child(m, 'rect', x="0.001", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='spark-full-mask')
 
   # clips for pixel-based precip!
   cp <- xml_add_child(d, 'clipPath', id="state-clip")
@@ -154,8 +157,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
 
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
-  xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
-  xml_add_child(m, 'rect', x="0", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
+  xml_add_child(m, 'rect', x="0.001", y="-1", width="0.998", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
+  xml_add_child(m, 'rect', x="0.001", y="-1", width="0", height="3", style="fill-opacity: 1; fill: white;", id='flood-full-mask')
   
   
   xml_add_child(map.elements.mid, 'use', "xlink:href"="#storm-counties", class='county-borders-overlay')
