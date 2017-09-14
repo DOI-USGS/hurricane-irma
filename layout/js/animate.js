@@ -22,10 +22,10 @@ var fetchSvg = $.ajax({
 });
 
 var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
-  prcpColors = data;
+  prcpColors = JSON.parse(data);
 });
 var fetchPrcpTimes = $.get("js/times.json").done(function(data) {
-  prcpTimes = data;
+  prcpTimes = JSON.parse(data);
 });
 
 var animatePrcp = function(timestep, $currentStormDot) {
