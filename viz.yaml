@@ -101,6 +101,9 @@ info:
     animation:
       repo: CRAN
       version: 2.5.0
+    raster:
+      repo: CRAN
+      version: 2.5.8
   contributors:
     -
       name: Mary Bucknell
