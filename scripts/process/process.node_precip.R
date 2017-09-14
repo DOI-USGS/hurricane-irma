@@ -24,6 +24,7 @@ process.node_precip <- function(viz = as.viz('node-precip')){
     ID <- sp.cells$id[i]
     ID.data <- precipData[precipData$id == ID, ] %>% arrange(DateTime)
     changed <- which(as.logical(c(TRUE, diff(as.numeric(ID.data$cols)))))
+    sp.cells$style = "fill: #ffffff33;"
     sp.cells$class[i] <- paste(' p-', changed, '-', ID.data$cols[changed], sep = '', collapse = '')
   }
   #want to cut down precipData to only relevant info?
