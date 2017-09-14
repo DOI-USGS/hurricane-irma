@@ -2,52 +2,69 @@
 process.storm_sites <- function(viz = as.viz('storm-sites')){
   library(magrittr)
   
-  checkRequired(viz, c("perc_flood_stage", "begin_date_filter"))
+  checkRequired(viz, "perc_flood_stage")
   depends <- readDepends(viz)
-  checkRequired(depends, c("view-limits", "sites", "storm-area-filter", 
-                           "nws-data"))
+  checkRequired(depends, c("sites", "nws-data"))
   
-  view.lims <- depends[["view-limits"]]
-  sites <- depends[['sites']] 
-  storm_poly <- depends[['storm-area-filter']]
+  sites <- depends[['sites']]@data
+
   nws.sites <- depends[['nws-data']]$sites
   nws.data <- depends[['nws-data']]$forecasts
   
   library(dplyr)
-  sites$dv_begin_date <- as.Date(sites$dv_begin_date)
   
-  sites.sp <- sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
-                                               sites$dec_lat_va), 
-                                         data = sites,
-                                         proj4string = sp::CRS("+proj=longlat +ellps=GRS80 +no_defs"))
+  percent_flood_stage <- as.numeric(viz[["perc_flood_stage"]]) # not currently used?!?
   
-  sites.sp <- sp::spTransform(sites.sp, sp::CRS(view.lims$proj.string))
-  
-  storm_poly <- sp::spTransform(storm_poly, sp::CRS(view.lims$proj.string))
-  
-  percent_flood_stage <- as.numeric(viz[["perc_flood_stage"]])
-  begin_date_filter <- as.Date(viz[["begin_date_filter"]])
-  
-  #this will be modified in a later process step, based on NWIS observations
-  #need this filtering first to limit the amount of data pulled from NWIS
-  is.featured <- rgeos::gContains(storm_poly, sites.sp, byid = TRUE) %>% 
-    rowSums() %>% 
-    as.logical() & 
-    sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)] & # has an NWS flood stage
-    sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
-    !(sites$site_no %in% c('02223000', '02207220', '02246000', '02467000')) # is not one of our manually selected bad sites
-  
+  is.featured <- sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)]
+    
   #might be nice to have this in it's own step 
-  sites.sp@data <- data.frame(id = paste0('nwis-', sites.sp@data$site_no), 
-                         class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
-                         r = ifelse(is.featured, '3.5','1'),
-                         onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites.sp@data$site_no), ""),
-                         onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
-                         onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');setBold('nwis-%s');", sites.sp@data$site_no, sites.sp@data$site_no), ""),
-                         onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites.sp@data$site_no), ""), 
-                         stringsAsFactors = FALSE)
+  storm_sites <- data.frame(id = paste0('nwis-', sites$site_no), 
+                              class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
+                              r = ifelse(is.featured, '3.5','1'),
+                              onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites$site_no), ""),
+                              onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", sites$site_no, sites$site_no), ""),
+                              onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');setBold('nwis-%s');", sites$site_no, sites$site_no), ""),
+                              onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites$site_no), ""), 
+                              stringsAsFactors = FALSE)
   
-  saveRDS(sites.sp, viz[['location']])
+  saveRDS(storm_sites, viz[['location']])
+}
+
+#fetch NWIS iv data, downsample to hourly
+
+process.getNWISdata <- function(viz = as.viz('gage-data')){
+  required <- c("depends", "location")
+  checkRequired(viz, required)
+  depends <- readDepends(viz)
+  siteInfo <- depends[['storm-sites']]
+  sites_active <- dplyr::filter(siteInfo, class == 'nwis-dot')$id
+  sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
+  
+  dateTimes <- depends[['timesteps']]$times
+  dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
+                                   tz = "America/New_York")
+  
+  start.date <-  as.Date(dateTimes_fromJSON[1])
+  end.date <- as.Date(dateTimes_fromJSON[length(dateTimes)])
+  
+  sites_fetcher_params <- getContentInfo('sites')
+  parameter_code <- sites_fetcher_params[['pCode']]
+  
+  nwisData <- dataRetrieval::renameNWISColumns(
+    dataRetrieval::readNWISdata(service="iv",
+                                parameterCd=parameter_code,
+                                sites = sites_active,
+                                startDate = start.date,
+                                endDate = end.date,
+                                tz = "America/New_York"))
+  
+  nwisData <- dplyr::filter(nwisData, dateTime %in% dateTimes_fromJSON)
+  
+  names(nwisData)[which(grepl(".*_Inst$", names(nwisData)))] <- "p_Inst"
+  names(nwisData)[which(grepl(".*_Inst_cd$", names(nwisData)))] <- "p_Inst_cd"
+  
+  location <- viz[['location']]
+  saveRDS(nwisData, file=location)
 }
 
 #has a site passed flood stage or forecasted to?
@@ -84,43 +101,6 @@ process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   #filter storm sites
   storm_sites_filtered <- storm_sites[storm_sites$id %in% gage_nws_flood$site_no,]
   saveRDS(object = storm_sites_filtered, file = viz[['location']])
-}
-
-#fetch NWIS iv data, downsample to hourly
-
-process.getNWISdata <- function(viz = as.viz('gage-data')){
-  required <- c("depends", "location")
-  checkRequired(viz, required)
-  depends <- readDepends(viz)
-  siteInfo <- depends[['storm-sites']]
-  sites_active <- dplyr::filter(siteInfo@data, class == 'nwis-dot')$id
-  sites_active <- gsub(pattern = "nwis-", replacement = "", x = sites_active)
-  
-  dateTimes <- depends[['timesteps']]$times
-  dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
-                                   tz = "America/New_York")
-  
-  start.date <-  as.Date(dateTimes_fromJSON[1])
-  end.date <- as.Date(dateTimes_fromJSON[length(dateTimes)])
-  
-  sites_fetcher_params <- getContentInfo('sites')
-  parameter_code <- sites_fetcher_params[['pCode']]
-  
-  nwisData <- dataRetrieval::renameNWISColumns(
-    dataRetrieval::readNWISdata(service="iv",
-                                parameterCd=parameter_code,
-                                sites = sites_active,
-                                startDate = start.date,
-                                endDate = end.date,
-                                tz = "America/New_York"))
-  
-  nwisData <- dplyr::filter(nwisData, dateTime %in% dateTimes_fromJSON)
-  
-  names(nwisData)[which(grepl(".*_Inst$", names(nwisData)))] <- "p_Inst"
-  names(nwisData)[which(grepl(".*_Inst_cd$", names(nwisData)))] <- "p_Inst_cd"
-  
-  location <- viz[['location']]
-  saveRDS(nwisData, file=location)
 }
 
 

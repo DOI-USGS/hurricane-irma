@@ -2,56 +2,78 @@
 
 fetch.sites <- function(viz = as.viz('sites')){
   library(dplyr)
-  
-  required <- c("location", "pCode")
+  depends <- readDepends(viz)
+  required <- c("location", "pCode", "begin_date_filter")
   checkRequired(viz, required)
   
+  # Site Fetch Dependencies
   pCode <- viz[['pCode']]
-  
-  counties <- readDepends(viz)[['counties']] 
-  #will this be ok with dependency management?
   start.date <-  as.Date(getContentInfo('precip-cell-data')[['start.date']])
+  counties <- depends[['counties']] 
   
-  sites_sum_all <- data.frame()
+  # Post Fetch Filter Dependencies
+  storm_area <- depends[['storm-area-filter']]
+  view_lims <- depends[["view-limits"]]
+  begin_date_filter <- as.Date(viz[["begin_date_filter"]])
+  
+  sites <- data.frame()
   
   counties_fips <- maps::county.fips %>% 
     dplyr::filter(polyname %in% names(counties)) %>% 
     mutate(fips = sprintf('%05d', fips))
   
   #max 20 counties at once
-  reqBks <- seq(1,nrow(counties_fips),by=20)
-  
-  for(brk in reqBks) {
-    fips_subset <- na.omit(counties_fips$fips[brk:(brk+19)])
+  for(county_set in seq(1,nrow(counties_fips),by=20)) {
+    fips_subset <- na.omit(counties_fips$fips[county_set:(county_set+19)])
     
-    sites <- dataRetrieval::readNWISdata(service = "site",
+    site_set <- dataRetrieval::readNWISdata(service = "site",
                                          seriesCatalogOutput=TRUE,
                                          parameterCd=pCode,
                                          countyCd = fips_subset)
     
-    sites <- filter(sites, parm_cd == pCode,
+    site_set <- filter(site_set, parm_cd == pCode,
                     !site_tp_cd %in% c("LK", "ES", "GW")) %>%
       data.frame()
     
-    daily_begin_date <- filter(sites, data_type_cd == "dv") %>% 
+    daily_begin_date <- filter(site_set, data_type_cd == "dv") %>% 
       select(site_no, begin_date) %>%
       rename(dv_begin_date = begin_date)
     
-    sites_sum <- filter(sites, data_type_cd == "uv") %>% #others?
+    site_set <- filter(site_set, data_type_cd == "uv") %>% #others?
       mutate(end_date = as.Date(end_date)) %>%
       filter(end_date >= start.date,
              count_nu >= 3000,
              !(is.na(alt_datum_cd))) %>%
       select(site_no, station_nm, dec_lat_va, dec_long_va) %>%
       left_join(daily_begin_date, by="site_no")
-      data.frame() 
+    data.frame() 
     
-    sites_sum_all <- bind_rows(sites_sum_all, sites_sum)
+    sites <- bind_rows(sites, site_set)
     
   }
   
-  sites_sum_all <- unique(sites_sum_all)
+  # Filter out stuff we know we don't need.
+  sites <- unique(sites)
+  
+  sites$dv_begin_date <- as.Date(sites$dv_begin_date)
+  
+  sites <- sp::spTransform(sp::SpatialPointsDataFrame(cbind(sites$dec_long_va,
+                                               sites$dec_lat_va), 
+                                         data = sites,
+                                         proj4string = sp::CRS("+proj=longlat +ellps=GRS80")),
+                              sp::CRS(view_lims$proj.string))
+  
+  storm_poly <- sp::spTransform(storm_area, 
+                                sp::CRS(view_lims$proj.string))
+  
+  in_out <- rgeos::gContains(storm_poly, sites, byid = TRUE) %>% 
+    rowSums() %>% 
+    as.logical() & 
+    sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
+    !(sites$site_no %in% c('02223000', '02207220', '02246000', '02467000')) # is not one of our manually selected bad sites
+  
+  sites <- sites[which(in_out), ]
   
   location <- viz[['location']]
-  saveRDS(sites_sum_all, file=location)
+  saveRDS(sites, file=location)
 }

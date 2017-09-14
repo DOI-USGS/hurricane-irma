@@ -9,7 +9,7 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
   sites <- depend.data[["sites"]]
   nws_conversion <- depend.data[["nws-conversion"]]
 
-  sites <- left_join(sites, 
+  sites <- left_join(sites@data, 
                      select(nws_conversion, NWS, USGS), 
                      by = c("site_no"="USGS")) %>% 
     filter(!is.na(NWS))
@@ -17,7 +17,6 @@ fetch.nws_data <- function(viz=as.viz("nws-data")){
   sites$flood.stage <- NA
   sites$flood.stage.units <- NA
   
-  #get stage or discharge forecast?
   site_content <- getContentInfo('sites')
   pCode <- site_content[['pCode']]
   if(pCode == "00060") {

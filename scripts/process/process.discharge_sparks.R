@@ -27,7 +27,7 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
-  sites <- depends[["sites"]][c("site_no", "dec_lat_va")]
+  sites <- depends[["sites"]]@data[c("site_no", "dec_lat_va")]
   
   sparks <- sparks %>% 
     left_join(sites, by = "site_no") %>%

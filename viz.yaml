@@ -236,9 +236,9 @@ fetch:
     location: cache/sites.rds
     reader: rds
     refetch: TRUE
-    depends: ["precip-cell-data", "counties"] #for start time
-    comment: disabling refetch for now, re-enable to get updates to work
+    depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
+    begin_date_filter: "2000-01-01"
   -
     id: nws-conversion
     location: cache/nws-conversion.rds
@@ -262,9 +262,8 @@ process:
     processor: storm_sites
     scripts: scripts/process/process.storm_sites.R
     reader: rds
-    depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
+    depends: ["sites", "nws-data"]
     perc_flood_stage: 1
-    begin_date_filter: "2000-01-01"
   -
     id: gage-data
     processor: getNWISdata
