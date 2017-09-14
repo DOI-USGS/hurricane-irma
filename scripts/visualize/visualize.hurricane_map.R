@@ -70,7 +70,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_add_child(g.gage_isFlood, 'circle', r="4", class="nwis-flooding-legend")
   xml_add_child(g.irma, 'text', "Hurricane Irma", class='svg-text legend-text', dx='20', dy="0.33em")
   xml_add_child(g.gage_isFlood, 'text', "Exceeded flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
-  xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot")
+  xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot-legend")
   xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
   
   g.main_gage_text <- xml_add_child(g.rain, 'text', "USGS Stream Gages", class='svg-text legend-text', dy="-1em",

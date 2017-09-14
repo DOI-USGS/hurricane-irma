@@ -43,7 +43,7 @@ var animatePrcp = function(timestep, $currentStormDot) {
   });
 
   $('.nwis-dot').css('fill', '#057083').css('stroke', "#057083");
-  $('.f-' + timestep).css('fill', 'red');
+  $('.f-' + timestep).css('fill', '#ff7000');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
