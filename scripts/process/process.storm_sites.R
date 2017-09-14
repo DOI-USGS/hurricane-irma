@@ -4,8 +4,7 @@ process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   depends <- readDepends(viz)
   
   gage_data <- depends[['nwis-data']]
-  sites <- depends[['sites']] 
-  site_ids <- 
+  sites <- depends[['sites']]
   
   nws_list <- depends[['nws-data']]
   nws_forecast <- nws_list[['forecasts']] %>% rename(NWS=site)

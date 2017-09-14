@@ -257,26 +257,26 @@ fetch:
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
-    
-process:
   -
     id: timesteps
     location: cache/times.json
-    processor: timesteps
-    scripts: scripts/process/process.timesteps.R
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
     reader: json
     depends: "precip-cell-data"
     export: true
     mimetype: application/javascript
   -
     id: nwis-data
-    processor: nwis_data
+    fetcher: nwis_data
     location: cache/nwis-data.rds
-    scripts: scripts/process/process.nwis_data.R
+    scripts: scripts/fetch/fetch.nwis_data.R
     depends: ["nws-data", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
     perc_flood_stage: 1
+    
+process:
   -
     id: storm-sites-flood
     processor: select_flood_sites
