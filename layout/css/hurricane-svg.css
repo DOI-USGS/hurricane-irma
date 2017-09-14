@@ -103,6 +103,12 @@ line, polyline, path{
   fill:#057083;
   fill-opacity:0.6;
 }
+
+.nwis-flooding-legend{
+  stroke:#057083;
+  fill: red;
+  fill-opacity:0.6;
+}
 .mouser-nwis {
   fill-opacity: 0;
   stroke-opacity: 0;
