@@ -4,6 +4,7 @@ line, polyline, path{
 	stroke-linejoin: round;
 	stroke-miterlimit: 10.00;
 }
+
 .svg-text {
   -webkit-touch-callout: none; /* iOS Safari */
   -webkit-user-select: none;   /* Chrome/Safari/Opera */
@@ -23,10 +24,13 @@ line, polyline, path{
 }
 
 .floodline {
-  stroke: red;
+  stroke: #FF6347;
   stroke-width: 2;
-  stroke-opacity: 0.7;
+  fill: #ff7000;
+  fill-opacity: 0.6;
+  stroke-opacity: 0.9;
 }
+
 .ocean-name-landscape {
   fill: #C0C0C0;
   fill-opacity: 0.5;
@@ -49,10 +53,6 @@ line, polyline, path{
 #map-elements-portrait, #map-elements-portrait-top, #map-elements-portrait-mid {
   /* doesn't work in IE */
   transform: translate(-80px, -174px) scale(1.55)
-}
-
-#sparkline-squiggle-block-portrait {
-  transform: translate(0px, 130px)
 }
 
 
@@ -98,16 +98,18 @@ line, polyline, path{
 .time-text {
   font-style:italic;
 }
-.nwis-dot, .nwis {
-  stroke:#057083;
-  fill:#057083;
-  fill-opacity:0.6;
+.nwis-dot, .nwis, .nwis-dot-legend {
+  stroke:#385F71;
+  sroke-width: 0.5;
+  fill: #73877B;
+  fill-opacity:0.8;
 }
 
 .nwis-flooding-legend{
-  stroke:#057083;
-  fill: red;
-  fill-opacity:0.6;
+  stroke: #057083;
+  sroke-width: 0.5;
+  fill: #ff7000;
+  fill-opacity:0.8;
 }
 .mouser-nwis {
   fill-opacity: 0;
@@ -115,10 +117,10 @@ line, polyline, path{
 }
 
 .nwis-bold, .mouser-bold, .nwis-dot:hover, .nwis:hover, .mouser-nwis:hover {
-  fill-opacity: 0.7;
-  stroke-width:4;
-  fill:#F29E4C;
-  stroke:#F29E4C;
+  fill-opacity: 0.8;
+  stroke-width:2;
+  fill: #80b2b2;
+  stroke:#80b2b2;
   stroke-opacity: 1;
 }
   
@@ -184,12 +186,14 @@ line, polyline, path{
 }
 .sparkline, .sparklines-overlay {
 	stroke: #057083;
+	fill: #69a9b4;
 	stroke-width: 2;
 }
 .sparkline-bold,.sparkline:hover, .sparklines-overlay:hover  {
   cursor: pointer;
-  stroke: #F29E4C;
+  stroke: #80b2b2;
   stroke-width: 3;
+  fill: #9bc5cd;
   opacity: 1.0;
 }
 

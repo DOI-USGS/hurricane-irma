@@ -1,8 +1,12 @@
 
 grab_spark <- function(vals){
+  
+  xs <- seq_len(length(vals))
+  xs <- c(head(xs, 1), xs, tail(xs, 1))
+  ys <- c(min(vals), vals, min(vals))
   x = svglite::xmlSVG({
     par(omi=c(0,0,0,0), mai=c(0,0,0,0))
-    plot(vals, type='l', axes=F, ann=F)
+    plot(xs, ys, type='l', axes=F, ann=F)
   }, height=0.4, width=2)
   xml2::xml_attr(xml2::xml_find_first(x, '//*[local-name()="polyline"]'),'points')
 }
