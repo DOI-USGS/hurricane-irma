@@ -615,7 +615,10 @@ publish:
       line3: ". Visit USGS's "
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
-      line4: " to learn more about how the agency prepared for and measured Irma's impact."
+      line4: " to learn more about how the agency prepared for and measured Irma's impact. For more information on hurricanes, visit the "
+      nhcText: "National Hurricane Center's website"
+      nhcLink: http://www.nhc.noaa.gov/
+      line5: "."
       social-section: social-section
   -
     id: figure-embed-section
