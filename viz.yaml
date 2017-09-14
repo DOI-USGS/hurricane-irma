@@ -586,7 +586,7 @@ publish:
     id: embed-page
     name: embed-hurricane-irma
     publisher: page
-    template: embed
+    template: layout/templates/embedFigure.mustache
     mimetype: text/html
     depends: ["figure-section", "svg-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
       "vizlab-favicon", "social-media-css"]
