@@ -317,7 +317,7 @@ visualize.timelapse_gif <- function(viz){
   storm <- depends[["storm-location"]]
   hurricane_track <- depends[["storm-track"]]
   storm_sites <- depends[['storm-sites']]
-  gage_data <- depends[['gage-data']]
+  nwis_data <- depends[['nwis-data']]
   nws_data <- depends[["nws-data"]]
   
   # needed to use ts w/ seq_along b/c times turned numeric otherwise

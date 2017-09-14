@@ -1,6 +1,11 @@
 # fetch NWIS sites and return a useful collection of site info
 
 fetch.sites <- function(viz = as.viz('sites')){
+  
+  if(!viz[['refetch']]){
+    return(NULL)
+  }
+  
   library(dplyr)
   depends <- readDepends(viz)
   required <- c("location", "pCode", "begin_date_filter")
@@ -48,7 +53,7 @@ fetch.sites <- function(viz = as.viz('sites')){
       left_join(daily_begin_date, by="site_no")
     data.frame() 
     
-    sites <- bind_rows(sites, site_set)
+    sites <- dplyr::bind_rows(sites, site_set)
     
   }
   

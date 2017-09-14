@@ -1,15 +1,15 @@
 process.timestep_discharge <- function(viz = as.viz('timestep-discharge')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("gage-data","timesteps", "storm-sites-flood"))
+  checkRequired(depends, c("nwis-data","timesteps", "storm-sites-flood"))
   times <- as.POSIXct(strptime(depends[['timesteps']]$times, 
                                format = '%b %d %I:%M %p', 
                                tz = "America/New_York"))
   
-  active.sites <- depends$`storm-sites-flood`@data %>% 
+  active.sites <- depends[["storm-sites-flood"]]@data %>% 
     filter(class == 'nwis-dot') %>% .$id
   
-  data.sub <- filter(depends[["gage-data"]], paste0("nwis-", site_no) %in% active.sites) %>% 
+  data.sub <- filter(depends[["nwis-data"]], paste0("nwis-", site_no) %in% active.sites) %>% 
     group_by(site_no) %>% 
     filter(min(dateTime) <= times[2], max(dateTime) >= tail(times, 2L)[2])
   
