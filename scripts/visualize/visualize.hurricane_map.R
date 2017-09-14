@@ -21,9 +21,9 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   diameter <- unique(sort(round(diff(xs))))[2]
   for (dot in precip.dots){
     xml_name(dot) <- 'path'
-    x <- as.numeric(xml_attr(dot, 'cx'))
+    x <- as.numeric(xml_attr(dot, 'cx')) - diameter/2
     y <- as.numeric(xml_attr(dot, 'cy')) - diameter/2
-    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f l%s,%s l-%s,%s l-%s,-%sZ", x, y, diameter, diameter, diameter, diameter, diameter, diameter)
+    xml_attr(dot, 'd') <- sprintf("M%1.1f,%1.1f h%s v%s h-%sZ", x, y, diameter, diameter, diameter)
     xml_attr(dot, 'r') <- NULL
     xml_attr(dot, 'cx') <- NULL
     xml_attr(dot, 'cy') <- NULL
