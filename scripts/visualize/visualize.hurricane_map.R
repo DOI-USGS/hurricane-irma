@@ -140,7 +140,7 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   # clips for pixel-based precip!
   cp <- xml_add_child(d, 'clipPath', id="state-clip")
   storm.states <- xml_attr(xml_children(xml_find_first(svg, "//*[local-name()='g'][@id='storm-states']") ), 'id')
-  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', href=sprintf("#%s", x)))
+  .jnk <- lapply(storm.states, function(x) xml_add_child(cp, 'use', 'xlink:href'=sprintf("#%s", x)))
 
   m = xml_add_child(d, 'mask', id="flood-opacity", x="0", y="-1", width="1", height="3", maskContentUnits="objectBoundingBox")
   xml_add_child(m, 'rect', x="0", y="-1", width="1", height="3", style="fill-opacity: 0; fill: white;", id='flood-light-mask')
