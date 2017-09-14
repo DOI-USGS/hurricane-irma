@@ -21,12 +21,8 @@ var fetchSvg = $.ajax({
   dataType: 'html'
 });
 
-var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
-  prcpColors = data;
-});
-var fetchPrcpTimes = $.get("js/times.json").done(function(data) {
-  prcpTimes = data;
-});
+var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
+var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
 
 var animatePrcp = function(timestep, $currentStormDot) {
   prcpColors.forEach(function(color, index) {
@@ -92,6 +88,8 @@ $('document').ready(function() {
     $('#map-figure figure').html(data);
     $('#map-figure svg').ready(function() {
         $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+          prcpTimes = fetchPrcpTimes.responseJSON;
+          prcpColors = fetchPrcpColors.responseJSON;
           svg = document.querySelector("svg");
           pt = svg.createSVGPoint();
           $('.viz-pause').on('click', function(){
