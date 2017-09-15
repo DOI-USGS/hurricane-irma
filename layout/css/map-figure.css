@@ -19,6 +19,7 @@ a{
   text-decoration:none;
 }
 
+#viz-text,
 #map-figure,
 #dataSources{
   padding:10px;
@@ -67,6 +68,7 @@ figurecaption{
   width:35px;
   margin:7px auto 0 6px;
 }
+
 #map-figure figure {
   text-align: center;
 }
@@ -90,6 +92,7 @@ figurecaption{
 }
 
 @media screen and (min-width:768px){
+  #viz-text,
   #map-figure,
   #dataSources{
     width:760px;
@@ -99,6 +102,7 @@ figurecaption{
 }
 
 @media screen and (min-width:1200px){
+  #viz-text,
   #map-figure,
   #dataSources{
     width:960px;

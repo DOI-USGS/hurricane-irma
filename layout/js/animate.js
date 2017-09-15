@@ -21,12 +21,8 @@ var fetchSvg = $.ajax({
   dataType: 'html'
 });
 
-var fetchPrcpColors = $.get("js/precip-colors.json").done(function(data) {
-  prcpColors = data;
-});
-var fetchPrcpTimes = $.get("js/times.json").done(function(data) {
-  prcpTimes = data;
-});
+var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
+var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
 
 var animatePrcp = function(timestep, $currentStormDot) {
   prcpColors.forEach(function(color, index) {
@@ -42,8 +38,8 @@ var animatePrcp = function(timestep, $currentStormDot) {
     }
   });
 
-  $('.nwis-dot').css('fill', '#057083').css('stroke', "#057083");
-  $('.f-' + timestep).css('fill', 'red');
+  $('.nwis-dot').css('fill', '#73877B').css('stroke', "#385F71");
+  $('.f-' + timestep).css('fill', '#ff7000');
   $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
 
   var darkWidth = (timestep+1)/prcpTimes.times.length;
@@ -92,6 +88,8 @@ $('document').ready(function() {
     $('#map-figure figure').html(data);
     $('#map-figure svg').ready(function() {
         $.when(fetchPrcpColors, fetchPrcpTimes).done(function() {
+          prcpTimes = fetchPrcpTimes.responseJSON;
+          prcpColors = fetchPrcpColors.responseJSON;
           svg = document.querySelector("svg");
           pt = svg.createSVGPoint();
           $('.viz-pause').on('click', function(){
