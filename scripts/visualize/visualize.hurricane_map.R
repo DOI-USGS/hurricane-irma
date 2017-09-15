@@ -185,6 +185,13 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   xml_attr(storm.sites, "onmouseout") <- NULL
   xml_attr(storm.sites, "onmouseover") <- NULL
   xml_attr(storm.sites, "onclick") <- NULL
+  
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
+  xml_remove(to.rm)
+  
+  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@id='mouse-NA']")
+  xml_remove(to.rm)
+  
   return(svg)
 }
 
