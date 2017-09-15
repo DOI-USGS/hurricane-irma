@@ -193,7 +193,6 @@ fetch:
     mimetype: application/zip
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
-    comment: disabling refetch until timestamp is hooked up
   -
     id: precip-spatial
     fetcher: precipSpatial
@@ -216,7 +215,7 @@ fetch:
     id: precip-cell-data
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
+    end.date: "2017-09-18"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
@@ -226,7 +225,7 @@ fetch:
     id: precip-cell-data-mobile
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
+    end.date: "2017-09-18"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells-mobile.csv
     mimetype: text/csv
