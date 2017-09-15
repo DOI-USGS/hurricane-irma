@@ -238,9 +238,9 @@ fetch:
     location: cache/sites.rds
     reader: rds
     refetch: TRUE
-    depends: ["precip-cell-data", "counties"] #for start time
-    comment: disabling refetch for now, re-enable to get updates to work
+    depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
+    begin_date_filter: "2000-01-01"
   -
     id: nws-conversion
     location: cache/nws-conversion.rds
@@ -256,32 +256,32 @@ fetch:
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
-    
-process:
   -
-    id: storm-sites
-    location: cache/storm-sites.rds
-    processor: storm_sites
-    scripts: scripts/process/process.storm_sites.R
-    reader: rds
-    depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
-    perc_flood_stage: 1
-    begin_date_filter: "2000-01-01"
+    id: timesteps
+    location: cache/times.json
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
+    reader: json
+    depends: "precip-cell-data"
+    export: true
+    mimetype: application/javascript
   -
-    id: gage-data
-    processor: getNWISdata
-    location: cache/gage-data.rds
-    scripts: scripts/process/process.storm_sites.R
-    depends: ["storm-sites", "sites", "timesteps"]
+    id: nwis-data
+    fetcher: nwis_data
+    location: cache/nwis-data.rds
+    scripts: scripts/fetch/fetch.nwis_data.R
+    depends: ["nws-data", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
-    comment: disabling refetch for now, re-enable to get updates to work
+    perc_flood_stage: 1
+    
+process:
   -
     id: storm-sites-flood
     processor: select_flood_sites
     location: cache/past-flood-sites.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ['gage-data', 'storm-sites', 'nws-data', 'nws-conversion']
+    depends: ['nwis-data', 'sites', 'nws-data', 'nws-conversion']
     reader: rds
   -
     id: storm-track
@@ -321,22 +321,13 @@ process:
     scripts: scripts/process/process.states.R
     depends: ["islands"]
     mimetype: application/zip
-  -
-    id: timesteps
-    location: cache/times.json
-    processor: timesteps
-    scripts: scripts/process/process.timesteps.R
-    reader: json
-    depends: "precip-cell-data"
-    export: true
-    mimetype: application/javascript
   - 
     id: timestep-discharge
     location: cache/timestep-discharge.rds
     processor: timestep_discharge
     scripts: scripts/process/process.timestep_discharge.R
     reader: rds
-    depends: ["gage-data","timesteps", "storm-sites-flood"]  
+    depends: ["nwis-data", "timesteps", "storm-sites-flood"]  
   - 
     id: flood-sites-classify
     location: cache/flood-sites.rds
