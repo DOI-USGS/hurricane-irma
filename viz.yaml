@@ -191,7 +191,6 @@ fetch:
     fetcher: hurricaneTrack
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
-    refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
   -
     id: precip-spatial
@@ -201,7 +200,6 @@ fetch:
     location: cache/irma_cells.rds
     cell_size: 15000
     reader: rds
-    refetch: TRUE
   -
     id: precip-spatial-mobile
     fetcher: precipSpatial
@@ -210,7 +208,6 @@ fetch:
     location: cache/irma_cells_mobile.rds
     cell_size: 25000
     reader: rds
-    refetch: TRUE
   -
     id: precip-cell-data
     fetcher: precipCellData
@@ -219,7 +216,6 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
-    refetch: TRUE
     depends: precip-spatial
   -
     id: precip-cell-data-mobile
@@ -229,7 +225,6 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells-mobile.csv
     mimetype: text/csv
-    refetch: TRUE
     depends: precip-spatial-mobile
   -
     id: sites
@@ -237,7 +232,6 @@ fetch:
     scripts: scripts/fetch/fetch.sites.R
     location: cache/sites.rds
     reader: rds
-    refetch: TRUE
     depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
     begin_date_filter: "2000-01-01"
@@ -252,7 +246,6 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: TRUE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
@@ -272,7 +265,6 @@ fetch:
     scripts: scripts/fetch/fetch.nwis_data.R
     depends: ["nws-data", "sites", "timesteps"]
     reader: rds
-    refetch: TRUE
     perc_flood_stage: 1
     
 process:

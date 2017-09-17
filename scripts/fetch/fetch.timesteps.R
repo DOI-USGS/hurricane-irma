@@ -5,3 +5,5 @@ fetch.timesteps <- function(viz = as.viz('timesteps')){
     unique() %>% .$DateTime %>% as.POSIXct %>% format('%b %d %I:%M %p')
   cat(jsonlite::toJSON(list(times=times)), file = viz[['location']])
 }
+
+fetchTimestamp.timesteps <- vizlab:::fetchTimestamp.file

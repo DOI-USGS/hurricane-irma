@@ -18,6 +18,8 @@ fetch.view_limits <- function(viz = as.viz('view-limits')){
   saveRDS(out, viz[['location']])
 }
 
+fetchTimestamp.view_limits <- vizlab:::fetchTimestamp.file
+
 # Generates a WGS84 polygon that defines the storm area independent of the viz bounding box.
 fetch.storm_area_filter <- function(viz = as.viz('storm-area-filter')) {
   
@@ -31,3 +33,5 @@ fetch.storm_area_filter <- function(viz = as.viz('storm-area-filter')) {
   
   saveRDS(poly, viz[['location']])
 }
+
+fetchTimestamp.storm_area_filter <- vizlab:::fetchTimestamp.file

@@ -82,3 +82,5 @@ fetch.sites <- function(viz = as.viz('sites')){
   location <- viz[['location']]
   saveRDS(sites, file=location)
 }
+
+fetchTimestamp.sites <- vizlab:::fetchTimestamp.file

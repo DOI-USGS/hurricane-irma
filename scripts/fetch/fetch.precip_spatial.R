@@ -88,5 +88,4 @@ fetch.precipSpatial <- function(viz = as.viz('precip-spatial')){
   
 }
 
-
-
+fetchTimestamp.precipSpatial <- vizlab:::fetchTimestamp.file
