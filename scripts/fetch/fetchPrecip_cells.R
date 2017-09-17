@@ -38,5 +38,4 @@ fetch.precipCellData <- function(viz = as.viz('precip-cell-data')){
   write.csv(precip, file=location, row.names = FALSE)
 }
 
-
-
+fetchTimestamp.precipCellData <- vizlab:::fetchTimestamp.file

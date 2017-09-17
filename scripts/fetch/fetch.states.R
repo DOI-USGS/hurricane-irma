@@ -31,11 +31,14 @@ fetch_map_data <- function(..., viz){
 fetch.states <- function(viz = as.viz('states')){
   fetch_map_data('state', viz = viz)
 }
+fetchTimestamp.states <- vizlab:::fetchTimestamp.file
 
 fetch.counties <- function(viz = as.viz('counties')){
   fetch_map_data('county', viz = viz)
 }
+fetchTimestamp.counties <- vizlab:::fetchTimestamp.file
 
 fetch.islands <- function(viz = as.viz('islands')){
   fetch_map_data('world2Hires', "(?!USA)", xlim = c(275, 300), ylim = c(16, 30), viz = viz)
 }
+fetchTimestamp.islands <- vizlab:::fetchTimestamp.file

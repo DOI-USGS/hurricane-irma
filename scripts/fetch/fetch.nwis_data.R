@@ -48,3 +48,5 @@ fetch.nwis_data <- function(viz = as.viz('nwis-data')) {
   saveRDS(nwis_data, file=location)
   
 }
+
+fetchTimestamp.nwis_data <- vizlab:::fetchTimestamp.file

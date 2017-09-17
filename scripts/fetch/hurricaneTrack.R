@@ -22,3 +22,5 @@ fetch.hurricaneTrack <- function(viz) {
     as.fetcher()
   fetch(fetchviz)
 }
+
+fetchTimestamp.hurricaneTrack <- vizlab:::fetchTimestamp.file
