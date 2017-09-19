@@ -49,6 +49,7 @@ var animatePrcp = function(timestepLocal) {
   $('.f-' + timestepLocal).css('fill', 'red');
   $('#timestamp-text').html(prcpTimes.times[timestepLocal - 1]);
 
+
   var darkWidth = (timestepLocal+1) / prcpTimes.times.length;
   $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#spark-full-mask').attr('width', darkWidth);

@@ -193,7 +193,6 @@ fetch:
     mimetype: application/zip
     refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
-    comment: disabling refetch until timestamp is hooked up
   -
     id: precip-spatial
     fetcher: precipSpatial
@@ -216,7 +215,7 @@ fetch:
     id: precip-cell-data
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
+    end.date: "2017-09-18"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
@@ -226,7 +225,7 @@ fetch:
     id: precip-cell-data-mobile
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-13"
+    end.date: "2017-09-18"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells-mobile.csv
     mimetype: text/csv
@@ -239,9 +238,9 @@ fetch:
     location: cache/sites.rds
     reader: rds
     refetch: TRUE
-    depends: ["precip-cell-data", "counties"] #for start time
-    comment: disabling refetch for now, re-enable to get updates to work
+    depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
+    begin_date_filter: "2000-01-01"
   -
     id: nws-conversion
     location: cache/nws-conversion.rds
@@ -257,32 +256,32 @@ fetch:
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
-    
-process:
   -
-    id: storm-sites
-    location: cache/storm-sites.rds
-    processor: storm_sites
-    scripts: scripts/process/process.storm_sites.R
-    reader: rds
-    depends: ["view-limits", "sites", "storm-area-filter", "nws-data"]
-    perc_flood_stage: 1
-    begin_date_filter: "2000-01-01"
+    id: timesteps
+    location: cache/times.json
+    fetcher: timesteps
+    scripts: scripts/fetch/fetch.timesteps.R
+    reader: json
+    depends: "precip-cell-data"
+    export: true
+    mimetype: application/javascript
   -
-    id: gage-data
-    processor: getNWISdata
-    location: cache/gage-data.rds
-    scripts: scripts/process/process.storm_sites.R
-    depends: ["storm-sites", "sites", "timesteps"]
+    id: nwis-data
+    fetcher: nwis_data
+    location: cache/nwis-data.rds
+    scripts: scripts/fetch/fetch.nwis_data.R
+    depends: ["nws-data", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
-    comment: disabling refetch for now, re-enable to get updates to work
+    perc_flood_stage: 1
+    
+process:
   -
     id: storm-sites-flood
     processor: select_flood_sites
     location: cache/past-flood-sites.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ['gage-data', 'storm-sites', 'nws-data', 'nws-conversion']
+    depends: ['nwis-data', 'sites', 'nws-data', 'nws-conversion']
     reader: rds
   -
     id: storm-track
@@ -322,22 +321,13 @@ process:
     scripts: scripts/process/process.states.R
     depends: ["islands"]
     mimetype: application/zip
-  -
-    id: timesteps
-    location: cache/times.json
-    processor: timesteps
-    scripts: scripts/process/process.timesteps.R
-    reader: json
-    depends: "precip-cell-data"
-    export: true
-    mimetype: application/javascript
   - 
     id: timestep-discharge
     location: cache/timestep-discharge.rds
     processor: timestep_discharge
     scripts: scripts/process/process.timestep_discharge.R
     reader: rds
-    depends: ["gage-data","timesteps", "storm-sites-flood"]  
+    depends: ["nwis-data", "timesteps", "storm-sites-flood"]  
   - 
     id: flood-sites-classify
     location: cache/flood-sites.rds
@@ -571,16 +561,29 @@ publish:
     publisher: page
     template: fullpage
     scripts: scripts/publish/json.R
-    depends: ["footer","header-section","figure-section", "data-sources", "map-figure-css", 
+    depends: ["footer","header-section","figure-section", "social-section", "text-section", 
+      "data-sources", "map-figure-css", 
       "jquery-js", "animate-js", "vizlab-js", "timesteps", "precip-colors", 
       "svg-css", "vizlab-favicon","lib-header-css","lib-footer-css", "hurricane-map-landscape", 
       "hurricane-map-portrait", "thumb-facebook", "thumb-twitter", "thumb-landing", 
-      "social-media-css"]#, "embed-section"]
+      "social-media-css"]
     context:
       header: header-section
       resources: ["svg-css","lib-header-css","lib-footer-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
         "vizlab-favicon", "social-media-css"]
-      sections: [ "figure-section", "data-sources"]#, "embed-section"]
+      sections: [ "figure-section", "social-section", "text-section", "data-sources"]
+  -
+    id: embed-page
+    name: embed-hurricane-irma
+    publisher: page
+    template: layout/templates/embedFigure.mustache
+    mimetype: text/html
+    depends: ["figure-section", "svg-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
+      "vizlab-favicon", "social-media-css"]
+    context:
+      resources: ["svg-css","map-figure-css", "jquery-js", "vizlab-js", "animate-js", 
+        "vizlab-favicon", "social-media-css"]
+      embed: ["figure-section"]
   -
     id: figure-section
     template: layout/templates/mapFigure.mustache
@@ -588,12 +591,18 @@ publish:
     depends:
       playIcon: play-icon
       loadingIcon: loading-icon
-      social-section: social-section
     context:
       id: map-figure
       title: Hurricane Irma’s Water Footprint
       playIcon: playIcon
       figure: loadingIcon
+  -
+    id: text-section
+    template: layout/templates/text.mustache
+    publisher: section
+    depends:
+    context:
+      id: viz-text
       line1: >-
         Hurricane Irma, the most intense hurricane observed in the Atlantic in the last 
         decade, approached the west coast of Florida on September 10th, 2017. The map 
@@ -615,32 +624,11 @@ publish:
       line3: ". Visit USGS's "
       irmaText: Hurricane Irma page
       irmaLink: "https://www.usgs.gov/special-topic/hurricane-irma"
-      line4: " to learn more about how the agency prepared for and measured Irma's impact."
+      line4: " to learn more about how the agency prepared for and measured Irma's impact. For more information on hurricanes, visit the "
+      nhcText: "National Hurricane Center's website"
+      nhcLink: http://www.nhc.noaa.gov/
+      line5: "."
       social-section: social-section
-  -
-    id: figure-embed-section
-    embed: true
-    template: layout/templates/mapFigure.mustache
-    publisher: section
-    depends: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", 
-    "vizlab-favicon", "hurricane-map-landscape"]
-    context:
-      id: map-embed-figure
-      figure: hurricane-map-landscape
-      title: Hurricane Irma’s Water Footprint
-      line1: >-
-        Hurricane Irma approached the U.S. Gulf coast on Sept 10th, 2017. 
-        The map above displays the hurricane's impact on precipitation and 
-        river gage height. Normalized gage height at a selection of U.S. 
-        Geological Survey (USGS) gaging stations impacted by the hurricane 
-        is shown in the right panel. Variation in the shape of the hydrographs 
-        (right panel) is due to stream size, storm-surge, reservoir operations, 
-        and other local conditions, which can impact the effect of precipitation 
-        on flow. The USGS also collects additional information with 
-      stnText: Short-Term Network gages
-      stnLink: "http://stn.wim.usgs.gov/FEV/#IrmaSep2017"
-      line2: (these gages are not shown here). 
-      resources: ["map-figure-css", "jquery-js", "animate-js", "vizlab-js", "svg-css", "vizlab-favicon"]
   -
     id: header-section
     template: layout/templates/header.mustache
@@ -659,27 +647,16 @@ publish:
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
-#      embedIcon: embedIcon 
+      embedIcon: embedIcon 
     context:
       githubLink: "https://github.com/USGS-VIZLAB/hurricane-irma"
       twitterLink: "https://twitter.com/share?url=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F&text=Impact%20of%20Hurricane%20Irma%20on%20precipitation%20and%20rivers&hashtags=IrmaHurricane2017,hurricane,flood,dataviz"
       facebookLink: "http://www.facebook.com/sharer.php?u=https%3A%2F%2Fowi.usgs.gov%2Fvizlab%2Fhurricane-irma%2F"
+      embedLink: "embed-hurricane-irma.html"
       githubLogo: githubLogo
       twitterLogo: twitterLogo 
       facebookLogo: facebookLogo
-#      embedIcon: embedIcon 
-#  -
-#    id: embed-section
-#    publisher: section
-#    template: layout/templates/embedTemplate.mustache
-#    depends:
-#      blackEmbedIcon: blackEmbedIcon
-#    context:
-#      blackEmbedIcon: blackEmbedIcon
-#      embeds: 
-#        -
-#          description: Embed Description Area
-#          url: "https://owi.usgs.gov/vizlab/hurricane-irma/embed/figure-section.html"
+      embedIcon: embedIcon 
   -
     id: footer
     publisher: section
