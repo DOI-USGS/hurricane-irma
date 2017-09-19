@@ -24,10 +24,16 @@ var fetchSvg = $.ajax({
 var fetchPrcpColors = $.ajax({url:'js/precip-colors.json', dataType: 'json'});
 var fetchPrcpTimes = $.ajax({url:'js/times.json', dataType: 'json'});
 
-var animatePrcp = function(timestep, $currentStormDot) {
+var animatePrcp = function(timestepLocal) {
+  
+  var $prevStormDot = $('#storm-' + (timestepLocal - 1));
+  $prevStormDot.css('opacity', "0");
+  var $currentStormDot = $('#storm-' + timestepLocal);
+  $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
+
   prcpColors.forEach(function(color, index) {
     var bin = index + 1;
-    var $prcpBin = $('.p-' + timestep + '-' + bin);
+    var $prcpBin = $('.p-' + timestepLocal + '-' + bin);
     var stormX = $currentStormDot.attr('cx');
     var stormY = $currentStormDot.attr('cy');
     $prcpBin.css("fill", color);
@@ -36,17 +42,34 @@ var animatePrcp = function(timestep, $currentStormDot) {
       $currentStormDot.data('cx', stormX);
       $currentStormDot.data('cy', stormY);
     }
+
   });
 
   $('.nwis-dot').css('fill', '#057083').css('stroke', "#057083");
-  $('.f-' + timestep).css('fill', 'red');
-  $('#timestamp-text').html(prcpTimes.times[timestep - 1]);
+  $('.f-' + timestepLocal).css('fill', 'red');
+  $('#timestamp-text').html(prcpTimes.times[timestepLocal - 1]);
 
-  var darkWidth = (timestep+1)/prcpTimes.times.length;
+  var darkWidth = (timestepLocal+1) / prcpTimes.times.length;
   $('#spark-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#spark-full-mask').attr('width', darkWidth);
   $('#flood-light-mask').attr('x', darkWidth).attr('width', 1 - darkWidth);
   $('#flood-full-mask').attr('width', darkWidth);
+
+  // requestAnimationFrame BASE CASE
+  if (timestepLocal < prcpTimes.times.length) {      
+    if (running) {
+      window.requestAnimationFrame(function() {
+        animatePrcp(timestepLocal + 1);
+      });
+    } else {
+      timestep = timestepLocal;
+    }
+  } else {
+      // Full animation done
+      timestep = 1;
+      running = false;
+      $('#playButton').css('display', 'block'); 
+  }
 };
 
 var play = function() {
@@ -55,34 +78,25 @@ var play = function() {
     running = true;
     ga('send', 'event', 'figure', 'user pressed play');
     button.css('display', 'none');
-    interval = setInterval(function() {
-      
       var $stormDot = $('.storm-dot');
       $stormDot.css("opacity", "0").css("transform", "scale(0.1");
-      var $currentStormDot = $('#storm-' + timestep);
-      $currentStormDot.css('opacity', '1.0').css('transform', 'scale(1)');
-      
-      if (timestep < prcpTimes.times.length) {
-        animatePrcp(timestep, $currentStormDot);
-        timestep++;
-      } else {
-        timestep = 1;
-        clearInterval(interval);
-        running = false;
-        button.css('display', 'block');
-      }
-    }, intervalLength);
-  }  
-}
+      // Start animation
+      window.requestAnimationFrame(function() {
+        animatePrcp(timestep);
+      });
+  }
+};
+
 var pause = function() {
   var button = $('#playButton');
+  button.css('display', 'block');
   if (running) {
-    clearInterval(interval);
     running = false;
     button.css('display', 'block');
     ga('send', 'event', 'figure', 'user pressed pause');
   }
 };
+
 $('document').ready(function() {
   fetchSvg.done(function(data) {
     $('#map-figure figure').html(data);
@@ -158,7 +172,6 @@ function openNWIS(id, event){
     window.open(url, '_blank');
   }
 }
-
 function setBold(id){
   var className = id.split('-')[0];
   $('#' + id).removeClass(className).addClass(className + '-bold');
