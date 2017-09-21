@@ -215,7 +215,7 @@ fetch:
     id: precip-cell-data
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-18"
+    end.date: "2017-09-24"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
@@ -225,7 +225,7 @@ fetch:
     id: precip-cell-data-mobile
     fetcher: precipCellData
     start.date: "2017-09-08 12:00"
-    end.date: "2017-09-18"
+    end.date: "2017-09-24"
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells-mobile.csv
     mimetype: text/csv
@@ -607,8 +607,8 @@ publish:
         Hurricane Irma, the most intense hurricane observed in the Atlantic in the last 
         decade, approached the west coast of Florida on September 10th, 2017. The map 
         above animates the hurricane's path, cumulative precipitation, and its impact on 
-        river gage height. Every six hours, the data are refreshed to show the most up-to-date 
-        information. Hydrographs in the right panel show normalized gage height at U.S. 
+        river gage height. The application rebuilds every six hours until September 24, 2017. 
+        Hydrographs in the right panel show normalized gage height at U.S. 
         Geological Survey (USGS) gaging stations that are forecasted to or have exceeded 
         National Weather Service flood stage. Variation in the shape of the hydrographs is due 
         to a number of factors that impact the effect of precipitation on flow, including: 
