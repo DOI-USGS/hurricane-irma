@@ -5,7 +5,7 @@ var svg
 
 var running = false;
 var interval = undefined;
-var intervalLength = 160;
+var intervalLength = 50;
 var timestep = 1;
 var filename;
 
