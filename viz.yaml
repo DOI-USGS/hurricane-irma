@@ -140,7 +140,7 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-98, 28, -92, 31] # http://bboxfinder.com/#28.062286,-98.052979,31.447410,-92.010498
+    bbox: [-99, 28, -91, 32] # http://bboxfinder.com/#27.945886,-99.536133,32.556074,-90.944824
     height: 10
     width: 8
     pointsize: 12
@@ -152,8 +152,8 @@ fetch:
     location: cache/storm-area-filter.rds
     reader: rds
     fetcher: storm_area_filter
-    lats: [28, 31, 31, 28, 28]
-    lons: [-98, -98, -92, -92, -98]
+    lats: [27, 34, 34, 27, 27]
+    lons: [-100, -100, -90, -90, -100]
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     comment: use to limit storm area selected
   -
@@ -191,7 +191,7 @@ fetch:
     depends: ["view-limits", "storm-area-filter"]
     scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells.rds
-    cell_size: 25000
+    cell_size: 20000
     reader: rds
     refetch: FALSE
   -
@@ -200,7 +200,7 @@ fetch:
     depends: ["view-limits", "storm-area-filter"]
     scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells_mobile.rds
-    cell_size: 40000
+    cell_size: 30000
     reader: rds
     refetch: FALSE
   -
@@ -229,7 +229,7 @@ fetch:
     scripts: scripts/fetch/fetch.sites.R
     location: cache/sites.rds
     reader: rds
-    refetch: FALSE
+    refetch: TRUE
     depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
     begin_date_filter: "1990-01-01"
@@ -244,7 +244,7 @@ fetch:
     id: nws-data
     location: cache/nws-data.rds
     fetcher: nws_data
-    refetch: FALSE
+    refetch: TRUE
     scripts: scripts/fetch/fetch.nws_data.R
     reader: rds
     depends: ['sites', 'nws-conversion']
@@ -255,7 +255,7 @@ fetch:
     scripts: scripts/fetch/fetch.timesteps.R
     reader: json
     depends: "precip-cell-data"
-    export: FALSE
+    export: TRUE
     mimetype: application/javascript
   -
     id: nwis-data
@@ -264,7 +264,7 @@ fetch:
     scripts: scripts/fetch/fetch.nwis_data.R
     depends: ["nws-data", "sites", "timesteps"]
     reader: rds
-    refetch: FALSE
+    refetch: TRUE
     perc_flood_stage: 1
     
 process:
