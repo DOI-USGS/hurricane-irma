@@ -217,7 +217,7 @@ locate_css_class_detail <- function(css, item_nm){
 #'
 #' Take style and data inputs to create a saved 
 #' image file of a snapshot in time.
-createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, states, islands, 
+createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, states, 
                                     counties, precip_breaks, precip_cols, timesteps, storm, 
                                     hurricane_track, expandBB, flood_sites){
   
@@ -228,8 +228,6 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   state_css <- locate_css_class(css, ".county-polygon")
   state_color <- locate_css_class_detail(state_css, "fill")
   state_lwd <- locate_css_class_detail(state_css, "stroke-width")
-  island_css <- locate_css_class(css, ".island-polygon")
-  island_color <- locate_css_class_detail(island_css, "fill")
   storm_color <- locate_css_class_detail(locate_css_class(css, "storm-dot"), "fill")
   
   counties@data$col <- NA_character_
@@ -258,7 +256,6 @@ createHurricaneSnapshot <- function(fig_height, fig_width, css, time_stamp, stat
   sp::plot(counties, col = NA, border = "#c6c6c6",
            expandBB = eval(parse(text = expandBB)))
   sp::plot(states, col = state_color, border = "#c6c6c6", add = TRUE)
-  sp::plot(islands, add = TRUE, border = "#c6c6c6", col = island_color)
   sp::plot(counties, add = TRUE, border = "#c6c6c6", col = counties@data$col)
   sp::plot(hurricane_track, add=TRUE, col = "#5f5f5f", lwd=3)
   cols <- rep("#FFFFFF00", length(storm))
@@ -281,7 +278,6 @@ visualize.map_thumbnail <- function(viz){
   
   depends <- readDepends(viz)
   states <- depends[["storm-states"]]
-  islands <- depends[["storm-islands"]]
   counties <- depends[["storm-counties"]]
   precip_breaks <- depends[["precip-breaks"]]
   precip_cols <- depends[["precip-colors"]]
@@ -291,7 +287,7 @@ visualize.map_thumbnail <- function(viz){
   flood_sites <- depends[['flood-sites']]
   
   png(file = file_location, height = fig_height, width = fig_width)
-  createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
+  createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, 
                           counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
                           expandBB, flood_sites)
   dev.off()
@@ -309,7 +305,6 @@ visualize.timelapse_gif <- function(viz){
   
   depends <- readDepends(viz)
   states <- depends[["storm-states"]]
-  islands <- depends[["storm-islands"]]
   counties <- depends[["storm-counties"]]
   precip_breaks <- depends[["precip-breaks"]]
   precip_cols <- depends[["precip-colors"]]
@@ -330,7 +325,7 @@ visualize.timelapse_gif <- function(viz){
     flood_sites <- filterFloodSites(gage_data, nws_data, storm_sites, time_stamp)
     
     # create map of precip + gages above flood stage
-    createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, islands, 
+    createHurricaneSnapshot(fig_height, fig_width, css, time_stamp, states, 
                             counties, precip_breaks, precip_cols, timesteps, storm, hurricane_track,
                             expandBB, flood_sites)
     title(time_stamp, line = -2)

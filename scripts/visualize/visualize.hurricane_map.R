@@ -202,8 +202,6 @@ visualize.hurricane_map_portrait <- function(viz = as.viz('hurricane-map-portrai
   svg <- visualize_hurricane_map(viz, height = height, width = width, mode =  'portrait')
   
   # find and remove
-  to.rm <- xml2::xml_find_all(svg, "//*[local-name()='g'][@id='storm-islands']") 
-  xml_remove(to.rm)
   to.rm <- xml2::xml_find_all(svg, "//*[local-name()='circle'][@class='inactive-dot']") 
   xml_remove(to.rm)
   
