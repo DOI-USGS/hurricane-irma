@@ -8,9 +8,9 @@ fetch.nwis_data <- function(viz = as.viz('nwis-data')) {
   checkRequired(viz, required)
   depends <- readDepends(viz)
   sites <- depends[['sites']]@data
-  nws.sites <- depends[['nws-data']]$sites
+  nws.sites <- depends[['nws-conversion']]$USGS
   
-  sites <- sites[sites$site_no %in% nws.sites$site_no[!is.na(nws.sites$flood.stage)], ]
+  sites <- sites[sites$site_no %in% nws.sites, ]
   
   dateTimes <- depends[['timesteps']]$times
   dateTimes_fromJSON <- as.POSIXct(strptime(dateTimes, format = '%b %d %I:%M %p'), 
@@ -24,25 +24,29 @@ fetch.nwis_data <- function(viz = as.viz('nwis-data')) {
   
   nwis_data <- data.frame()
   
-  for(i in seq(1,nrow(sites),by=20)) {
-    
-    site_set <- na.omit(sites$site_no[i:(i+19)])
-    
-    nwis_set <- dataRetrieval::renameNWISColumns(
-      dataRetrieval::readNWISdata(service="iv",
-                                parameterCd=parameter_code,
-                                sites = site_set,
-                                startDate = start.date,
-                                endDate = end.date,
-                                tz = "America/New_York"))
+  site.chunk <- 30
   
+  for(i in seq(1,nrow(sites),by=site.chunk)) {
+    site_set <- na.omit(sites$site_no[i:(i+site.chunk-1)])
+    dRurl <- dataRetrieval:::constructNWISURL(service="iv", 
+                                              parameterCd=parameter_code,
+                                              siteNumbers = site_set,
+                                              startDate = start.date,
+                                              endDate = end.date)
+    dRquery <- strsplit(dRurl, '[?]')[[1]][2]
+    dRurl <- sprintf('https://waterservices.usgs.gov/nwis/iv/?%s', dRquery) # the DR base URL is 503'ing
+    
+    nwis_set <- dataRetrieval::renameNWISColumns(dataRetrieval::importWaterML1(dRurl, tz = "America/New_York"))
+    nwis_set$dateTime <- as.POSIXct(nwis_set$dateTime, tz = "America/New_York", format = "%Y-%m-%dT%H:%M:%S")
+    
+    names(nwis_set)[which(grepl(".*_Inst$", names(nwis_set)))] <- "p_Inst"
+    names(nwis_set)[which(grepl(".*_Inst_cd$", names(nwis_set)))] <- "p_Inst_cd"  
     nwis_data <- dplyr::bind_rows(nwis_data, nwis_set)
   }
   
   nwis_data <- dplyr::filter(nwis_data, dateTime %in% dateTimes_fromJSON)
   
-  names(nwis_data)[which(grepl(".*_Inst$", names(nwis_data)))] <- "p_Inst"
-  names(nwis_data)[which(grepl(".*_Inst_cd$", names(nwis_data)))] <- "p_Inst_cd"
+  
   
   location <- viz[['location']]
   saveRDS(nwis_data, file=location)

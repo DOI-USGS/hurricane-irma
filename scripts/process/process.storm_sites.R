@@ -2,45 +2,29 @@
 process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   library(dplyr)
   depends <- readDepends(viz)
-  
+  checkRequired(viz, 'perc_flood_stage')
   gage_data <- depends[['nwis-data']]
   sites <- depends[['sites']]
   
-  nws_list <- depends[['nws-data']]
-  nws_forecast <- nws_list[['forecasts']] %>% rename(NWS=site)
-  nws_sites <- nws_list[['sites']]
-  nws_joined <- left_join(nws_forecast, nws_sites, by = "NWS")
+  nws_sites <- depends[['nws-data']]
   
-  #filter nws and gage data down to storm sites
-  nws_joined <- filter(nws_joined, site_no %in% sites@data$site_no) %>% 
-    mutate(forecast_vals = as.numeric(forecast_vals))
   gage_data <- filter(gage_data, site_no %in% sites@data$site_no)
   
-  gage_data_max <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst))
-  nws_max <- nws_joined %>% group_by(site_no, flood.stage) %>% 
-    summarize(max_forecast = max(forecast_vals))
-  
-  gage_nws_join <- left_join(gage_data_max, nws_max, by = "site_no") %>% 
-    filter(!is.na(flood.stage))
-  
-  #has it passed flood stage, or forecasted to?
-  gage_nws_flood <- gage_nws_join %>% filter(max_gage > flood.stage | max_forecast > flood.stage) %>% 
-    mutate(site_no = paste("nwis", site_no, sep = "-"))
-  
-  nwis_id <- paste0("nwis-", sites@data$site_no)
+  # this is where we have NAs from gages that are missing some data:
+  gage_flooded <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst, na.rm = TRUE)) %>% 
+    left_join(nws_sites) %>% filter(!is.na(max_gage), !is.na(flood.stage)) %>% 
+    filter(max_gage > viz[['perc_flood_stage']] * flood.stage)
   
   library(sp)
-  sites_filtered <- sites[nwis_id %in% gage_nws_flood$site_no, ]
-  
-  is.featured <- rep(TRUE, nrow(sites_filtered@data))
-  
-  sites_filtered@data <- data.frame(id = paste0('nwis-', sites_filtered$site_no), 
-                            class = ifelse(is.featured, 'nwis-dot','inactive-dot'),
-                            r = ifelse(is.featured, '3.5','1'),
-                            onmousemove = ifelse(is.featured, sprintf("hovertext('USGS %s',evt);",sites$site_no), ""),
-                            onmouseout = ifelse(is.featured, sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", sites$site_no, sites$site_no), ""),
-                            onmouseover= ifelse(is.featured, sprintf("setBold('sparkline-%s');setBold('nwis-%s');", sites$site_no, sites$site_no), ""),
-                            onclick=ifelse(is.featured, sprintf("openNWIS('%s', evt);", sites$site_no), ""), 
+  sites_filtered <- sites[sites@data$site_no %in% gage_flooded$site_no, ]
+  s.ids <- sites_filtered$site_no
+  sites_filtered@data <- data.frame(id = paste0('nwis-', s.ids), 
+                            class = 'nwis-dot',
+                            r = '3.5',
+                            onmousemove = sprintf("hovertext('USGS %s',evt);", s.ids),
+                            onmouseout = sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", s.ids, s.ids),
+                            onmouseover= sprintf("setBold('sparkline-%s');setBold('nwis-%s');", s.ids, s.ids),
+                            onclick=sprintf("openNWIS('%s', evt);", s.ids),
                             stringsAsFactors = FALSE)
   
   saveRDS(object = sites_filtered, file = viz[['location']])
@@ -53,10 +37,12 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
   library(dplyr)
   
   depends <- readDepends(viz)
-  nws_data <- depends[["nws-data"]]$sites
+  nws_data <- depends[["nws-data"]]
   gage_data <- depends[["timestep-discharge"]]
   storm_sites <- depends[["storm-sites-flood"]]
   
+  
+  use.sites <- storm_sites$id %in% names(gage_data) & !duplicated(storm_sites$id)
   site.nos <- sapply(names(gage_data), function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
   
   #this won't work if we switched to discharge
@@ -73,10 +59,16 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
                                stringsAsFactors = FALSE)
     class_df <- bind_rows(class_df, class_df_row)
   }
-  d.out <- mutate(class_df, id = paste0('nwis-', site_no)) %>% 
-    select(id, raw.class = class) %>% left_join(storm_sites@data, by="id") %>% 
-    mutate(raw.class = ifelse(is.na(raw.class), "", paste0(" ", raw.class))) %>% 
-    mutate(class = paste0(class,  raw.class)) %>% select(-raw.class)
-  storm_sites@data <- d.out
+  storm_sites <- storm_sites[use.sites, ]
+  d.out <- mutate(class_df, id = paste0('nwis-', site_no), add.class = class) %>% 
+    select(id, add.class) %>% 
+    left_join(storm_sites@data, by = 'id')
+  
+  # why? because the sites were wrong
+  for (j in 1:length(storm_sites)){
+    which.i <- d.out$id == storm_sites@data$id[j]
+    storm_sites@data$class[j] <- paste(storm_sites@data$class[j], d.out$add.class[which.i], sep=' ')
+  }
+  
   saveRDS(storm_sites, viz[['location']])
 }
