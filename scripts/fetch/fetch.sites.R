@@ -74,7 +74,7 @@ fetch.sites <- function(viz = as.viz('sites')){
     rowSums() %>% 
     as.logical() & 
     !(sites$site_no %in% c('08074500', '02489500', '08165500', '08047500',
-                           '08020000', '07342500', '08020900')) # is not one of our manually selected bad sites
+                           '08020000', '07342500', '08020900', '07344500')) # is not one of our manually selected bad sites
   
   sites <- sites[which(in_out), ]
   
