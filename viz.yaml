@@ -191,7 +191,7 @@ fetch:
     depends: ["view-limits", "storm-area-filter"]
     scripts: [scripts/fetch/fetch.precip_spatial.R, scripts/fetch/fetch.states.R]
     location: cache/irma_cells.rds
-    cell_size: 20000
+    cell_size: 10000
     reader: rds
     refetch: TRUE
   -
@@ -338,8 +338,7 @@ process:
     processor: precip_colors
     scripts: scripts/process/process.precip_colors.R
     reader: json
-    bins: 9
-    pallete: "Blues"
+    cols: ["#FAFBF3", "#F0F8E3", "#D4E9CA", "#BBE0CE", "#B7DAD0", "#B0CCD7", "#A9B8D7", "#A297C2", "#8F6F9E", "#684A77", "#41234D"]
     mimetype: application/javascript
     export: true
   -
@@ -349,7 +348,7 @@ process:
     scripts: scripts/process/process.precip_colors.R
     reader: rds
     depends: ["precip-colors"]
-    stepSize: 5
+    stepSize: 4
   - 
     id: node-precip
     location: cache/node-precip.rds
