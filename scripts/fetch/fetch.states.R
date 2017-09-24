@@ -29,7 +29,15 @@ fetch_map_data <- function(..., viz){
 }
 
 fetch.states <- function(viz = as.viz('states')){
-  fetch_map_data('state', viz = viz)
+  
+  view <- readDepends(viz)[['view-limits']]
+  states.out <- to_sp('state', proj.string = view[['proj.string']],
+                      within = as.sp_box(view$xlim, view$ylim, CRS(view[['proj.string']])))
+  mexico.out <- to_sp('world','Mexico', proj.string = view[['proj.string']],
+                      within = as.sp_box(view$xlim, view$ylim, CRS(view[['proj.string']])))
+  
+  out <- rbind(states.out, mexico.out)
+  saveRDS(out, viz[['location']])
 }
 
 fetch.counties <- function(viz = as.viz('counties')){
