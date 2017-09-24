@@ -44,22 +44,20 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   
   # overlays 
   g.overlays <- xml_add_child(map.elements, 'g', id = 'map-overlays')
-  xml_add_child(g.overlays, 'text', "Atlantic Ocean", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="atlantic-ocean", transform="translate(280,290)")
-  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(20,343)")
-  xml_add_child(g.overlays, 'text', toupper("Florida"), class='svg-text state-name', id="florida", transform="translate(80,282)")
-  xml_add_child(g.overlays, 'text', toupper("Georgia"), class='svg-text state-name', id="georgia", transform="translate(110,210)")
-  xml_add_child(g.overlays, 'text', toupper("Alabama"), class='svg-text state-name', id="alabama", transform="translate(18,190)")
-  xml_add_child(g.overlays, 'text', toupper("South Carolina"), class='svg-text state-name', id="south-carolina", transform="translate(155,150)")
+  xml_add_child(g.overlays, 'text', "Gulf of Mexico", class=sprintf('svg-text viz-pause ocean-name-%s',mode), id="gulf-of-mexico", transform="translate(285,383)")
+  xml_add_child(g.overlays, 'text', "TEXAS", class='svg-text state-name', id="texas", transform="translate(100,90)", 'text-anchor'='middle')
+  xml_add_child(g.overlays, 'text', "LOUISIANA", class='svg-text state-name', id="louisiana", transform="translate(330,100)")
   non.geo.top <- xml_add_child(svg, 'g', 'id' = 'non-geo-top')
   
   
   xml_add_child(non.geo, 'rect', width="100%", height="100%", class='ocean-water viz-pause', id='ocean-background')
-  g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(140,%s)", as.numeric(vb[4])-50))
-  g.backing <- xml_add_child(non.geo, 'g', id='legend0-back', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
+  g.rain <- xml_add_child(non.geo.top, 'g', id='legend', transform=sprintf("translate(%s,%s)", 
+                                                                           as.numeric(vb[3])-side.panel-35, as.numeric(vb[4])-50))
+  g.backing <- xml_add_child(non.geo.top, 'g', id='legend0-back', transform=sprintf("translate(10,%s)", as.numeric(vb[4])-50))
   
   # lower left legend:
-  xml_add_child(g.rain, 'text', "Total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
-                transform="translate(0,35)")
+  xml_add_child(g.rain, 'text', "NOAA total rainfall amount (inches)", class='svg-text legend-text', dy="-1em",
+                transform="translate(0,35)", 'text-anchor' = 'end', dx = "30")
   g.rains <- xml_add_child(g.rain, 'g', id = 'rain-legend')
   g.hurricane <- xml_add_child(g.rain, 'g', id = 'hurricane-legend', transform="translate(15,-65)")
   g.gage_isFlood <- xml_add_child(g.rain, 'g', id = 'gage-legend', transform="translate(15,-10)")
@@ -68,15 +66,13 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   g.rains.tx <- xml_add_child(g.rains, 'g', id = 'rain-legend-text', transform="translate(0,35)")
   xml_add_child(g.hurricane, 'circle', r="8", class="storm-dot-legend")
   xml_add_child(g.gage_isFlood, 'circle', r="4", class="nwis-flooding-legend")
-xml_add_child(g.hurricane, 'text', "Hurricane Harvey", class='svg-text legend-text', dx='20', dy="0.33em")
-  xml_add_child(g.gage_isFlood, 'text', "Above flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.hurricane, 'text', "Hurricane Harvey", class='svg-text legend-text', dx='-20', dy="0.33em", 'text-anchor' = 'end')
+  xml_add_child(g.gage_isFlood, 'text', "Above flood stage", class='svg-text legend-text', dx='-20', dy="0.33em", 'text-anchor' = 'end')
   xml_add_child(g.gage_predFlood, 'circle', r="4", class="nwis-dot-legend")
-  xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='20', dy="0.33em")
+  xml_add_child(g.gage_predFlood, 'text', "Below flood stage", class='svg-text legend-text', dx='-20', dy="0.33em", 'text-anchor' = 'end')
   
-  g.main_gage_text <- xml_add_child(g.rain, 'text', "USGS Stream Gages", class='svg-text legend-text', dy="-1em",
-                                    transform="translate(0,-23)")
-  g.main_gage_text <- xml_add_child(g.rain, 'text', "(< 1% of US total)", class='svg-text smallprint-text legend-text', dy="-1.33em",
-                                    transform="translate(135,-23)")
+  g.main_gage_text <- xml_add_child(g.rain, 'text', "USGS Stream Gages (< 1% of US total)", class='svg-text legend-text', dy="-1em",
+                                    transform="translate(0,-23)", 'text-anchor' = 'end', dx = "30")
   
   
   rain.w <- 32 # width of a rain legend bin
@@ -88,7 +84,7 @@ xml_add_child(g.hurricane, 'text', "Hurricane Harvey", class='svg-text legend-te
   col.rng <- paste(head(col.breaks, -1L), tail(col.breaks, -1L), sep='-')
   col.txt <- c(col.rng, sprintf('%s+', tail(col.breaks, 1)))
   
-  for (i in 1:n.bins){
+  for (i in seq(n.bins, 1, -1)){
     
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
@@ -96,7 +92,7 @@ xml_add_child(g.hurricane, 'text', "Hurricane Harvey", class='svg-text legend-te
     text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
     xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
     
-    x0 <- x0+rain.w
+    x0 <- x0 - rain.w
   }
   
   d <- xml_add_child(svg, 'defs', .where='before') 
@@ -127,9 +123,9 @@ xml_add_child(g.hurricane, 'text', "Hurricane Harvey", class='svg-text legend-te
   xml_add_child(g.sparkle.blck, 'text', ' ', id='timestamp-text', class='time-text svg-text legend-text', 
                 y=as.character(ys[i]+50), x = as.character(side.panel/2), 'text-anchor'='middle')
 
-  map.elements.mid <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-mid', mode))
+  map.elements.top <- xml_add_sibling(non.geo.top, 'g', id=sprintf('map-elements-%s-top', mode), .where = "before")
+  map.elements.mid <- xml_add_sibling(non.geo.top, 'g', id=sprintf('map-elements-%s-mid', mode), .where = "before")
   g.tool <- xml_add_child(svg,'g',id='tooltip-group')
-  map.elements.top <- xml_add_child(svg, 'g', id=sprintf('map-elements-%s-top', mode))
   
   xml_add_child(g.tool, 'rect', id="tooltip-box", height="24", class="tooltip-box")
   xml_add_child(g.tool, 'path', id="tooltip-point", d="M-6,-11 l6,10 l6,-11", class="tooltip-box")
