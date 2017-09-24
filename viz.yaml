@@ -140,7 +140,7 @@ fetch:
     location: cache/view-limits.rds
     reader: rds
     fetcher: view_limits
-    bbox: [-99, 28, -91, 32] # http://bboxfinder.com/#27.945886,-99.536133,32.556074,-90.944824
+    bbox: [-99, 25, -90, 31] # http://bboxfinder.com/#27.945886,-99.536133,32.556074,-90.944824
     height: 10
     width: 8
     pointsize: 12
@@ -152,8 +152,8 @@ fetch:
     location: cache/storm-area-filter.rds
     reader: rds
     fetcher: storm_area_filter
-    lats: [27, 34, 34, 27, 27]
-    lons: [-100, -100, -90, -90, -100]
+    lats: [26, 34, 34, 26, 26]
+    lons: [-100, -100, -89, -89, -100]
     scripts: [scripts/fetch/fetch.view_limits.R, scripts/visualize/visualize_utils.R]
     comment: use to limit storm area selected
   -

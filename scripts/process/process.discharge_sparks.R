@@ -32,11 +32,11 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
-  site_info <- dataRetrieval::readNWISsite(sparks$site_no) %>% select(site_no, dec_lat_va)
+  site_info <- dataRetrieval::readNWISsite(sparks$site_no) %>% select(site_no, dec_long_va)
   sparks <- sparks %>% 
     left_join(site_info, by = "site_no") %>%
-    arrange(desc(dec_lat_va)) %>%
-    select(-site_no, -dec_lat_va) 
+    arrange(desc(dec_long_va)) %>%
+    select(-site_no, -dec_long_va) 
   
   
   saveRDS(sparks, viz[['location']])
