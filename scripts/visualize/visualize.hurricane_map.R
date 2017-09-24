@@ -79,23 +79,22 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
                                     transform="translate(135,-23)")
   
   
-  rain.w <- 28 # width of a rain legend bin
+  rain.w <- 32 # width of a rain legend bin
   rain.h <- 14
   x0 <- 0
-  n.bins <- color.meta$bins
-  col.breaks <- seq(0, length.out = color.meta$bins, by = break.meta$stepSize)
+  colors <- color.meta$cols
+  n.bins <- length(colors)
+  col.breaks <- depends$`precip-breaks`
   col.rng <- paste(head(col.breaks, -1L), tail(col.breaks, -1L), sep='-')
   col.txt <- c(col.rng, sprintf('%s+', tail(col.breaks, 1)))
-  cols <- RColorBrewer::brewer.pal(n.bins, color.meta$pallete)
+  
   for (i in 1:n.bins){
-    text.class <- ifelse(any(col2rgb(cols[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+    
     xml_add_child(g.rains.bn, 'rect', x=as.character(x0), y="-10", 
                   height = as.character(rain.h), width = as.character(rain.w), 
-                  class='rain-box', style=sprintf("fill:%s;",cols[i]))
-    if (i == 1 | i == n.bins){
-      # only do the extreme values
-      xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
-    }
+                  class='rain-box', style=sprintf("fill:%s;",colors[i]))
+    text.class <- ifelse(any(col2rgb(colors[i]) < 100), 'svg-text light-rain-legend', 'svg-text dark-rain-legend')
+    xml_add_child(g.rains.tx, 'text', col.txt[i], class = text.class, x= as.character(x0+rain.w/2), 'text-anchor'='middle')  
     
     x0 <- x0+rain.w
   }
@@ -116,8 +115,6 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
-    id <- strsplit(sparks[i, ]$id, '[-]')[[1]][2]
-    message('latitude: ', dataRetrieval::readNWISsite(id)$dec_lat_va)
     fl.spark <- fl.sparks[i,]
     cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
