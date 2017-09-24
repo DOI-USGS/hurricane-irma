@@ -64,7 +64,7 @@ process.flood_sparks <- function(viz = as.viz('flood-sparks')){
   depends <- readDepends(viz)
   checkRequired(depends, c("timestep-discharge", "sites", "nws-data"))
   
-  nws_data <- depends[["nws-data"]]$sites
+  nws_data <- depends[["nws-data"]]
   ids <- names(depends[["timestep-discharge"]])
   site.nos <- sapply(ids, function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
 

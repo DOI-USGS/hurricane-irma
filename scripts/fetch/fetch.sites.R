@@ -28,7 +28,7 @@ fetch.sites <- function(viz = as.viz('sites')){
     mutate(fips = sprintf('%05d', fips))
   
   #max 20 counties at once
-  for(county_set in seq(1,nrow(counties_fips),by=20)) {
+  for(county_set in seq(1,nrow(counties_fips),by=32)) {
     fips_subset <- na.omit(counties_fips$fips[county_set:(county_set+19)])
     
     site_set <- dataRetrieval::readNWISdata(service = "site",

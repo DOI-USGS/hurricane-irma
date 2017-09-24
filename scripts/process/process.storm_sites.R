@@ -2,35 +2,21 @@
 process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   library(dplyr)
   depends <- readDepends(viz)
-  
+  checkRequired(viz, 'perc_flood_stage')
   gage_data <- depends[['nwis-data']]
   sites <- depends[['sites']]
   
-  nws_list <- depends[['nws-data']]
-  nws_forecast <- nws_list[['forecasts']] %>% rename(NWS=site)
-  nws_sites <- nws_list[['sites']]
-  nws_joined <- left_join(nws_forecast, nws_sites, by = "NWS")
+  nws_sites <- depends[['nws-data']]
   
-  #filter nws and gage data down to storm sites
-  nws_joined <- filter(nws_joined, site_no %in% sites@data$site_no) %>% 
-    mutate(forecast_vals = as.numeric(forecast_vals))
   gage_data <- filter(gage_data, site_no %in% sites@data$site_no)
   
-  gage_data_max <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst))
-  nws_max <- nws_joined %>% group_by(site_no, flood.stage) %>% 
-    summarize(max_forecast = max(forecast_vals))
-  
-  gage_nws_join <- left_join(gage_data_max, nws_max, by = "site_no") %>% 
-    filter(!is.na(flood.stage))
-  
-  #has it passed flood stage, or forecasted to?
-  gage_nws_flood <- gage_nws_join %>% filter(max_gage > flood.stage | max_forecast > flood.stage) %>% 
-    mutate(site_no = paste("nwis", site_no, sep = "-"))
-  
-  nwis_id <- paste0("nwis-", sites@data$site_no)
+  # this is where we have NAs from gages that are missing some data:
+  gage_flooded <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst, na.rm = TRUE)) %>% 
+    left_join(nws_sites) %>% filter(!is.na(max_gage), !is.na(flood.stage)) %>% 
+    filter(max_gage > viz[['perc_flood_stage']] * flood.stage)
   
   library(sp)
-  sites_filtered <- sites[nwis_id %in% gage_nws_flood$site_no, ]
+  sites_filtered <- sites[sites@data$site_no %in% gage_flooded$site_no, ]
   
   is.featured <- rep(TRUE, nrow(sites_filtered@data))
   
@@ -53,7 +39,7 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
   library(dplyr)
   
   depends <- readDepends(viz)
-  nws_data <- depends[["nws-data"]]$sites
+  nws_data <- depends[["nws-data"]]
   gage_data <- depends[["timestep-discharge"]]
   storm_sites <- depends[["storm-sites-flood"]]
   

@@ -183,7 +183,7 @@ fetch:
     fetcher: hurricaneTrack
     scripts: scripts/fetch/hurricaneTrack.R
     mimetype: application/zip
-    refetch: FALSE
+    refetch: TRUE
     metadata: "Updates every 6 hours on http://www.nhc.noaa.gov/gis/"
   -
     id: precip-spatial
@@ -193,7 +193,7 @@ fetch:
     location: cache/irma_cells.rds
     cell_size: 20000
     reader: rds
-    refetch: FALSE
+    refetch: TRUE
   -
     id: precip-spatial-mobile
     fetcher: precipSpatial
@@ -202,7 +202,7 @@ fetch:
     location: cache/irma_cells_mobile.rds
     cell_size: 30000
     reader: rds
-    refetch: FALSE
+    refetch: TRUE
   -
     id: precip-cell-data
     fetcher: precipCellData
@@ -211,7 +211,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells.csv
     mimetype: text/csv
-    refetch: FALSE
+    refetch: TRUE
     depends: precip-spatial
   -
     id: precip-cell-data-mobile
@@ -241,14 +241,6 @@ fetch:
     fetcher: nws_conversion
     scripts: scripts/fetch/fetch.nws_conversion.R
   -
-    id: nws-data
-    location: cache/nws-data.rds
-    fetcher: nws_data
-    refetch: TRUE
-    scripts: scripts/fetch/fetch.nws_data.R
-    reader: rds
-    depends: ['sites', 'nws-conversion']
-  -
     id: timesteps
     location: cache/times.json
     fetcher: timesteps
@@ -262,10 +254,17 @@ fetch:
     fetcher: nwis_data
     location: cache/nwis-data.rds
     scripts: scripts/fetch/fetch.nwis_data.R
-    depends: ["nws-data", "sites", "timesteps"]
+    depends: ["nws-conversion", "sites", "timesteps"]
     reader: rds
     refetch: TRUE
-    perc_flood_stage: 1
+  -
+    id: nws-data
+    location: cache/nws-data.rds
+    fetcher: nws_data
+    refetch: TRUE
+    scripts: scripts/fetch/fetch.nws_data.R
+    reader: rds
+    depends: ['sites', 'nws-conversion']
     
 process:
   -
@@ -273,8 +272,9 @@ process:
     processor: select_flood_sites
     location: cache/past-flood-sites.rds
     scripts: scripts/process/process.storm_sites.R
-    depends: ['nwis-data', 'sites', 'nws-data', 'nws-conversion']
+    depends: ['nwis-data', 'sites', 'nws-data']
     reader: rds
+    perc_flood_stage: 0.5
   -
     id: storm-track
     location: cache/storm-track.rds
