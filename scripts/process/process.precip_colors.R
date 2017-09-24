@@ -1,5 +1,6 @@
 process.precip_colors <- function(viz = as.viz('precip-colors')){
-  cols <- RColorBrewer::brewer.pal(viz[['bins']], viz[['pallete']])
+  checkRequired(viz,'cols')
+  cols <- viz[['cols']]
   cat(jsonlite::toJSON(cols), file = viz[['location']])
 }
 
