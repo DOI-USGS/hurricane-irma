@@ -11,9 +11,9 @@ process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   gage_data <- filter(gage_data, site_no %in% sites@data$site_no)
   
   # this is where we have NAs from gages that are missing some data:
-  gage_flooded <- gage_data %>% group_by(site_no) %>% summarize(max_gage = max(p_Inst, na.rm = TRUE)) %>% 
-    left_join(nws_sites) %>% filter(!is.na(max_gage), !is.na(flood.stage)) %>% 
-    filter(max_gage > viz[['perc_flood_stage']] * flood.stage)
+  gage_flooded <- gage_data %>% dplyr::group_by(site_no) %>% dplyr::summarize(max_gage = max(p_Inst, na.rm = TRUE)) %>% 
+    dplyr::left_join(nws_sites) %>% dplyr::filter(!is.na(max_gage), !is.na(flood.stage)) %>% 
+    dplyr::filter(max_gage > viz[['perc_flood_stage']] * flood.stage)
   
   library(sp)
   sites_filtered <- sites[sites@data$site_no %in% gage_flooded$site_no, ]
