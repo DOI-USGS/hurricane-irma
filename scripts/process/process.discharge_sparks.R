@@ -16,10 +16,11 @@ grab_spark <- function(vals){
 process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
   library(dplyr)
   depends <- readDepends(viz)
-  checkRequired(depends, c("timestep-discharge", "sites"))
+  checkRequired(depends, c("timestep-discharge"))
   
-  site.nos <- site.nos <- sapply(names(depends[["timestep-discharge"]]), 
-                                 function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE)
+  site.nos <- sapply(names(depends[["timestep-discharge"]]), 
+                     function(x) strsplit(x, '[-]')[[1]][2], USE.NAMES = FALSE) %>% 
+    unique()
   
   sparks <- data.frame(points = sapply(depends[["timestep-discharge"]], function(x) grab_spark(x$y), USE.NAMES = FALSE),
                        site_no = site.nos, stringsAsFactors = FALSE) %>% 
@@ -31,14 +32,12 @@ process.discharge_sparks <- function(viz = as.viz('discharge-sparks')){
            onclick=sprintf("openNWIS('%s', evt);", site_no),
            onmousemove=sprintf("hovertext('USGS %s',evt);", site_no))
   
-  sites <- depends[["sites"]]@data[c("site_no", "dec_lat_va")]
-  
+  site_info <- dataRetrieval::readNWISsite(sparks$site_no) %>% select(site_no, dec_lat_va)
   sparks <- sparks %>% 
-    left_join(sites, by = "site_no") %>%
+    left_join(site_info, by = "site_no") %>%
     arrange(desc(dec_lat_va)) %>%
     select(-site_no, -dec_lat_va) 
   
-  sparks <- unique(sparks)
   
   saveRDS(sparks, viz[['location']])
 }

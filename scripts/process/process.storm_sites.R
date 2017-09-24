@@ -60,12 +60,15 @@ process.flood_sites_classify <- function(viz = as.viz("flood-sites-classify")){
     class_df <- bind_rows(class_df, class_df_row)
   }
   storm_sites <- storm_sites[use.sites, ]
-  d.out <- mutate(class_df, id = paste0('nwis-', site_no)) %>% 
-    select(id, raw.class = class) %>% left_join(storm_sites@data, by="id") %>% 
-    mutate(raw.class = ifelse(is.na(raw.class), "", paste0(" ", raw.class))) %>% 
-    mutate(class = paste0(class,  raw.class)) %>% select(-raw.class) 
+  d.out <- mutate(class_df, id = paste0('nwis-', site_no), add.class = class) %>% 
+    select(id, add.class) %>% 
+    left_join(storm_sites@data, by = 'id')
   
+  # why? because the sites were wrong
+  for (j in 1:length(storm_sites)){
+    which.i <- d.out$id == storm_sites@data$id[j]
+    storm_sites@data$class[j] <- paste(storm_sites@data$class[j], d.out$add.class[which.i], sep=' ')
+  }
   
-  storm_sites@data <- d.out
   saveRDS(storm_sites, viz[['location']])
 }

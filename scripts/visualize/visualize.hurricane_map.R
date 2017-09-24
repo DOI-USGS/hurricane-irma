@@ -116,6 +116,8 @@ visualize_hurricane_map <- function(viz, height, width, mode, ...){
   for (i in 1:nrow(sparks)){ 
     g.single <- xml_add_child(g.sparkles, 'g', transform=sprintf('translate(0,%s)', ys[i])) 
     do.call(xml_add_child, append(list(.x = g.single, .value = 'polyline'), sparks[i, ]))
+    id <- strsplit(sparks[i, ]$id, '[-]')[[1]][2]
+    message('latitude: ', dataRetrieval::readNWISsite(id)$dec_lat_va)
     fl.spark <- fl.sparks[i,]
     cp <- xml_add_child(d, "clipPath", id=sprintf("flood-clip-%s", strsplit(fl.spark$id, '[-]')[[1]][2]))
     xml_add_child(cp, 'rect', width ='100%', height = fl.spark$y, y = "0")
