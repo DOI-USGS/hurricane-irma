@@ -8,7 +8,7 @@ fetch.sites <- function(viz = as.viz('sites')){
   
   library(dplyr)
   depends <- readDepends(viz)
-  required <- c("location", "pCode", "begin_date_filter")
+  required <- c("location", "pCode")
   checkRequired(viz, required)
   
   # Site Fetch Dependencies
@@ -19,7 +19,6 @@ fetch.sites <- function(viz = as.viz('sites')){
   # Post Fetch Filter Dependencies
   storm_area <- depends[['storm-area-filter']]
   view_lims <- depends[["view-limits"]]
-  begin_date_filter <- as.Date(viz[["begin_date_filter"]])
   
   sites <- data.frame()
   
@@ -74,7 +73,6 @@ fetch.sites <- function(viz = as.viz('sites')){
   in_out <- rgeos::gContains(storm_poly, sites, byid = TRUE) %>% 
     rowSums() %>% 
     as.logical() & 
-    sites$dv_begin_date < begin_date_filter & # has period of record longer than some begin date
     !(sites$site_no %in% c('02223000', '02207220', '02246000', '02467000')) # is not one of our manually selected bad sites
   
   sites <- sites[which(in_out), ]

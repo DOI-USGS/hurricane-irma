@@ -221,7 +221,7 @@ fetch:
     scripts: scripts/fetch/fetchPrecip_cells.R
     location: cache/precip_cells-mobile.csv
     mimetype: text/csv
-    refetch: FALSE
+    refetch: TRUE
     depends: precip-spatial-mobile
   -
     id: sites
@@ -232,7 +232,6 @@ fetch:
     refetch: TRUE
     depends: ["precip-cell-data", "counties", "storm-area-filter", "view-limits"]
     pCode: "00065"
-    begin_date_filter: "1990-01-01"
   -
     id: nws-conversion
     location: cache/nws-conversion.rds
