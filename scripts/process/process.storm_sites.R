@@ -17,16 +17,14 @@ process.select_flood_sites <- function(viz = as.viz('storm-sites-flood')) {
   
   library(sp)
   sites_filtered <- sites[sites@data$site_no %in% gage_flooded$site_no, ]
-  
-  is.featured <- rep(TRUE, nrow(sites_filtered@data))
-  
-  sites_filtered@data <- data.frame(id = paste0('nwis-', sites_filtered$site_no), 
+  s.ids <- sites_filtered$site_no
+  sites_filtered@data <- data.frame(id = paste0('nwis-', s.ids), 
                             class = 'nwis-dot',
                             r = '3.5',
-                            onmousemove = sprintf("hovertext('USGS %s',evt);",sites$site_no),
-                            onmouseout = sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');"),
-                            onmouseover= sprintf("setBold('sparkline-%s');setBold('nwis-%s');"),
-                            onclick=sprintf("openNWIS('%s', evt);", sites$site_no),
+                            onmousemove = sprintf("hovertext('USGS %s',evt);", s.ids),
+                            onmouseout = sprintf("setNormal('sparkline-%s');setNormal('nwis-%s');hovertext(' ');", s.ids, s.ids),
+                            onmouseover= sprintf("setBold('sparkline-%s');setBold('nwis-%s');", s.ids, s.ids),
+                            onclick=sprintf("openNWIS('%s', evt);", s.ids),
                             stringsAsFactors = FALSE)
   
   saveRDS(object = sites_filtered, file = viz[['location']])
