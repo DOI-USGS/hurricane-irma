@@ -73,7 +73,8 @@ fetch.sites <- function(viz = as.viz('sites')){
   in_out <- rgeos::gContains(storm_poly, sites, byid = TRUE) %>% 
     rowSums() %>% 
     as.logical() & 
-    !(sites$site_no %in% c('02223000', '02207220', '02246000', '02467000')) # is not one of our manually selected bad sites
+    !(sites$site_no %in% c('08074500', '02489500', '08165500', '08047500',
+                           '08020000', '07342500', '08020900')) # is not one of our manually selected bad sites
   
   sites <- sites[which(in_out), ]
   
